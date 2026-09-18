@@ -55,6 +55,12 @@ def manifest() -> dict:
 
 
 @pytest.fixture(scope="module")
+def manifest_bundle() -> dict:
+    """`package.json`（插件包清单）—— 与 `plugin.yaml` 是两回事，别混。"""
+    return json.loads((HERE / "package.json").read_text(encoding="utf-8"))
+
+
+@pytest.fixture(scope="module")
 def host_source() -> str:
     return HOST.read_text(encoding="utf-8")
 
@@ -676,3 +682,71 @@ def test_host_js_ships_with_an_empty_placeholder(host_source: str) -> None:
     assert declarations == ["const DEFAULT_REPO_ROOT = ''"], f"占位必须是空串：{declarations}"
     # 而且它得**真的被用上**（否则"自带副本"这条路径根本没接进解析逻辑）。
     assert "? args.repo_root : DEFAULT_REPO_ROOT" in host_source, "repo_root 缺省时要落到 DEFAULT_REPO_ROOT"
+
+
+# ------------------------------------------- 两种装载方式：不允许逻辑分叉
+#
+# 同一个插件有两种装法：
+#   * dynamic Package —— host.js 全文喂给 cordis_define（可热更）；
+#   * 插件包 / profile 层 —— lib/index.js 导出 apply，`dsh plugin add` 装（可一键）。
+# ROADMAP 7.3 与 AGENTS.md 都要求两条入口共享同一套实现。这里的办法是
+# **lib/index.js 由 host.js 生成**，再用一条用例钉住"生成物 == 生成器的输出"。
+
+
+def test_lib_index_js_is_generated_from_host_js() -> None:
+    """手改 `lib/index.js`（或改了 host.js 忘了重新生成）都会在这里红。"""
+    builder = _load_script("plugin_build_module", HERE / "scripts" / "build_module.py")
+    generated = builder.generate()
+    actual = (HERE / "lib" / "index.js").read_text(encoding="utf-8")
+    assert actual == generated, "lib/index.js 与 host.js 不一致 —— 跑 python scripts/build_module.py 重新生成"
+
+
+def test_generated_module_exports_apply_and_reuses_the_same_body() -> None:
+    module = (HERE / "lib" / "index.js").read_text(encoding="utf-8")
+    host = HOST.read_text(encoding="utf-8")
+    assert "export const apply = plugin.apply" in module
+    assert host in module, "生成物必须原样包住 host.js 的全文（否则就是抄了一份、会漂移）"
+
+
+def test_package_json_declares_a_loadable_profile_bundle(manifest_bundle: dict) -> None:
+    assert manifest_bundle["name"] == "repo-autopilot-plugin"
+    assert manifest_bundle["type"] == "module"
+    assert manifest_bundle["main"] == "lib/index.js"
+
+    patch = manifest_bundle["dsh"]["bundle"]["patch"]
+    assert (HERE / patch).is_file(), f"dsh.bundle.patch 指向的文件不存在：{patch}"
+    assert patch.lstrip("./") in " ".join(manifest_bundle["exports"].values()), (
+        "exports 里必须能取到 cordis.patch.yml，否则 profile 层加载时会解析不到"
+    )
+    for required in ("lib/index.js", "cordis.patch.yml", "vendor/"):
+        assert required in manifest_bundle["files"], f"files 里少了 {required}（npm 打包会漏掉它）"
+
+
+def test_patch_row_points_at_this_package(manifest_bundle: dict) -> None:
+    """profile 补丁里的行必须解析到**本包**，否则装完什么都不会装载。"""
+    rows = yaml.safe_load((HERE / "cordis.patch.yml").read_text(encoding="utf-8"))
+    assert isinstance(rows, list) and rows, "补丁应当是一个非空的列表"
+    inserted = [row for entry in rows for row in (entry.get("insert") or [])]
+    assert inserted, "补丁里没有 insert 段"
+    names = {row["name"] for row in inserted}
+    assert manifest_bundle["name"] in names, f"补丁指向的是 {names}，而本包叫 {manifest_bundle['name']}"
+    assert all(row.get("id") for row in inserted), "每一行都要有 id（profile 靠 id 定位行）"
+
+
+def test_one_click_installer_is_present_and_targets_this_package() -> None:
+    """
+    双击入口必须存在，并且**确实**走 `dsh plugin add` 那条路 ——
+    否则"点击即一键安装"就是空话（脚本只检查环境、不装东西）。
+    """
+    cmd = (HERE / "install.cmd").read_bytes()
+    assert cmd.strip(), "install.cmd 不应为空"
+    text = cmd.decode("utf-8", errors="replace")
+    assert "plugin" in text and "add" in text, "必须调用 dsh plugin add"
+    assert "install.ps1" in text, "要先跑环境检查/完整性校验那一步"
+    assert "EmitHost" in text, "要生成 host.local.js（dynamic Package 那条路也用得上）"
+
+
+def test_cmd_files_are_crlf_in_the_index() -> None:
+    """`.cmd` 要 CRLF：cmd.exe 对批处理行尾敏感，跳转标签尤其。"""
+    attrs = (HERE / ".gitattributes").read_text(encoding="utf-8")
+    assert "*.cmd text eol=crlf" in attrs, ".gitattributes 里要把 .cmd 固定成 CRLF"

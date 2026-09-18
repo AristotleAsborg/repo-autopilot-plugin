@@ -8,6 +8,10 @@
 # 那是**文件内容**、不受这条规则影响；BOM + LF 在 5.1 上实测可正常运行。
 * text=auto eol=lf
 
+# `.cmd` 保持 CRLF：cmd.exe 对批处理的行尾敏感（跳转标签尤其）。
+# 这与 repo-autopilot 自己那份 `.gitattributes` 的口径一致。
+*.cmd text eol=crlf
+
 # 自带副本必须**逐字节**保持打包时的样子。
 #
 # `vendor/repo-autopilot/MANIFEST.json` 记的是那些字节的 sha256，而 repo-autopilot 打的包

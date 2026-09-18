@@ -46,6 +46,7 @@ param(
     [string]$Python,
     [switch]$InstallDeps,
     [switch]$UseUv,
+    [switch]$EmitHost,
     [switch]$DryRun
 )
 
@@ -161,6 +162,7 @@ if ($RepoRoot) { $forward += @('--repo-root', $RepoRoot) }
 if ($Python) { $forward += @('--python', $Python) }
 if ($InstallDeps) { $forward += '--install-deps' }
 if ($UseUv) { $forward += '--use-uv' }
+if ($EmitHost) { $forward += '--emit-host' }
 if ($DryRun) { $forward += '--dry-run' }
 
 $exe = $foundArgv[0]

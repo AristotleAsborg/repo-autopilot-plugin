@@ -1,0 +1,32 @@
+{
+  "name": "repo-autopilot-plugin",
+  "version": "1.0.0",
+  "description": "把 repo-autopilot 本体打包成 DeepSeek Harness 插件：自带一份已打好的 repo-autopilot（含 MANIFEST 逐文件 sha256），只读、零凭证。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./host.js": "./host.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "cordis.patch.yml",
+    "host.js",
+    "scripts/",
+    "vendor/",
+    "README.md",
+    "NOTES.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

@@ -137,6 +137,39 @@ stdout / stderr + 退出码
 
 ## 二、安装
 
+两种装法，**同一份实现**（`lib/index.js` 由 `host.js` 生成，有用例钉住不许漂移）：
+
+| 装法 | 怎么做 | 适合 |
+|---|---|---|
+| **一键（profile 层）** | **双击 `install.cmd`** | 想要"装完就能用、重启即生效" |
+| 会话内（dynamic Package） | `python scripts/install.py --emit-host`，把 `host.local.js` 喂给 `cordis_define` | 想要热更、不想动 profile |
+
+### 2.0 一键安装（双击 `install.cmd`）
+
+双击它会依次做三件事：
+
+1. 找 Python（按 `-Python` → `REPO_AUTOPILOT_PYTHON` → `python3` → `python` → `py -3.12`），
+   检查版本与依赖，并**逐文件 sha256 校验**随包自带的那份 repo-autopilot；
+2. 生成 `host.local.js`（把自带副本路径写进 `DEFAULT_REPO_ROOT`）；
+3. `dsh plugin --profile <名字> add <本目录>` —— 装成一个 **profile 层**，重开会话即生效。
+
+可用环境变量：`DSH_PROFILE`（默认 `standard`）、`DSH_BIN`（dsh 可执行文件路径）。
+
+> **两条限制，先说清**：① 装 profile 要写 `%DSH_HOME%\profiles\...`，**在 DSH 会话里跑会被沙箱拦**
+> （实测报 `EPERM: mkdir 'D:\dsh\home\profiles\...'`）—— 所以要在资源管理器里双击、或普通终端里跑；
+> ② 这一步用 pnpm，需要能访问 registry。
+>
+> 卸载：`dsh plugin --profile <名字> remove repo-autopilot-plugin`
+
+### 2.1 会话内装法（dynamic Package）
+
+```bash
+python scripts/install.py --emit-host
+```
+
+然后把 **`host.local.js`** 的全部内容喂给 `cordis_define`（见 [2.5](#25-注册成-cordis-package)）。
+
+
 三条路线，选一条即可。**路线 A 最省事**。
 
 ### 2.1 路线 A：一键脚本（推荐）
