@@ -15,6 +15,7 @@ from __future__ import annotations
 import importlib.util
 import hashlib
 import json
+import os
 import re
 import shutil
 import sys
@@ -346,6 +347,28 @@ def _synthetic_repo(root: Path) -> Path:
     return root
 
 
+def _rmtree_tolerant(root: Path) -> None:
+    """
+    删一棵树，遇到只读文件先摘掉只读位。
+
+    `shutil.rmtree(ignore_errors=True)` 在这里**不够**：插件目录里有**只读**的
+    `vendor/repo-autopilot/ROADMAP.md`，复制出来的副本也带只读位，于是 rmtree 静默失败、
+    上一轮测试的产物**残留**到下一轮（实测：dry-run 那条用例因此误报）。
+    `ignore_errors` 会把"没删掉"这件事也一起吞掉 —— 那正是它危险的地方。
+    """
+    if not root.exists():
+        return
+    import stat
+
+    for current, _dirs, files in os.walk(root):
+        for name in files:
+            try:
+                (Path(current) / name).chmod(stat.S_IWRITE)
+            except OSError:
+                pass
+    shutil.rmtree(root, ignore_errors=True)
+
+
 @pytest.fixture
 def scratch():
     """
@@ -356,13 +379,12 @@ def scratch():
     所以 scratch 建在**插件目录下面**，用完删掉。
     """
     root = HERE / ".cache" / "smoke-tests"
-    if root.exists():
-        shutil.rmtree(root, ignore_errors=True)
+    _rmtree_tolerant(root)
     root.mkdir(parents=True, exist_ok=True)
     try:
         yield root
     finally:
-        shutil.rmtree(root, ignore_errors=True)
+        _rmtree_tolerant(root)
 
 
 def test_smoke_is_stdlib_only_so_it_can_report_a_missing_dependency() -> None:
@@ -735,18 +757,98 @@ def test_patch_row_points_at_this_package(manifest_bundle: dict) -> None:
 
 def test_one_click_installer_is_present_and_targets_this_package() -> None:
     """
-    双击入口必须存在，并且**确实**走 `dsh plugin add` 那条路 ——
+    双击入口必须存在，并且**确实**把"装进 profile"这一步接上了 ——
     否则"点击即一键安装"就是空话（脚本只检查环境、不装东西）。
+    装 profile 的逻辑在 install_profile.py 里（A 包管理器 → 失败自动退 B）。
     """
-    cmd = (HERE / "install.cmd").read_bytes()
-    assert cmd.strip(), "install.cmd 不应为空"
-    text = cmd.decode("utf-8", errors="replace")
-    assert "plugin" in text and "add" in text, "必须调用 dsh plugin add"
+    text = (HERE / "install.cmd").read_text(encoding="utf-8", errors="replace")
+    assert text.strip(), "install.cmd 不应为空"
     assert "install.ps1" in text, "要先跑环境检查/完整性校验那一步"
-    assert "EmitHost" in text, "要生成 host.local.js（dynamic Package 那条路也用得上）"
+    assert "-EmitHost" in text, "要生成 host.local.js（dynamic Package 那条路也用得上）"
+    assert "-InstallProfile" in text, "要真的装进 profile，而不是只检查环境"
+    assert (HERE / "scripts" / "install_profile.py").is_file()
 
 
 def test_cmd_files_are_crlf_in_the_index() -> None:
     """`.cmd` 要 CRLF：cmd.exe 对批处理行尾敏感，跳转标签尤其。"""
     attrs = (HERE / ".gitattributes").read_text(encoding="utf-8")
     assert "*.cmd text eol=crlf" in attrs, ".gitattributes 里要把 .cmd 固定成 CRLF"
+
+
+# --------------------------------------------- 装进 profile：A 失败要能退回 B
+#
+# 实测教训：`dsh plugin add` 是 **pnpm 驱动**的，而这台机器没有 pnpm
+# （`'pnpm' is not recognized`）。所以装了 A 还必须有一条不需要包管理器、不需要网络的 B：
+# 本插件**零依赖**，B 就是 pnpm + reconcilePlugins 会得到的那个终态。
+
+
+def _fake_profile(root: Path, name: str = "web") -> Path:
+    profile = root / "profiles" / name
+    profile.mkdir(parents=True, exist_ok=True)
+    (profile / "package.json").write_text(
+        json.dumps(
+            {
+                "name": f"dsh-profile-{name}",
+                "dependencies": {},
+                "dsh": {"profile": {"bundles": ["@deepseek-ai/dsh-base"]}},
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    (profile / "node_modules").mkdir(exist_ok=True)
+    return profile
+
+
+def test_bundle_install_writes_the_final_state_and_verifies(scratch) -> None:
+    profile = _fake_profile(scratch)
+    module = _load_script("plugin_install_profile", HERE / "scripts" / "install_profile.py")
+
+    ok, detail = module.install_by_bundle(profile, dry_run=False)
+    assert ok, detail
+
+    installed = profile / "node_modules" / module.package_name()
+    assert (installed / "package.json").is_file(), "插件要真的被复制进 node_modules"
+    assert (installed / "cordis.patch.yml").is_file(), "补丁文件必须跟着一起装进去"
+
+    manifest = json.loads((profile / "package.json").read_text(encoding="utf-8"))
+    assert module.package_name() in manifest["dsh"]["profile"]["bundles"], "bundles 里要有它"
+    assert module.package_name() in manifest["dependencies"]
+    # 备份要留下（改别人的 profile 清单，必须可回退）
+    assert list(profile.glob("package.json.bak-install-profile-*")), "改清单前要备份"
+
+    ok, notes = module.verify(profile)
+    assert ok, notes
+
+
+def test_bundle_install_dry_run_touches_nothing(scratch) -> None:
+    profile = _fake_profile(scratch)
+    module = _load_script("plugin_install_profile_dry", HERE / "scripts" / "install_profile.py")
+    before = (profile / "package.json").read_text(encoding="utf-8")
+
+    ok, detail = module.install_by_bundle(profile, dry_run=True)
+    assert ok and "dry-run" in detail
+    assert (profile / "package.json").read_text(encoding="utf-8") == before
+    assert not (profile / "node_modules" / module.package_name()).exists()
+
+
+def test_verify_catches_a_profile_that_would_not_load_it(scratch) -> None:
+    """自证要能识别"装了但不会被装载"这种情况 —— 否则等于没验。"""
+    profile = _fake_profile(scratch)
+    module = _load_script("plugin_install_profile_verify", HERE / "scripts" / "install_profile.py")
+    ok, notes = module.verify(profile)
+    assert ok is False
+    assert any("bundles 里没有" in note for note in notes), notes
+
+
+def test_pnpm_lookup_prefers_path_then_corepack(monkeypatch) -> None:
+    module = _load_script("plugin_install_profile_pnpm", HERE / "scripts" / "install_profile.py")
+    monkeypatch.setattr(module.shutil, "which", lambda name: "C:/pnpm.exe" if name == "pnpm" else None)
+    assert module.find_pnpm() == ["C:/pnpm.exe"]
+
+    monkeypatch.setattr(module.shutil, "which", lambda name: "C:/corepack.cmd" if name == "corepack" else None)
+    assert module.find_pnpm() == ["C:/corepack.cmd", "pnpm"]
+
+    monkeypatch.setattr(module.shutil, "which", lambda name: None)
+    assert module.find_pnpm() is None, "两样都没有时要明确返回 None，好让调用方退回 B"

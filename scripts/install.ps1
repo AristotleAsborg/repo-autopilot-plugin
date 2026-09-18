@@ -47,6 +47,8 @@ param(
     [switch]$InstallDeps,
     [switch]$UseUv,
     [switch]$EmitHost,
+    [switch]$InstallProfile,
+    [string]$Profile = $(if ($env:DSH_PROFILE) { $env:DSH_PROFILE } else { 'web' }),
     [switch]$DryRun
 )
 
@@ -169,4 +171,13 @@ $exe = $foundArgv[0]
 $rest = @()
 if ($foundArgv.Count -gt 1) { $rest = $foundArgv[1..($foundArgv.Count - 1)] }
 & $exe @rest @forward
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+# 装进 profile（可选）：A 包管理器 → 失败自动退 B 免包管理器。
+# 逻辑在 install_profile.py 里（可被 Python 用例覆盖），这里只负责用同一个解释器调它。
+if ($InstallProfile) {
+    $profileArgs = @((Join-Path $here 'install_profile.py'), '--profile', $Profile)
+    if ($DryRun) { $profileArgs += '--dry-run' }
+    & $exe @rest @profileArgs
+}
 exit $LASTEXITCODE
