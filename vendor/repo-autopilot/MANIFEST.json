@@ -43,7 +43,7 @@
       "bytes": 5200
     },
     "AGENTS.md": {
-      "sha256": "bef7070476ce8cc75e8dd5d08bd197080718e1db1af71d25ab019f6e830fd2f2",
+      "sha256": "7b821b8ea7b05738922f195e2d45ce5b3ee3e89c9df296510c07c1d573ea8a80",
       "bytes": 2466
     },
     "README.md": {
@@ -79,39 +79,39 @@
       "bytes": 1439
     },
     "skills/TEST_GATE.md": {
-      "sha256": "6e3d564b0acdf256f63c8306239ba3f7a7ab0ebe8fb35664e38d75fd86943cdf",
+      "sha256": "2fb1c2138b7446005add8f3a8c20073a5a3c04a8a976e778450e0e259bd46123",
       "bytes": 1019
     },
     "skills/batch.md": {
-      "sha256": "bf6e0796bc756453d0a465c33248248aa65e592958a6481285289b4e7c1476bb",
+      "sha256": "3328bdb08be5140de7b7b00aa4ace0db23b2eba07c98417ce1ec129e3dd8b8b2",
       "bytes": 3047
     },
     "skills/checkup.md": {
-      "sha256": "d985553539df410aad7e7c5250e58bbbfed510c3aaca91eed737160b240c56cf",
+      "sha256": "4fc258f7ea3d6271a9ede698c50c7917f5ef7bc965152e2443a70fb268076f41",
       "bytes": 2602
     },
     "skills/emergency.md": {
-      "sha256": "e7850fa2da2446fc0d8d926d9d7e939570ecaa36f79ea6672337ccd3e988f16b",
+      "sha256": "a9aa8a274631addfa3b5c6df434ce18725f1487928f3c3adfb092ca2d8692fcb",
       "bytes": 2768
     },
     "skills/fix.md": {
-      "sha256": "fbc1e55b3526d6d4f82c32f479067c4d0ff4456475f2e9fed49d93f47d2e6600",
+      "sha256": "4eb7f0fc273564ace70beeb2c29a4aee807365af21ed940b90ea433c43d79997",
       "bytes": 2852
     },
     "skills/refine.md": {
-      "sha256": "01c9afda20489c99d3e93a07f18de284140bf4e11fd6b4b72c55f5a375320a14",
+      "sha256": "dc0c1f8b1930ba30daf30ddefff8832862bec1834ee093deffc36c592d6fe30e",
       "bytes": 4183
     },
     "skills/scaffold.md": {
-      "sha256": "25d9afacf57772cf964b64b3dd3df603586a1cb35213d6946443f9db428e251e",
+      "sha256": "c2ebbce6bae517ed5138857f8f2d310c444a0c1020d842567da3922dce6c5356",
       "bytes": 3059
     },
     "skills/scout.md": {
-      "sha256": "ab77592cf5e09a4490474e38acebb5bf6d00b55379ae546008bd3c549b3a37b8",
+      "sha256": "727ce00eef6bf4d40a5a0b7f0da2fc9cc3dffe11d03107c6d1cac56fc2885c35",
       "bytes": 2760
     },
     "skills/triage.md": {
-      "sha256": "ff52076f82ab834683b82c10f166247b7c5b90b94271075abeadfca60e4a3d92",
+      "sha256": "154aaf37072727759506fb7b433020a5e862bc61a7a9998841217daccad541c5",
       "bytes": 2804
     },
     "src/__init__.py": {
@@ -319,27 +319,27 @@
       "bytes": 0
     },
     "state/corpus/dirty-baseline.json": {
-      "sha256": "deac61fa867f4f5bf3344d9ef50ecd42fb8b5c00410f4af009a9479ac6bcd6b9",
+      "sha256": "780ef3ed8e4ee51a517dc69c8caffd930cc8c9d1391f3b5e8a25ad5a06a750c1",
       "bytes": 509
     },
     "state/corpus/issues.jsonl": {
-      "sha256": "c458cf3f4db3389e5d209e4d9a282b5ef149c8c267d741a722c4d4664b6adae9",
+      "sha256": "801d7799a4631a952e334c2390a0030bddb47a9ed81e4e3076fa34ad132e4c05",
       "bytes": 603046
     },
     "state/corpus/manifest.json": {
-      "sha256": "ba9c1e111e17eac2484aa5f91247b13ec1beea83c9aefc3f65ec7d494c604b7f",
+      "sha256": "f51366491fd22f26b52a32804a6830d846665fbc588c05479b003d2bb5b73e2f",
       "bytes": 2978
     },
     "state/corpus/triage-adjudicated.jsonl": {
-      "sha256": "0bb6fec35195839a849e33a669a22f5bff90c7b01e6f21d20a015393766650c1",
+      "sha256": "8237ef1238e03d022f90be78cf8ce736508a54320608015653c80df6a2f8d616",
       "bytes": 1695
     },
     "state/corpus/triage-holdout-predictions.jsonl": {
-      "sha256": "03c595e8907a543870078a36914184b52676103d5163520d6b47cc35db47b392",
+      "sha256": "d4edce92f1afdfa2738db58db25ec9f64e57305d6cc2cbb7e2b8373b5f2c8c0e",
       "bytes": 28328
     },
     "state/corpus/triage-replay.jsonl": {
-      "sha256": "8da2f642b9fb3870ff771873f0106bd59cbcb4016d4e6957aca0e0a91aa3f6df",
+      "sha256": "f433c138a173bd68c10c48b049c42f22dd6a70c71cd172f2973b82656790a4ff",
       "bytes": 344908
     },
     "state/mode.json": {
@@ -355,7 +355,7 @@
       "bytes": 0
     },
     "state/progress.md": {
-      "sha256": "2808e14f60e55beecfd74b4003890cecab0fc7ded2d91d798fc299a796b97e4b",
+      "sha256": "21da5b6ed1db9cb72327bbeae89a938704eae8e990472b38a1eaeb5465347afb",
       "bytes": 7326
     },
     "state/repair/.gitkeep": {
@@ -367,43 +367,43 @@
       "bytes": 0
     },
     "state/scout-corpus/GitHub-issue-bug-feature-question-e8f62cee-scores.json": {
-      "sha256": "02098ddd6e9e8d2ccc3188c19842c6afb173a01205cd72193a00ae401e45c357",
+      "sha256": "1070aa9e917253ef9d00100ae96739f415889ec067950576b48e5b488a59e97a",
       "bytes": 7585
     },
     "state/scout-corpus/GitHub-issue-bug-feature-question-e8f62cee.json": {
-      "sha256": "1652dfee5a6b3c0f0087eb25cacaeee029fc3d2bb7e64f89c1b616beb6140824",
+      "sha256": "69a81ab18bdd920242327df3971ca365b57704f1ff8e02a7b1445718b7f8bfa8",
       "bytes": 338022
     },
     "state/scout-corpus/LLM-diff-f613dbcc-scores.json": {
-      "sha256": "b770360ad24194c8acb6c07fab88af1727fad14e20b7a9bf92048078c93fb62e",
+      "sha256": "82b3ab3b01d33292d85b8ac624c157b395cefead9b7b3fa0d93be743757adce4",
       "bytes": 15045
     },
     "state/scout-corpus/LLM-diff-f613dbcc.json": {
-      "sha256": "c1d642ca8c6062d1a727e6efc4143de2f819819eb4d6bd551cc0ec9a92d29bdb",
+      "sha256": "0691f16e7a991dd7877c89131cbeefc645d74a2ea88df3fb13d5548670de675e",
       "bytes": 468671
     },
     "state/scout-corpus/issue-embedding-bf7e9d11-scores.json": {
-      "sha256": "123f04122d4a09155375d6241f73738f88967af51932bdad44e47ba6e4535c21",
+      "sha256": "37edde61977fb7512c94aa6ed115554fee1868ecc0603cfc0b1824a5c4d53d1e",
       "bytes": 9093
     },
     "state/scout-corpus/issue-embedding-bf7e9d11.json": {
-      "sha256": "5e0b778b10bcdbba9b80585ffee32576a18269beecef69229c54f1647956224c",
+      "sha256": "01e5ec8082e6c5123406a4c73fa0af01e424f7fd3107fc88914fe8d47b90bd9e",
       "bytes": 729192
     },
     "state/scout-corpus/need-43bc9ca1-scores.json": {
-      "sha256": "a1112cf8680367f24027a49806ed6beb1a83a6a5040499209d8f19e683c647c8",
+      "sha256": "01735d4eac95de9e302a32b737131718f671267b8faee51d2bdf2c722e0997c4",
       "bytes": 11307
     },
     "state/scout-corpus/need-43bc9ca1.json": {
-      "sha256": "c64f0290a229d90d955e297a1ccd15e557e7b317cf7b025231afba75cf02dd29",
+      "sha256": "60fdb7bacb26147793770b66d1c428f8be98fde81f74c315d8f72f97047a6223",
       "bytes": 130390
     },
     "state/scout-corpus/need-e34b03f5-scores.json": {
-      "sha256": "60ae2f8e5953d40243bdb0fca640ab9d23cb0eb3ef8a823d848a18fa485df862",
+      "sha256": "b678eeafac5d6b52dab85fd461913e5e044161cfeee4cddb2a8cc77cbbd5ffc8",
       "bytes": 8667
     },
     "state/scout-corpus/need-e34b03f5.json": {
-      "sha256": "293af0bd8884352a672ee35904a886d74808fb8189f473dc24fddbe742c41501",
+      "sha256": "6d3271a39b3d79fdf0f3550aaff521e3d0fb40ba50218e88bce2e23d51329992",
       "bytes": 397510
     },
     "state/specs/.gitkeep": {
@@ -782,5 +782,6 @@
       "sha256": "b11e335a5bc9a108ba09d138ad92dfe111fd0a8ea6827b5df590e91468e8ef12",
       "bytes": 2792
     }
-  }
+  },
+  "line_endings": "本副本已统一为 LF 并据此重算 sha256：打包时源工作区是 CRLF，而本仓库与 vendor 的 .gitattributes 都要求 eol=lf，git 存的一定是 LF —— 不统一的话，全新 clone 出来的字节与清单对不上。"
 }
