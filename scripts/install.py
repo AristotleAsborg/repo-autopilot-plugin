@@ -28,6 +28,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import shutil
 import subprocess
 import sys
@@ -38,16 +40,83 @@ sys.path.insert(0, str(HERE))
 
 import smoke  # noqa: E402  —— 同目录，复用它的检查，避免两套判据漂移
 
+#: 随插件一起打包的那份 repo-autopilot（自包含）。由仓库自带的 tools/package.py 打出，
+#: 带 MANIFEST.json（逐文件 sha256），所以"有没有被改过"是可以**验**的，不是靠信。
+BUNDLED = HERE.parent / "vendor" / "repo-autopilot"
+
+
+def bundled_repo_root() -> Path | None:
+    """自带副本的路径；不完整就返回 None（不假装自包含可用）。"""
+    return BUNDLED if is_repo_root(BUNDLED) else None
+
+
+def verify_manifest(root: Path) -> tuple[bool, list[str]]:
+    """
+    拿 MANIFEST.json 里的 sha256 逐文件校验自带副本。
+
+    **只用标准库**：校验要在"依赖还没装"的干净机器上也能跑 —— 那正是最需要它的时刻。
+    权威校验仍是 repo-autopilot 自带的 `python tools/package.py verify <dir>`
+    （它还会报"多出来的文件"，这里只查缺失与内容不符）。
+    """
+    manifest_path = root / "MANIFEST.json"
+    if not manifest_path.is_file():
+        return False, [f"没有清单：{manifest_path}"]
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        return False, [f"清单读不了：{type(error).__name__}: {error}"]
+
+    files = manifest.get("files") or {}
+    if not isinstance(files, dict) or not files:
+        return False, ["清单里没有 files 段"]
+
+    missing: list[str] = []
+    changed: list[str] = []
+    for relative, meta in files.items():
+        target = root / relative
+        if not target.is_file():
+            missing.append(relative)
+            continue
+        if hashlib.sha256(target.read_bytes()).hexdigest() != (meta or {}).get("sha256"):
+            changed.append(relative)
+
+    notes: list[str] = []
+    source = manifest.get("source") or {}
+    notes.append(f"清单 {len(files)} 个文件，源 commit {source.get('commit', '未知')}")
+    if missing:
+        notes.append(f"缺失 {len(missing)} 个：{'、'.join(missing[:5])}{' …' if len(missing) > 5 else ''}")
+    if changed:
+        notes.append(f"内容不符 {len(changed)} 个：{'、'.join(changed[:5])}{' …' if len(changed) > 5 else ''}")
+    return (not missing and not changed), notes
+
+
+def emit_host(root: Path, target: Path) -> Path:
+    """
+    生成 `host.local.js`：把 `DEFAULT_REPO_ROOT` 填成自带副本的绝对路径。
+
+    为什么要这样做：Host 半边拿不到自己的磁盘位置（没有 fs、没有 __dirname、没有 process），
+    所以"自带的这份在哪"只能在**安装时**写进去。发布出去的 `host.js` 里那行是空串。
+    """
+    source = (HERE.parent / "host.js").read_text(encoding="utf-8")
+    marker = "const DEFAULT_REPO_ROOT = ''"
+    if marker not in source:
+        raise SystemExit("[!] host.js 里找不到 DEFAULT_REPO_ROOT 占位，无法生成（是不是被改过？）")
+    emitted = source.replace(marker, f"const DEFAULT_REPO_ROOT = {json.dumps(str(root))}")
+    target.write_text(emitted, encoding="utf-8")
+    return target
+
 REGISTER_STEPS = """\
 注册成 Cordis Package：
-  1) 读取 host.js 的**全部内容**；
-  2) cordis_define({{
+  1) 先跑 `python scripts/install.py --emit-host` 生成 host.local.js
+     （它把**随插件打包的那份 repo-autopilot** 的绝对路径写进 DEFAULT_REPO_ROOT）；
+  2) 读取 **host.local.js** 的**全部内容**；
+  3) cordis_define({{
        plugin: {{ kind: 'new', idPrefix: 'rauto' }},
        name: '<包名>',
        purpose: '<一句话用途>',
-       code: {{ host: <host.js 的内容> }},
+       code: {{ host: <host.local.js 的内容> }},
      }});
-  3) 用返回的 pluginId / packageId 调 cordis_run（首次用 mode: 'run'）。
+  4) 用返回的 pluginId / packageId 调 cordis_run（首次用 mode: 'run'）。
 """
 
 
@@ -154,10 +223,11 @@ def main(argv: list[str] | None = None) -> int:
         sys.stdout.reconfigure(errors="replace")
 
     parser = argparse.ArgumentParser(description="repo-autopilot 插件的一键安装/自检")
-    parser.add_argument("--repo-root", help="repo-autopilot 仓库的绝对路径；不给就自动找")
+    parser.add_argument("--repo-root", help="repo-autopilot 仓库的绝对路径；不给就用随插件打包的自带副本")
     parser.add_argument("--python", help="要用哪个解释器（仅用于展示/建议；本脚本只检查自己所在的解释器）")
     parser.add_argument("--install-deps", action="store_true", help="缺依赖就用当前解释器的 pip 装上（默认不装）")
     parser.add_argument("--use-uv", action="store_true", help="缺依赖时用 uv 建一个 .venv 并装依赖（需要本机有 uv）")
+    parser.add_argument("--emit-host", action="store_true", help="生成 host.local.js（把自带副本路径写进去）")
     parser.add_argument("--dry-run", action="store_true", help="只打印要做什么，不执行")
     args = parser.parse_args(argv)
 
@@ -201,15 +271,53 @@ def main(argv: list[str] | None = None) -> int:
         print("\n".join(bootstrap_advice(tools, venv_dir=Path.cwd() / ".venv")))
 
     print("\n=== 3/4 repo-autopilot 仓库 ===")
-    repo_root = Path(args.repo_root).expanduser() if args.repo_root else autodetect_repo_root(Path.cwd())
+    repo_root: Path | None
+    if args.repo_root:
+        repo_root = Path(args.repo_root).expanduser()
+        print(f"  （用参数指定的仓库根：{repo_root}）")
+    else:
+        repo_root = bundled_repo_root()
+        if repo_root is not None:
+            print(f"  （用**随插件打包的自带副本**：{repo_root}）")
+        else:
+            repo_root = autodetect_repo_root(Path.cwd())
+            if repo_root is not None:
+                print(f"  （没找到自带副本，改为自动查找到：{repo_root}）")
+
     if repo_root is None:
-        print("  [缺] 没有给 --repo-root，自动查找也没找到。")
+        print("  [缺] 既没有自带副本，也没给 --repo-root，自动查找也没找到。")
         print("        → 补法：--repo-root <repo-autopilot 仓库的绝对路径>")
         repo_checks: list[smoke.Check] = []
     else:
-        print(f"  （仓库根：{repo_root}）")
         repo_checks = smoke.check_repo_root(repo_root)
         print(smoke.render(repo_checks).rsplit("\n\n", 1)[0])
+
+        # 自包含的关键：自带的那份**是不是原样**。用项目自己的 MANIFEST 逐文件验 sha256。
+        if str(repo_root).startswith(str(BUNDLED)):
+            ok, notes = verify_manifest(repo_root)
+            for note in notes:
+                print(f"  · {note}")
+            if ok:
+                print("  [OK] 自带副本与清单逐文件 sha256 一致（没有被改过）")
+            else:
+                print("  [缺] **自带副本与清单对不上** —— 别用它，换 --repo-root 指向一份干净的检出")
+                repo_checks.append(
+                    smoke.Check(name="自带副本完整性", ok=False, detail="；".join(notes),
+                                fix="重新安装插件，或用 --repo-root 指向干净检出")
+                )
+
+    if args.emit_host:
+        if repo_root is None:
+            print("\n[!] 没有可写进 host.local.js 的路径，跳过 --emit-host")
+        else:
+            target = Path.cwd() / "host.local.js"
+            if args.dry_run:
+                print(f"\n（--dry-run）会生成 {target}，DEFAULT_REPO_ROOT = {repo_root}")
+            else:
+                written = emit_host(repo_root, target)
+                print(f"\n[OK] 已生成 {written}")
+                print(f"     DEFAULT_REPO_ROOT = {repo_root}")
+                print("     注册 Cordis Package 时**用这一份**（它把自带副本的路径写进去了）。")
 
     print("\n=== 4/4 结论 ===")
     everything = [*checks, *(repo_checks or [])]

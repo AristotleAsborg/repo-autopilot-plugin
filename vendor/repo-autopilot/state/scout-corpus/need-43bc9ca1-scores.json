@@ -1,0 +1,217 @@
+{
+  "need": "危险操作的人类审批闸门（写操作前必须有人点头）",
+  "scores": {
+    "agentailor/fullstack-langgraph-nextjs-agent": {
+      "score": {
+        "relevance": 0.7,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "README 明确宣称 \"human-in-the-loop tool approval\"，且 src/types/message 暴露 ToolApprovalCallbacks、src/components/ToolCallDisplay.tsx 与 AIMessage.tsx 里 getToolCalls/hasToolCalls 支撑审批交互，但它只是 Next.js 模板应用而非可引入的库，且给出的文件开头（layout.tsx、page.tsx、AIMessage.tsx 前 40 行）未展示实际的写操作拦截/中断逻辑，故只宜参考其审批 UI 与回调设计。"
+      },
+      "evidence_chars": 3235
+    },
+    "edwinkys/phantasm": {
+      "score": {
+        "relevance": 0.6,
+        "usage": "reference",
+        "license_risk": "block",
+        "reason": "README 明确写着 Phantasm 提供 human-in-the-loop (HITL) 工作流并由 Server 协调人与 AI agent，对应“写操作前人类点头”的需求；但证据只给了 main.rs/protos.rs/types.rs 前 40 行（gRPC tonic 服务、websocket 连接管理、CLI start 子命令），看不到任何审批/写操作拦截的具体实现，因此只能作为设计参考，且 GPL-3.0 属 copyleft，直接抄代码进自动修复系统有传染风险。｜许可证查表结果：GPL-3.0 属强 copyleft"
+      },
+      "evidence_chars": 2786
+    },
+    "sathish316/pied-piper": {
+      "score": {
+        "relevance": 0.55,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "README 明确写着 SubAgents 支持 \"human-in-the-loop approvals\"，与写操作前需人类点头的需求方向一致；但证据只给了 main.go 的 4 行调用 cli.Execute()，没有任何审批闸门的实现代码，且它是一整套 SubAgent/任务管理框架（依赖 beads、Claude Code CLI），只能参考其审批设计而非直接抄用，MIT 许可证无风险。"
+      },
+      "evidence_chars": 1093
+    },
+    "escapeboy/agent-fleet-o": {
+      "score": {
+        "relevance": 0.55,
+        "usage": "reference",
+        "license_risk": "block",
+        "reason": "README 明确宣称 \"human-in-the-loop approvals\" 与 \"full audit trail\"，目录也有 app/Livewire、app/Events、app/Listeners 等审批 UI/事件层的结构，方向对口；但证据只给了 README 摘录和 vite.config.js，没有任何审批闸门或写操作拦截的实际代码，且它是 PHP/Laravel 的完整编排平台而非可摘取的组件，AGPL-3.0 网络传染性也需注意，故只适合参考其审批设计。｜许可证查表结果：AGPL-3.0 属强 copyleft"
+      },
+      "evidence_chars": 2350
+    },
+    "MaxInGaussian/pi-plans": {
+      "score": {
+        "relevance": 0.45,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "README 明确宣称 'Plan. Review. Execute.' 和 'reviewed Markdown plans land before any code changes' 的人类在环规划，目录里也有 src/guard.ts、plan.ts、exec.ts，暗示审批/守卫环节，但给出的三段代码全是 Pi agent 的会话/压缩/配置管线（import 自 @earendil-works/pi-coding-agent），没有任何写入前人类批准闸门的实现证据，故只能作设计参考。"
+      },
+      "evidence_chars": 3247
+    },
+    "cline/cline": {
+      "score": {
+        "relevance": 0.25,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有 README 标语（'The open source coding agent in your IDE, terminal, and desktop.'）和顶层目录树及 vitest.config.ts 的开头，未见任何人类审批/写操作确认闸门的代码或配置，无法确认其含有所需的审批闸门实现。"
+      },
+      "evidence_chars": 1523
+    },
+    "OpenHands/OpenHands": {
+      "score": {
+        "relevance": 0.2,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "证据只有 README 自述为编码 agent 的自托管控制台，以及 src/entry.client.tsx（Remix/React 水合入口）和 src/index.ts（仅 `export * from \"./lib\"`）等前端骨架，未出现任何写操作前的人类审批/确认闸门代码，无法判定其具备该能力，只能作为同类 agent 控制台的交互设计参考；MIT 许可证无风险。"
+      },
+      "evidence_chars": 2683
+    },
+    "humanlayer/humanlayer": {
+      "score": {
+        "relevance": 0.15,
+        "usage": "skip",
+        "license_risk": "warn",
+        "reason": "README 明确说 \"the code here is pretty much all deprecated\" 并指向重建版，且给出的核心文件只有 packages/database 的 Drizzle/Postgres 连接与迁移配置（database.ts、drizzle.config.ts），看不到任何人类审批闸门/写操作拦截的实现，无法据此复用；许可证为 NOASSERTION 也不明确。"
+      },
+      "evidence_chars": 1491
+    },
+    "Deuz-AI/Deuz-SDK": {
+      "score": {
+        "relevance": 0.15,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "证据只看到构建/配置类文件（eslint.config.js、tsup.config.ts、vitest.config.ts）和入口名（agent、autonomy、compute、workspace），没有任何提到人类审批闸门或写操作前确认的代码；虽然 MIT 许可证与 TypeScript agent runtime 定位与需求沾边，但缺少审批闸门的实现证据，只能作低相关度的设计参考。"
+      },
+      "evidence_chars": 3187
+    },
+    "dagster-io/dagster": {
+      "score": {
+        "relevance": 0.12,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据只见数据编排平台的目录树（python_modules、examples、helm、docs）和仅注册 pytest 插件的 conftest.py，未出现任何写操作前人工审批/闸门相关代码，README 摘录也只讲 logo 与仓库自述，无法支撑该需求。"
+      },
+      "evidence_chars": 2125
+    },
+    "openinterpreter/openinterpreter": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 1266
+    },
+    "langchain-ai/langgraph": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 878
+    },
+    "HumanSignal/Adala": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 2025
+    },
+    "Significant-Gravitas/AutoGPT": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "warn",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 2783
+    },
+    "Justin0504/Aegis": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 2195
+    },
+    "sagents-ai/sagents": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "warn",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 2941
+    }
+  },
+  "justified": [
+    {
+      "facts": {
+        "full_name": "agentkitai/agentgate",
+        "stars": 33,
+        "pushed_at": "2026-09-06T20:12:49Z",
+        "license_spdx": "MIT",
+        "archived": false,
+        "default_branch": "main",
+        "description": "Approval workflows for AI agents",
+        "html_url": "https://github.com/agentkitai/agentgate",
+        "language": "TypeScript"
+      },
+      "score": {
+        "relevance": 0.7,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "README 明写 \"Human-in-the-loop approval system for AI agents. Agents request. Policies decide. Humans approve.\"，且 packages/ 下有 core、server、dashboard、slack、discord、mcp 等实现审批闭环所需模块，与『写操作前必须有人点头』高度对口；但证据里只给了 cli/core 的 vitest.config.ts 和 eslint.config.js，没有任何审批闸门/策略判定的源码，无法确认接口与语义，故只能参考设计而非直接抄代码或作为依赖引入。MIT 许可证风险为 ok。"
+      },
+      "notes": [
+        "破格：stars 33 < 50，但模型给了书面理由（相关度 0.70）"
+      ]
+    },
+    {
+      "facts": {
+        "full_name": "Freespirits/social-auto-engine",
+        "stars": 25,
+        "pushed_at": "2026-07-18T21:09:10Z",
+        "license_spdx": "MIT",
+        "archived": false,
+        "default_branch": "main",
+        "description": "Multi-channel social media platform. Manage Facebook, Instagram, LinkedIn, TikTok, and X from one dashboard. AI content generation, approval workflows, 17 content skills, scales to 100 pages.",
+        "html_url": "https://github.com/Freespirits/social-auto-engine",
+        "language": "Python"
+      },
+      "score": {
+        "relevance": 0.6,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "README 明确自称 \"Open-source social media approval queue demo\" 且宣传 \"every post approved\"，与写操作前的人类审批闸门直接对应；但给出的代码只有 facebook_api.py/instagram_api.py 直连 Graph API 的 post_message/reply_to_comment，看不到审批闸门本身的实现（manager.py、server.py、dashboard 均未给内容），只能参考其审批队列设计而非照抄闸门代码。"
+      },
+      "notes": [
+        "破格：stars 25 < 50，但模型给了书面理由（相关度 0.60）"
+      ]
+    },
+    {
+      "facts": {
+        "full_name": "rulego/gflow-engine",
+        "stars": 18,
+        "pushed_at": "2026-09-11T10:04:52Z",
+        "license_spdx": "Apache-2.0",
+        "archived": false,
+        "default_branch": "main",
+        "description": "Embeddable approval workflow engine for Go, built on RuleGo — JSON DSL, full approval semantics, multi-tenant.",
+        "html_url": "https://github.com/rulego/gflow-engine",
+        "language": "Go"
+      },
+      "score": {
+        "relevance": 0.7,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "README 明确自称『可嵌入的审批工作流引擎』并以『AI 先审 · 人再签 · 签完自动办』为核心，与写操作前的人类审批闸门需求直接对应，且 Apache-2.0 无风险；但给出的代码证据仅 cmd/gen/main.go（gorm 代码生成器），未见审批/签署相关的 components、service、types 具体实现，无法验证闸门 API，故只能作为 Go 库依赖引入而非照抄。"
+      },
+      "notes": [
+        "破格：stars 18 < 50，但模型给了书面理由（相关度 0.70）"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "need": "issue 去重 / 语义相似度检索（embedding + 余弦）",
+  "scores": {
+    "huggingface/sentence-transformers": {
+      "score": {
+        "relevance": 0.9,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "证据中 sentence_transformers/__init__.py 导出了 SentenceTransformer、CrossEncoder、MultiVectorEncoder 等编码器类（'from sentence_transformers.sentence_transformer.model import SentenceTransformer'），正是需求所需的 embedding 生成能力，可直接作为依赖调用其编码接口再自行做余弦相似度；但证据只给了 __init__/backend 前 40 行，未见到 encode 或余弦相似度实现，故不给满分。"
+      },
+      "evidence_chars": 3251
+    },
+    "facebookresearch/faiss": {
+      "score": {
+        "relevance": 0.9,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "README 明确写它是 'library for efficient similarity search and clustering of dense vectors'，且目录含 IndexFlat/IndexIVF/IndexHNSW 等向量索引实现，正好覆盖 embedding 近邻检索需求；MIT 许可证（LICENSE、文件头 'licensed under the MIT license'）风险低，作为向量检索后端引入即可。"
+      },
+      "evidence_chars": 3404
+    },
+    "nmslib/hnswlib": {
+      "score": {
+        "relevance": 0.9,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "README 明确写着 'fast approximate nearest neighbor search Header-only C++ HNSW implementation with python bindings'，且版本说明里提到 'Change cosine similarity to distance in README' 与 BFIndex 的 normalization check，说明它直接支持向量近邻检索与余弦度量，可作为 pip 依赖（setup.py 用 pybind11 构建 'hnswlib' 扩展）用于 embedding 去重检索；许可证为顶层文件 LICENSE + Apache-2.0，无风险。证据只有文件开头、未见 API 细节，故不取满分且不选 copy。"
+      },
+      "evidence_chars": 1747
+    },
+    "danielroe/unsight.dev": {
+      "score": {
+        "relevance": 0.7,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "README 明确写着『Detect duplicate GitHub issues』并用了『AI-powered issue embeddings and k-means clustering』，与 issue 去重/语义相似度需求直接对口，且 MIT 许可；但证据里只看到应用外壳（packages/web/drizzle.config.ts 的 sqlite+drizzle 配置、packages/extension/wxt.config.ts 的浏览器扩展配置、types.ts 里带 score 字段的 Issue 接口），没有任何 embedding 或余弦相似度的实现代码，且它是完整的 Nuxt 应用而非可引入的库，因此只能参考其设计与架构。"
+      },
+      "evidence_chars": 2036
+    },
+    "qdrant/qdrant": {
+      "score": {
+        "relevance": 0.6,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "README 明确自称 \"Vector Search Engine for the next generation of AI applications\"，lib/ 下含 quantization、segment、sparse、bm25、posting_list 等向量/检索组件，适合作为向量库依赖支撑 embedding 余弦检索；但可见的唯一源码 lib/api/build.rs 只是 gRPC/protobuf 构建脚本，证据里没有出现任何 cosine/embedding 实现，故相关度只给中等。"
+      },
+      "evidence_chars": 2099
+    },
+    "milvus-io/milvus": {
+      "score": {
+        "relevance": 0.6,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "证据里只有 Apache-2.0 LICENSE、banner/徽章和 cmd/main.go、deployments、configs 这类服务端目录树，说明它是一个可自托管的数据库服务（可作向量存储/检索依赖），但给出的片段中没有任何 embedding 生成或余弦相似度的代码，无法据证据判断能直接复用其检索逻辑，故只能作为依赖引入而非抄代码。"
+      },
+      "evidence_chars": 2832
+    },
+    "VIGINUM-FR/D3lta": {
+      "score": {
+        "relevance": 0.6,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "README 明确是 duplicate verbatim contents 检测（copypasta/rewording/translation），d3lta/faissd3lta.py 引入 faiss、tensorflow_hub 与 polyleven 做向量索引+相似检索，与 issue 去重/语义相似度检索思路一致，但面向文档级查重且绑 TensorFlow/fasttext，未体现现成的 embedding+余弦 API，故只宜参考其 FAISS 检索流程。"
+      },
+      "evidence_chars": 2692
+    },
+    "mendesk/image-ndd-lsh": {
+      "score": {
+        "relevance": 0.25,
+        "usage": "reference",
+        "license_risk": "block",
+        "reason": "仓库是图像近似去重（detect.py 用 PIL+imagehash.dhash 生成签名并按 hash_size/bands 做 LSH 分带），与 issue 文本 embedding+余弦语义检索的模态和算法都不同，只能借鉴 LSH 分带/近邻检索的设计思路；且许可证未声明，代码不可直接复用。"
+      },
+      "evidence_chars": 1889
+    },
+    "tensorflow/models": {
+      "score": {
+        "relevance": 0.1,
+        "usage": "skip",
+        "license_risk": "warn",
+        "reason": "证据里只有 official/ 下的 common、core、nlp、vision 等目录和纯 Apache 许可证头文件（如 official/common/dataset_fn.py 仅有版权声明），未见任何 embedding 或余弦相似度检索代码，README 也只说这是 TensorFlow SOTA 模型库，与 issue 去重需求无关；且仓库许可证标记为 NOASSERTION，与文件头声明的 Apache-2.0 不一致，存在许可风险。"
+      },
+      "evidence_chars": 2972
+    },
+    "sahib/rmlint": {
+      "score": {
+        "relevance": 0.08,
+        "usage": "skip",
+        "license_risk": "block",
+        "reason": "rmlint 是一个用校验和找重复文件/空间浪费的工具（README 只说 'finds space waste and other broken things on your filesystem'，lib/ 下是 checksum.c、hasher.c、md-scheduler.c、pathtricia.c、rank.c 等文件哈希与去重调度代码），证据里没有任何 embedding 模型、向量表示或余弦相似度相关代码，无法支撑 issue 的语义相似度检索需求；且许可证为 GPL-3.0，作为依赖会带来 copyleft 传染风险，故跳过。｜许可证查表结果：GPL-3.0 属强 copyleft"
+      },
+      "evidence_chars": 3283
+    },
+    "arsenetar/dupeguru": {
+      "score": {
+        "relevance": 0.05,
+        "usage": "skip",
+        "license_risk": "block",
+        "reason": "证据中 dupeGuru 自述为 'GUI tool to find duplicate files'，core/ 下只有 se/me/pe（标准/音乐/图片）等基于文件内容比对的引擎与 scanner.py，看不到任何 embedding 模型、向量索引或余弦相似度代码，与 issue 语义去重需求无关；且 LICENSE 为 GPL-3.0，代码不可直接抄入闭源系统。｜许可证查表结果：GPL-3.0 属强 copyleft"
+      },
+      "evidence_chars": 2879
+    },
+    "sreedevk/deduplicator": {
+      "score": {
+        "relevance": 0.05,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "该仓库是重复文件查找/删除工具，核心逻辑在 src/fileinfo.rs 用 gxhash128 对文件分块做内容哈希（hash(&self.seed) 返回 u128），属于字节级精确去重，而非 embedding + 余弦的语义相似度检索，与 issue 去重需求不匹配；虽为 MIT 许可，但无可复用部分。"
+      },
+      "evidence_chars": 3136
+    },
+    "scanaislop/aislop": {
+      "score": {
+        "relevance": 0.05,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据显示它是 AI 代码 slop 检测器：README 称 'Catch the slop AI coding agents leave in your code'，src/ 下只有 cli/commands/engines/scoring/telemetry 等 CLI 与规则相关目录，未见任何 embedding、向量或余弦相似度代码，无法复用于 issue 去重/语义相似度检索。"
+      },
+      "evidence_chars": 3292
+    },
+    "rustic-rs/rustic": {
+      "score": {
+        "relevance": 0.02,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据显示这是 restic 风格的加密备份 CLI（README 的 'deduplicated backups' 指块级去重，src/ 下只有 backup/restore/prune/snapshots 等命令），完全没有 embedding、向量检索或余弦相似度相关代码，与 issue 语义去重需求无关。"
+      },
+      "evidence_chars": 3241
+    },
+    "chroma-core/chroma": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 3266
+    },
+    "sindresorhus/awesome": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 213
+    }
+  },
+  "justified": []
+}

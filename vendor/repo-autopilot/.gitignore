@@ -1,0 +1,136 @@
+# 写 token 绝不进版本库（路线 1.1 的明确要求）
+state/.write_token
+
+# 写 token 的其他可能落点。人类可以把它放在任意路径，这里把常见命名一并堵住——
+# 一旦被提交就是不可逆泄漏（历史里删不掉，只能轮换 token）。
+github-write-token.txt
+*write-token*.txt
+*write_token*
+
+# 读 token 的落点（人类放置）。同样必须堵死：一旦被提交就是不可逆泄漏，
+# 历史里删不掉，只能轮换 token。
+# 注意：本行合入前 state/GH_READ_TOKEN.txt 处于**未被忽略**状态，
+# 任何一次 `git add -A` 都会把它提交上去。
+state/GH_READ_TOKEN.txt
+*read_token*
+*READ_TOKEN*
+*read-token*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# 抓取的开源项目副本，不进库（路线 1.1 明确要求）
+state/vendor/*
+!state/vendor/.gitkeep
+
+# 运行期产物：队列内容与审批单是运行时状态，只入库结构
+state/tasks/pending/*.json
+state/tasks/doing/*.json
+state/tasks/done/*.json
+state/tasks/failed/*.json
+state/approvals/*.md
+state/outbox/*.json
+# 验收专用的隔离审批目录：验收**绝不消耗人类的真实批准**，所以它永远不该有「是」
+state/approvals-check/
+
+# 沙箱工作目录：每个任务一份仓库副本 + 运行日志，纯运行时产物
+state/sandbox/
+
+# 三个陪练仓库的内容：由 tools/sandbox_repos.py build 生成，可随时重建。
+# 不进版本库的原因很实在：里面有 10MB 的对抗样本和伪装二进制。
+tests/fixtures/sandbox-repos/
+
+# 本地模型拉取日志：体积大且无长期价值
+state/reports/pull-*.log
+
+# pip 的临时目录。
+# 这些目录由提权运行的 pip 创建，当前受限权限下读不了也删不掉，属已知环境残留。
+.pip-tmp/
+
+# pytest 缓存残留（sandbox 拒绝创建 .tmp 后缀文件，残留读写均受限）
+pytest-cache-files-*/
+.cache/
+
+# 编辑器与系统
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# 运行时探针与日志（不是交付物）
+state/reports/pid-probe*.txt
+state/reports/probe-collect.log
+state/reports/queue-test-run.log
+state/reports/queue-test-run.err
+state/reports/detach-probe.log
+state/reports/dsh-watchdog.log
+
+tests/fixtures/*.log
+
+# e2e 骨架每次运行的产物：issue/分类/补丁/队列/汇总，纯运行时产物
+state/e2e/
+
+# 4.2 修复循环的运行期产物：
+# - `state/eval-repair/` 是注入缺陷后的仓库副本（每次重跑都重建，且里面有 .git 残留）
+# - `state/repair/` 是逐 issue 的中间态（下次对话从它续跑，属运行时状态）
+# - `state/patches/` 是生成的补丁；报告里以路径引用它，交付看的是 `state/reports/repair_*.md`
+state/eval-repair/
+state/repair/*
+!state/repair/.gitkeep
+state/patches/*
+!state/patches/.gitkeep
+
+# 工具自己的临时日志（不是交付物；评测报告才入库）
+state/reports/sandbox-pytest.log
+state/reports/sandbox-ruff.log
+state/reports/repair-eval*.log
+state/reports/acceptance-*.log
+state/reports/gate-eval.log
+state/reports/gatekeep-*.log
+
+# 4.3 门禁的运行期产物：补丁副本（里面是 `git init` 出来的工作树）+ 基线副本 + 应用日志。
+# 注意这些副本里**有 .git**，被 git add -A 扫到会当成嵌套仓库直接报错，
+# 所以必须忽略（实测踩过：提交被 "does not have a commit checked out" 打断）。
+state/gate/
+state/gate-eval/
+
+# 4.4 发布演练的副本：同样是"带 .git 的仓库副本"，同样会打断 git add
+state/e2e-publish/
+state/reports/publish-*.log
+
+# 6.1 生成的新项目骨架：运行期产物（含 __pycache__/.ruff_cache），每次生成都重建
+state/scaffold/
+
+# 运行期账簿：只追加、越跑越大、不该进交付物（2026-09-12 从 state/reports/ 搬过来）。
+# `reports/` 只放**给人看的证据**：验收日志、评测报告、BLOCKED 报告、抽查清单。
+state/runtime/
+
+# 批量处理的进度账簿（`/一键处理` 的断点续跑态）。**运行期状态，不是交付物**：
+# 2026-09-13 发现它被 git 跟踪着，于是**每跑一次测试、每提交一次都带上一个假批次**
+# （`repo: "r"`、两条 `a`/`b`），还让安装副本的 `package.py verify .` 报"多出来的文件"。
+# 根因是 `test_run_batch_continues_after_a_failure` 没传 `directory=`（已修），
+# 这条忽略规则是第二道闸：运行期账簿不该由测试和提交来搬运。
+state/batch_*.json
+
+# 临时排障日志（我自己的 shell 输出，不是交付物；正式证据在 state/reports/acceptance/<时间戳>/）
+state/reports/ruff*.log
+state/reports/int-*.log
+state/reports/*-chunk*.log
+state/reports/eval-full.log
+state/reports/stage8-one.log
+state/reports/acceptance-all.log
+state/reports/scout-*.log
+state/reports/triage-eval*.log
+
+# 8.2 每周/每月演练的**产物**（state/reports/weekly/ 与 monthly/）是给人看的证据，**要入库**：
+# 它们就是 tools/cadence.py 里那三行节奏的 evidence。所以这里不加忽略规则。
+# 但三个脚本**自己造状态**时用的临时目录不是证据，忽略它（2026-09-12 新增）：
+state/reports/weekly/work/
+state/reports/monthly/work/

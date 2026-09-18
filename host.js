@@ -48,6 +48,14 @@ return {
 
     const text = (value, fallback) => (typeof value === 'string' && value.length > 0 ? value : fallback)
 
+    // 自包含：安装脚本会把这里填成**随插件一起打包的那份 repo-autopilot** 的绝对路径。
+    //
+    // 为什么必须"写进来"而不是运行时自己找：Host 半边拿不到自己的磁盘位置 ——
+    // 没有 fs、没有 __dirname、没有 process。发布出去的 host.js 里它是空串，
+    // `python scripts/install.py --emit-host` 会生成一份填好路径的 `host.local.js`，
+    // 注册那一份即可。传了 repo_root 参数时**以参数为准**（可指向任何外部检出）。
+    const DEFAULT_REPO_ROOT = ''
+
     // 命令行要用 pwsh 的调用符 + 单引号（理由见 runMode 里的注释）。
     // 提到这个作用域，因为"探测解释器"和"跑真正的命令"都要用它。
     const quote = (item) => "'" + String(item).split("'").join("''") + "'"
@@ -152,9 +160,19 @@ return {
       if (mode === undefined) {
         return { exit: -2, command: '', verdict: '未知模式：' + String(args.mode), tail: '' }
       }
-      const root = text(args.repo_root, '')
+      // repo_root 可选：优先用参数，其次用安装时写进来的自带副本路径。
+      const root = text(args.repo_root, '') !== '' ? args.repo_root : DEFAULT_REPO_ROOT
       if (root === '') {
-        return { exit: -2, command: '', verdict: '缺少 repo_root：请给出 repo-autopilot 仓库的绝对路径', tail: '' }
+        return {
+          exit: -2,
+          command: '',
+          verdict:
+            '没有 repo_root，且这份 host.js 里也没有内置路径。两种修法：' +
+            '① 调用时传 repo_root 参数；' +
+            '② 在插件目录下跑 python scripts/install.py --emit-host，' +
+            '它会生成把自带副本路径写好的 host.local.js，注册那一份即可',
+          tail: '',
+        }
       }
       if (mode.needsTarget === true && text(args.target, '') === '') {
         return { exit: -2, command: '', verdict: 'compare 模式需要 target（要比对的副本目录）', tail: '' }
@@ -224,7 +242,7 @@ return {
         type: 'object',
         // 必填项写成**根级数组**：逐属性写 `required: true` 会被宿主拒绝
         // （本机实测报错："parameters.mode.required belongs to the containing raw object schema"）。
-        required: ['mode', 'repo_root'],
+        required: ['mode'],
         properties: {
           mode: {
             type: 'string',
@@ -233,7 +251,9 @@ return {
           },
           repo_root: {
             type: 'string',
-            description: 'repo-autopilot 仓库的绝对路径（插件是适配器，不内置任何仓库副本）。',
+            description:
+              'repo-autopilot 仓库的绝对路径。不填则用随插件打包的那份自带副本' +
+              '（需要先跑 install.py --emit-host 生成 host.local.js）。',
           },
           target: {
             type: 'string',

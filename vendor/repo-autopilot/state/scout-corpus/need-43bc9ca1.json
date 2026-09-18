@@ -1,0 +1,3028 @@
+{
+  "need": "危险操作的人类审批闸门（写操作前必须有人点头）",
+  "query": "human in the loop approval",
+  "candidates": [
+    {
+      "full_name": "humanlayer/humanlayer",
+      "stars": 11506,
+      "pushed_at": "2026-06-19T03:27:53Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "The best way to get AI coding agents to solve hard problems in complex codebases.",
+      "html_url": "https://github.com/humanlayer/humanlayer",
+      "language": "TypeScript",
+      "notes": [
+        "来源：known(humanlayer/humanlayer,cline/cline,OpenInterpreter/open-interpreter,All-Hands-AI/OpenHands,langchain-ai/langgraph)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "cline/cline",
+      "stars": 67871,
+      "pushed_at": "2026-09-12T00:21:08Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Autonomous coding agent as an SDK, IDE extension, or CLI assistant.",
+      "html_url": "https://github.com/cline/cline",
+      "language": "TypeScript",
+      "notes": [
+        "来源：known(humanlayer/humanlayer,cline/cline,OpenInterpreter/open-interpreter,All-Hands-AI/OpenHands,langchain-ai/langgraph)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "openinterpreter/openinterpreter",
+      "stars": 68299,
+      "pushed_at": "2026-09-09T04:59:04Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A coding agent for open models like Kimi K3 and GLM 5.3",
+      "html_url": "https://github.com/openinterpreter/openinterpreter",
+      "language": "Rust",
+      "notes": [
+        "来源：known(humanlayer/humanlayer,cline/cline,OpenInterpreter/open-interpreter,All-Hands-AI/OpenHands,langchain-ai/langgraph)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "OpenHands/OpenHands",
+      "stars": 87596,
+      "pushed_at": "2026-09-12T10:11:56Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "🙌 OpenHands: AI-Driven Development",
+      "html_url": "https://github.com/OpenHands/OpenHands",
+      "language": "TypeScript",
+      "notes": [
+        "来源：known(humanlayer/humanlayer,cline/cline,OpenInterpreter/open-interpreter,All-Hands-AI/OpenHands,langchain-ai/langgraph)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "langchain-ai/langgraph",
+      "stars": 41512,
+      "pushed_at": "2026-09-11T19:34:48Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Build resilient agents.",
+      "html_url": "https://github.com/langchain-ai/langgraph",
+      "language": "Python",
+      "notes": [
+        "来源：known(humanlayer/humanlayer,cline/cline,OpenInterpreter/open-interpreter,All-Hands-AI/OpenHands,langchain-ai/langgraph)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "aden-hive/hive",
+      "stars": 11038,
+      "pushed_at": "2026-09-05T23:33:23Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Multi-Agent Harness for Production AI",
+      "html_url": "https://github.com/aden-hive/hive",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "PySpur-Dev/pyspur",
+      "stars": 5786,
+      "pushed_at": "2026-06-29T17:53:12Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A visual playground for agentic workflows: Iterate over your agents 10x faster",
+      "html_url": "https://github.com/PySpur-Dev/pyspur",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "argilla-io/argilla",
+      "stars": 5105,
+      "pushed_at": "2026-09-07T22:29:01Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "develop",
+      "description": "Argilla is a collaboration tool for AI engineers and domain experts to build high-quality datasets",
+      "html_url": "https://github.com/argilla-io/argilla",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "dagucloud/dagu",
+      "stars": 3951,
+      "pushed_at": "2026-09-12T09:25:23Z",
+      "license_spdx": "GPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Self-hostable workflow orchestrator for teams whose main work isn't orchestration. Declarative YAML over your scripts, SSH commands, containers, etc; keep workflows separate from business logic. One binary, no database, runs on limited H/W resources. Alternative to Airflow / Cron / Job Scheduler.",
+      "html_url": "https://github.com/dagucloud/dagu",
+      "language": "Go",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "code-kern-ai/refinery",
+      "stars": 1470,
+      "pushed_at": "2024-12-09T12:46:40Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "The data scientist's open-source choice to scale, assess and maintain natural language data. Treat training data like a software artifact.",
+      "html_url": "https://github.com/code-kern-ai/refinery",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "petergyang/human-review",
+      "stars": 1251,
+      "pushed_at": "2026-09-04T16:41:45Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A visual tool to edit HTML and Markdown files, leave comments like a Google Doc, and send feedback to your AI agent. Works inside your favorite AI harness.",
+      "html_url": "https://github.com/petergyang/human-review",
+      "language": "JavaScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "cinderline/northcinder",
+      "stars": 1209,
+      "pushed_at": "2026-08-22T12:11:30Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Open-source MCP server for comparing products and asking the buyer before purchase.",
+      "html_url": "https://github.com/cinderline/northcinder",
+      "language": "JavaScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Deuz-AI/Deuz-SDK",
+      "stars": 1203,
+      "pushed_at": "2026-08-13T11:32:11Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Zero-dependency TypeScript framework for production AI agents: durable execution, long-term memory, hybrid RAG, MCP tool calling, human-in-the-loop approval, planning and CodeAct sandboxes. One streaming API for Claude, GPT, Gemini, Grok, Mistral and DeepSeek — Node, Bun, Deno, serverless and edge.",
+      "html_url": "https://github.com/Deuz-AI/Deuz-SDK",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Ricky-7-Yan/intelligent-audit-system",
+      "stars": 1168,
+      "pushed_at": "2026-08-12T18:32:23Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "codex/enterprise-agent-optimization",
+      "description": "AuditPilot: auditable enterprise AI agents for evidence-grounded workflows, governed tools, evaluation harnesses, human review, and remediation delivery.",
+      "html_url": "https://github.com/Ricky-7-Yan/intelligent-audit-system",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "heymrun/heym",
+      "stars": 1165,
+      "pushed_at": "2026-09-12T08:56:31Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Build agentic systems. Run them with confidence. Orchestrate agents, automate business processes, inspect every execution, and keep humans in control. Deploy Heym on your own infrastructure.",
+      "html_url": "https://github.com/heymrun/heym",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "XiaoLuoLYG/GOD",
+      "stars": 1107,
+      "pushed_at": "2026-08-27T12:13:42Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Govern, Observe, Direct - a real-time control room for agent societies",
+      "html_url": "https://github.com/XiaoLuoLYG/GOD",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "SupeRuier/awesome-active-learning",
+      "stars": 1001,
+      "pushed_at": "2026-03-16T06:48:56Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "master",
+      "description": "Everything you need about Active Learning (AL).",
+      "html_url": "https://github.com/SupeRuier/awesome-active-learning",
+      "language": "",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Shy2593666979/AgentChat",
+      "stars": 891,
+      "pushed_at": "2026-08-27T02:14:06Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "AgentChat 是一个基于 LLM 的智能体交流平台，内置默认 Agent 并支持用户自定义 Agent。通过多轮对话和任务协作，Agent 可以理解并协助完成复杂任务。项目集成 LangChain、Function Call、MCP 协议、RAG、Memory、HITL、Skill、Milvus 和 ElasticSearch 等技术，实现高效的知识检索与工具调用，使用 FastAPI 构建高性能后端服务。",
+      "html_url": "https://github.com/Shy2593666979/AgentChat",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "desplega-ai/agent-swarm",
+      "stars": 764,
+      "pushed_at": "2026-09-12T02:31:34Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Your Company Agentic Operating System",
+      "html_url": "https://github.com/desplega-ai/agent-swarm",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "decionis/agent-safe-pipeline",
+      "stars": 532,
+      "pushed_at": "2026-09-12T10:27:02Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Reference architecture for AI agents that propose actions but cannot authorize them — immutable intent capture, an independent Decionis policy verdict (ALLOW/ESCALATE/BLOCK), verified human approval, and a SafeExecutor that consumes a single-use intent-bound grant.",
+      "html_url": "https://github.com/decionis/agent-safe-pipeline",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "cordum-io/cordum",
+      "stars": 504,
+      "pushed_at": "2026-09-11T21:26:15Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "The action firewall for AI agents. Enforce policy and human approval before risky tool calls, shell commands, workflows, and production changes, with auditable evidence.",
+      "html_url": "https://github.com/cordum-io/cordum",
+      "language": "Go",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "humanlayer/agentcontrolplane",
+      "stars": 474,
+      "pushed_at": "2025-07-02T17:06:33Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "ACP is the Agent Control Plane - a distributed agent scheduler optimized for simplicity, clarity, and control. It is designed for outer-loop agents that run without supervision, and make asynchronous tool calls like requesting human feedback on key operations. Full MCP support.",
+      "html_url": "https://github.com/humanlayer/agentcontrolplane",
+      "language": "Go",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "CodeSoul-co/Hypha",
+      "stars": 444,
+      "pushed_at": "2026-09-04T06:52:51Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Harness-oriented agent system framework for production-grade LLM agent applications",
+      "html_url": "https://github.com/CodeSoul-co/Hypha",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "chenxiachan/thoughtdag",
+      "stars": 435,
+      "pushed_at": "2026-09-12T06:58:34Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Your thinking deserves a map: an infinite canvas where LLM conversations grow into an editable thought graph. Wires are the context.",
+      "html_url": "https://github.com/chenxiachan/thoughtdag",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "smithersai/smithers",
+      "stars": 412,
+      "pushed_at": "2026-09-11T03:54:13Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Smithers is an agentic workflow framework for defining workflows in simple TypeScript configuration files and executing them quickly, durably, and reliably",
+      "html_url": "https://github.com/smithersai/smithers",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "pegasi-ai/reins",
+      "stars": 409,
+      "pushed_at": "2026-05-22T18:03:15Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Stop AI agents from doing things you didn't ask for.",
+      "html_url": "https://github.com/pegasi-ai/reins",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "weicanie/prisma-ai",
+      "stars": 408,
+      "pushed_at": "2026-02-17T15:26:06Z",
+      "license_spdx": "AGPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "你的求职AI co-pilot，优化你的项目，定制你的简历，为你匹配工作，并帮助你做好面试准备。此外，还提供一个免费的面经导向的面向offer学习网站：https://pinkprisma.com  Your AI job-hunting co-pilot, optimizing your projects, customizing your resume, matching you with jobs, and helping you prepare for interviews.",
+      "html_url": "https://github.com/weicanie/prisma-ai",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "CopilotKit/open-research-ANA",
+      "stars": 403,
+      "pushed_at": "2026-09-06T04:14:33Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "🤖 An open-source, AI agent-native research canvas application that performs real-time search with HITL (Human in The Loop) capabilities, powered by CopilotKit, Tavily and LangGraph",
+      "html_url": "https://github.com/CopilotKit/open-research-ANA",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "DY-2026/GameDesignOS",
+      "stars": 387,
+      "pushed_at": "2026-08-17T11:39:17Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Local-first game design OS for AI agents: turn sessions into evidence, experiments, reviewable decisions, and durable project memory—Human Gates and rollback.",
+      "html_url": "https://github.com/DY-2026/GameDesignOS",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "KimGLee/Cambium",
+      "stars": 365,
+      "pushed_at": "2026-09-12T08:44:25Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Governance standard and reference toolset for LLM-maintained knowledge corpora",
+      "html_url": "https://github.com/KimGLee/Cambium",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "pneumaticapp/pneumaticworkflow",
+      "stars": 316,
+      "pushed_at": "2026-09-11T19:31:39Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Free and source-available Apache 2.0 licensed lightweight workflow automation tool. ",
+      "html_url": "https://github.com/pneumaticapp/pneumaticworkflow",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "virtengine/bosun",
+      "stars": 280,
+      "pushed_at": "2026-05-28T03:35:26Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Autonomous Engineering",
+      "html_url": "https://github.com/virtengine/bosun",
+      "language": "JavaScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "tsai996/lowflow-design",
+      "stars": 220,
+      "pushed_at": "2026-08-11T05:47:57Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Vue 3 visual approval-workflow designer with JSON modeling, configurable nodes, and BPMN export.",
+      "html_url": "https://github.com/tsai996/lowflow-design",
+      "language": "Vue",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "feng-shan-jian/ApprovaPlat",
+      "stars": 204,
+      "pushed_at": "2026-08-30T02:50:29Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "基于 RuoYi Vue 3版本以及最新的Flowable 8、Spring Boot 4  的开源审批中台。完全为爱发电，如果有用的上的地方，可以点点小⭐。相关文档和代码质量还未完善，正在重构",
+      "html_url": "https://github.com/feng-shan-jian/ApprovaPlat",
+      "language": "Java",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "edwinkys/phantasm",
+      "stars": 196,
+      "pushed_at": "2024-11-28T04:15:00Z",
+      "license_spdx": "GPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Toolkits to create a human-in-the-loop approval layer to monitor and guide AI agents workflow in real-time.",
+      "html_url": "https://github.com/edwinkys/phantasm",
+      "language": "Svelte",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "op7418/m5-paper-buddy",
+      "stars": 160,
+      "pushed_at": "2026-04-19T02:48:49Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "📟 Claude Code physical companion on M5Paper V1.1 e-ink. Multi-session dashboard, hardware approval (buttons + touch), AskUserQuestion option cards, CJK, USB/BLE, installable as a Claude Code plugin. / Claude Code 实体搭档，把 M5Paper 变成 Claude Code 的多会话看板 + 硬件审批面板。",
+      "html_url": "https://github.com/op7418/m5-paper-buddy",
+      "language": "C++",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Yaogui415/newsflow-oss",
+      "stars": 104,
+      "pushed_at": "2026-07-22T14:34:30Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "An AI-assisted newsroom workflow system for event tracking, evidence organization, approval chains, correction handling, and post-publication monitoring.",
+      "html_url": "https://github.com/Yaogui415/newsflow-oss",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "RiprLutuk/PasPapan",
+      "stars": 82,
+      "pushed_at": "2026-09-09T04:25:22Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main-vps",
+      "description": "Enterprise workforce operations featuring Anti-Mock GPS spoof detection, Face ID biometric attendance, and automated 1-click payroll calculation.",
+      "html_url": "https://github.com/RiprLutuk/PasPapan",
+      "language": "PHP",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Growth-Circle/cadis",
+      "stars": 57,
+      "pushed_at": "2026-08-19T11:25:49Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Rust-first, local-first multi-agent runtime with a desktop HUD, policy-gated tools, voice, and worktree-isolated coding agents.",
+      "html_url": "https://github.com/Growth-Circle/cadis",
+      "language": "Rust",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "data-privacy-stack/presidio",
+      "stars": 10824,
+      "pushed_at": "2026-09-10T15:20:43Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "An open-source framework for detecting, redacting, masking, and anonymizing sensitive data (PII) across text, images, and structured data. Supports NLP, pattern matching, and customizable pipelines.",
+      "html_url": "https://github.com/data-privacy-stack/presidio",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "BoundaryML/baml",
+      "stars": 9173,
+      "pushed_at": "2026-09-12T10:10:03Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "canary",
+      "description": "The programming language for agents",
+      "html_url": "https://github.com/BoundaryML/baml",
+      "language": "Rust",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "maximhq/bifrost",
+      "stars": 7991,
+      "pushed_at": "2026-09-12T10:15:03Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "dev",
+      "description": "Fastest enterprise AI gateway (50x faster than LiteLLM) with adaptive load balancer, cluster mode, guardrails, 1000+ models support & <100 µs overhead at 5k RPS.",
+      "html_url": "https://github.com/maximhq/bifrost",
+      "language": "Go",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "NVIDIA-NeMo/Guardrails",
+      "stars": 7107,
+      "pushed_at": "2026-09-11T21:41:47Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "develop",
+      "description": "NeMo Guardrails is an open-source toolkit for easily adding programmable guardrails to LLM-based conversational systems.",
+      "html_url": "https://github.com/NVIDIA-NeMo/Guardrails",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "superagent-ai/superagent",
+      "stars": 6743,
+      "pushed_at": "2026-08-25T09:45:01Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Superagent protects your AI applications against prompt injections, data leaks, and harmful outputs. Embed safety directly into your app and prove compliance to your customers.",
+      "html_url": "https://github.com/superagent-ai/superagent",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "vllm-project/semantic-router",
+      "stars": 5746,
+      "pushed_at": "2026-09-12T08:42:32Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A programmable Mixture-of-Models router for heterogeneous LLM inference",
+      "html_url": "https://github.com/vllm-project/semantic-router",
+      "language": "Go",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "FailproofAI/failproofai",
+      "stars": 2910,
+      "pushed_at": "2026-09-12T10:22:32Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Observability and enforcement for AI agent harnesses. Capture every run and runtime reliability with policy enforcement.  40 built-in policies, a local dashboard, no account required with a generous free cloud plan",
+      "html_url": "https://github.com/FailproofAI/failproofai",
+      "language": "MDX",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "future-agi/future-agi",
+      "stars": 1984,
+      "pushed_at": "2026-09-12T10:00:00Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Open-source, end-to-end platform for evaluating, observing, and improving LLM and AI agent applications. Tracing · Evals · Simulations · Datasets · Gateway · Guardrails. Self-hostable. Apache 2.0.",
+      "html_url": "https://github.com/future-agi/future-agi",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "lennney/stop-that-shit",
+      "stars": 1923,
+      "pushed_at": "2026-09-12T06:24:41Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Stop That Shit（别再造史了）｜面向 Codex/GPT 场景的多平台 Hook + Skill Guard：拦截 AI coding agent 无需求的哈希、校验和与任务范围膨胀。 A multi-platform Hook + Skill Guard for AI coding agents in Codex/GPT workflows: stop unrequested hashes, checksums, and task-scope creep.",
+      "html_url": "https://github.com/lennney/stop-that-shit",
+      "language": "JavaScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "deepsense-ai/ragbits",
+      "stars": 1668,
+      "pushed_at": "2026-05-18T07:51:25Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Building blocks for rapid development of GenAI applications ",
+      "html_url": "https://github.com/deepsense-ai/ragbits",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "theopenco/llmgateway",
+      "stars": 1628,
+      "pushed_at": "2026-09-12T10:38:21Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Route, manage, and analyze your LLM requests across multiple providers with a unified API interface.",
+      "html_url": "https://github.com/theopenco/llmgateway",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "kenryu42/cc-safety-net",
+      "stars": 1536,
+      "pushed_at": "2026-09-11T09:12:40Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A pre-execution guard for AI coding agents. It blocks destructive Git and file system commands, plus common attempts to access sensitive files, before a tool call runs. Supports Amp Code, Antigravity CLI, Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot CLI, Grok Build, Hermes Agent, Kimi Code, OpenClaw, OpenCode, and Pi.",
+      "html_url": "https://github.com/kenryu42/cc-safety-net",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "akto-api-security/akto",
+      "stars": 1515,
+      "pushed_at": "2026-09-11T19:17:43Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Akto is the fastest growing AI Security platform for your teams to secure AI agents, MCPs, LLMs, Agent skills, Gen AI apps in your organization.",
+      "html_url": "https://github.com/akto-api-security/akto",
+      "language": "Java",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "souvikmajumder26/Multi-Agent-Medical-Assistant",
+      "stars": 970,
+      "pushed_at": "2025-05-03T04:43:30Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "⚕️GenAI powered multi-agentic medical diagnostics and healthcare research assistance chatbot. 🏥 Designed for healthcare professionals, researchers and patients.",
+      "html_url": "https://github.com/souvikmajumder26/Multi-Agent-Medical-Assistant",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "cuga-project/cuga-agent",
+      "stars": 877,
+      "pushed_at": "2026-09-11T17:43:30Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "CUGA is an open-source generalist agent harness for the enterprise, supporting complex task execution on web and APIs, OpenAPI/MCP integrations, composable architecture, reasoning modes, and policy-aware features.",
+      "html_url": "https://github.com/cuga-project/cuga-agent",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "framerslab/agentos",
+      "stars": 623,
+      "pushed_at": "2026-09-12T08:03:11Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "TypeScript AI agent framework: cognitive memory, runtime tool forging, multi-agent orchestration, 11 LLM providers.",
+      "html_url": "https://github.com/framerslab/agentos",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "globalbao/awesome-azure-policy",
+      "stars": 543,
+      "pushed_at": "2026-05-30T07:05:04Z",
+      "license_spdx": "CC0-1.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A curated list of blogs, videos, tutorials, code, tools, scripts, and anything useful to help you learn Azure Policy - by @JesseLoudon",
+      "html_url": "https://github.com/globalbao/awesome-azure-policy",
+      "language": "",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "ZaxbyHub/opencode-swarm",
+      "stars": 467,
+      "pushed_at": "2026-09-12T06:51:07Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "  Architect-centric agentic swarm plugin for OpenCode. Hub-and-spoke orchestration with SME consultation, code generation, and QA review.",
+      "html_url": "https://github.com/ZaxbyHub/opencode-swarm",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "CoWork-OS/CoWork-OS",
+      "stars": 452,
+      "pushed_at": "2026-09-12T07:53:48Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Local-first personal agentic OS and everything app for coding, knowledge work, web design, automations, and artifacts.",
+      "html_url": "https://github.com/CoWork-OS/CoWork-OS",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "SponsioLabs/Sponsio",
+      "stars": 440,
+      "pushed_at": "2026-09-11T17:35:06Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Deterministic safety solutions for probabilistic AI agents",
+      "html_url": "https://github.com/SponsioLabs/Sponsio",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "paladini/harness-score",
+      "stars": 421,
+      "pushed_at": "2026-09-12T01:47:09Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Your AI coding agent is only as reliable as the harness around it. Measure that harness in seconds with harness-score.",
+      "html_url": "https://github.com/paladini/harness-score",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "agentcontrol/agent-control",
+      "stars": 305,
+      "pushed_at": "2026-09-09T21:17:30Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Centralized agent control plane for governing runtime agent behavior at scale. Configurable, extensible, and production-ready. ",
+      "html_url": "https://github.com/agentcontrol/agent-control",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "ferro-labs/ai-gateway",
+      "stars": 256,
+      "pushed_at": "2026-09-10T04:50:20Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Unified AI Gateway for 30+ LLMs (OpenAI, Anthropic, Bedrock, Azure etc) with Caching, Guardrails, A/B test & cost controls. Go-native Fastest & Scalable AI Gateway LiteLLM & Kong AI Gateway alternative.",
+      "html_url": "https://github.com/ferro-labs/ai-gateway",
+      "language": "Go",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "privacera/paig",
+      "stars": 211,
+      "pushed_at": "2025-08-05T15:00:08Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "PAIG (Pronounced similar to paige or payj) is an open-source project designed to protect Generative AI (GenAI) applications by ensuring security, safety, and observability.",
+      "html_url": "https://github.com/privacera/paig",
+      "language": "CSS",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "OpenTradeOSS/OpenTrade",
+      "stars": 202,
+      "pushed_at": "2026-09-10T13:19:39Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "The open-source trading harness for Claude Code / Codex agents.",
+      "html_url": "https://github.com/OpenTradeOSS/OpenTrade",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "nizos/probity",
+      "stars": 200,
+      "pushed_at": "2026-09-11T07:33:37Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "TDD enforcement and guardrails for Claude Code, Codex, and GitHub Copilot CLI",
+      "html_url": "https://github.com/nizos/probity",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "DobermanCore/Doberman-Core",
+      "stars": 199,
+      "pushed_at": "2026-09-10T17:30:40Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Your AI's guard dog. Doberman sits at runtime, gating every input, output and tool call to stop unsafe or unintended actions before they execute.",
+      "html_url": "https://github.com/DobermanCore/Doberman-Core",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Idun-Group/idun-agent-platform",
+      "stars": 199,
+      "pushed_at": "2026-08-06T20:08:14Z",
+      "license_spdx": "GPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "🟪 Open-source runtime that ships any LangGraph or Google ADK agent as a production-ready FastAPI service. Bundled , AG-UI copilotkit API, chat UI, 15+ guardrails, MCP, OpenTelemetry, OIDC. One pip install.   Self-hosted, no vendor lock-in. ",
+      "html_url": "https://github.com/Idun-Group/idun-agent-platform",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "yaalalabs/agent-kernel",
+      "stars": 188,
+      "pushed_at": "2026-09-11T10:37:45Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "develop",
+      "description": "The Operating System for Scalable Enterprise AI Agents - Run, orchestrate, and deploy Compliant Enterprise AI Agents at scale across frameworks, without lock-in, rewrites or fragile glue code. Native support for MCP, A2A. Interface with all mainstream communication channels seamlessly out of the box, production ready from day one.",
+      "html_url": "https://github.com/yaalalabs/agent-kernel",
+      "language": "Python",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "aipotheosis-labs/gate22",
+      "stars": 178,
+      "pushed_at": "2025-12-12T02:27:52Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Open-source MCP gateway and control plane for teams to govern which tools agents can use, what they can do, and how it’s audited—across agentic IDEs like Cursor, or other agents and AI tools.",
+      "html_url": "https://github.com/aipotheosis-labs/gate22",
+      "language": "TypeScript",
+      "notes": [
+        "来源：topic(human-in-the-loop,approval-workflow,guardrails)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "activepieces/activepieces",
+      "stars": 24410,
+      "pushed_at": "2026-09-12T06:56:08Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "AI Agents & MCPs & AI Workflow Automation • (~400 MCP servers for AI agents) • AI Automation / AI Agent with MCPs • AI Workflows & AI Agents • MCPs for AI Agents",
+      "html_url": "https://github.com/activepieces/activepieces",
+      "language": "TypeScript",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "aiidateam/aiida-core",
+      "stars": 584,
+      "pushed_at": "2026-09-12T09:39:20Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "The official repository for the AiiDA code",
+      "html_url": "https://github.com/aiidateam/aiida-core",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "apache/airflow",
+      "stars": 46837,
+      "pushed_at": "2026-09-12T09:16:45Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Apache Airflow - A platform to programmatically author, schedule, and monitor workflows",
+      "html_url": "https://github.com/apache/airflow",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "argoproj/argo-workflows",
+      "stars": 16969,
+      "pushed_at": "2026-09-11T20:17:18Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Workflow Engine for Kubernetes",
+      "html_url": "https://github.com/argoproj/argo-workflows",
+      "language": "Go",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "arvados/arvados",
+      "stars": 420,
+      "pushed_at": "2026-09-11T15:18:13Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "An open source platform for managing and analyzing biomedical big data",
+      "html_url": "https://github.com/arvados/arvados",
+      "language": "Go",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "bytechefhq/bytechef",
+      "stars": 1001,
+      "pushed_at": "2026-09-11T15:42:07Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Open-source AI agents and workflow automation. Self-host or embed in your SaaS. Apache 2.0 alternative to n8n and Zapier.",
+      "html_url": "https://github.com/bytechefhq/bytechef",
+      "language": "Java",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "cabloy/cabloy",
+      "stars": 971,
+      "pushed_at": "2026-09-12T08:39:46Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Cabloy is a Node.js fullstack framework for AI vibe coding, with AI Spec-Driven Development for traceable, evidence-backed delivery.",
+      "html_url": "https://github.com/cabloy/cabloy",
+      "language": "TypeScript",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "cadence-workflow/cadence",
+      "stars": 9435,
+      "pushed_at": "2026-09-11T23:06:15Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Cadence is a distributed, scalable, durable, and highly available orchestration engine to execute asynchronous long-running business logic in a scalable and resilient way.",
+      "html_url": "https://github.com/cadence-workflow/cadence",
+      "language": "Go",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "ovh/cds",
+      "stars": 4840,
+      "pushed_at": "2026-09-11T14:12:02Z",
+      "license_spdx": "BSD-3-Clause",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Enterprise-Grade Continuous Delivery & DevOps Automation Open Source Platform",
+      "html_url": "https://github.com/ovh/cds",
+      "language": "Go",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "ChunelFeng/CGraph",
+      "stars": 2301,
+      "pushed_at": "2026-09-07T06:42:25Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "【A common used C++ & Python DAG framework】 一个通用的、无三方依赖的、跨平台的、收录于awesome-cpp的、基于流图的并行计算框架。欢迎star & fork & 交流",
+      "html_url": "https://github.com/ChunelFeng/CGraph",
+      "language": "C++",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "CloudSlang/cloud-slang",
+      "stars": 242,
+      "pushed_at": "2026-09-10T15:23:22Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "CloudSlang Language, CLI and Builder",
+      "html_url": "https://github.com/CloudSlang/cloud-slang",
+      "language": "Java",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "conductor-oss/conductor",
+      "stars": 32202,
+      "pushed_at": "2026-09-12T02:12:43Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Conductor is an event driven agentic workflow engine providing durable and highly resilient execution engine for applications and AI Agents",
+      "html_url": "https://github.com/conductor-oss/conductor",
+      "language": "Java",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "copper-engine/copper-engine",
+      "stars": 288,
+      "pushed_at": "2026-07-15T06:16:25Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "COPPER - a high performance Java workflow engine",
+      "html_url": "https://github.com/copper-engine/copper-engine",
+      "language": "Java",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "couler-proj/couler",
+      "stars": 943,
+      "pushed_at": "2024-10-08T03:31:54Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Unified Interface for Constructing and Managing Workflows on different workflow engines, such as Argo Workflows, Tekton Pipelines, and Apache Airflow.",
+      "html_url": "https://github.com/couler-proj/couler",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "AgnostiqHQ/covalent",
+      "stars": 869,
+      "pushed_at": "2026-08-31T17:12:26Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "develop",
+      "description": "Pythonic tool for orchestrating machine-learning/high performance/quantum-computing workflows in heterogeneous compute environments.",
+      "html_url": "https://github.com/AgnostiqHQ/covalent",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "broadinstitute/cromwell",
+      "stars": 1081,
+      "pushed_at": "2026-09-12T00:10:51Z",
+      "license_spdx": "BSD-3-Clause",
+      "archived": false,
+      "default_branch": "develop",
+      "description": "Scientific workflow engine designed for simplicity & scalability. Trivially transition between one off use cases to massive scale production environments",
+      "html_url": "https://github.com/broadinstitute/cromwell",
+      "language": "Scala",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "openwdl/wdl",
+      "stars": 857,
+      "pushed_at": "2026-09-08T18:35:12Z",
+      "license_spdx": "BSD-3-Clause",
+      "archived": false,
+      "default_branch": "wdl-1.3",
+      "description": "Specification for the Workflow Description Language (WDL).",
+      "html_url": "https://github.com/openwdl/wdl",
+      "language": "",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "cylc/cylc-flow",
+      "stars": 380,
+      "pushed_at": "2026-09-10T16:23:05Z",
+      "license_spdx": "GPL-3.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Cylc: a general purpose workflow engine with a gift for cycling",
+      "html_url": "https://github.com/cylc/cylc-flow",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "dagster-io/dagster",
+      "stars": 16139,
+      "pushed_at": "2026-09-11T19:05:31Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "An orchestration platform for the development, production, and observation of data assets.",
+      "html_url": "https://github.com/dagster-io/dagster",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "e2b-dev/awesome-ai-sdks",
+      "stars": 1218,
+      "pushed_at": "2026-07-09T17:29:58Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "A database of SDKs, frameworks, libraries, and tools for creating, monitoring, debugging and deploying autonomous AI agents",
+      "html_url": "https://github.com/e2b-dev/awesome-ai-sdks",
+      "language": "",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "e2b-dev/E2B",
+      "stars": 13758,
+      "pushed_at": "2026-09-11T17:44:19Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Open-source, secure environment with real-world tools for enterprise-grade agents.",
+      "html_url": "https://github.com/e2b-dev/E2B",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "e2b-dev/e2b-cookbook",
+      "stars": 1397,
+      "pushed_at": "2026-09-10T20:55:40Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "Examples of using E2B",
+      "html_url": "https://github.com/e2b-dev/e2b-cookbook",
+      "language": "TypeScript",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "HumanSignal/Adala",
+      "stars": 1636,
+      "pushed_at": "2026-09-03T23:31:17Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Adala: Autonomous DAta (Labeling) Agent framework",
+      "html_url": "https://github.com/HumanSignal/Adala",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "DataBassGit/AgentForge",
+      "stars": 848,
+      "pushed_at": "2026-08-10T20:45:31Z",
+      "license_spdx": "GPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Extensible AGI Framework",
+      "html_url": "https://github.com/DataBassGit/AgentForge",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "jbexta/AgentPilot",
+      "stars": 567,
+      "pushed_at": "2026-04-14T04:11:29Z",
+      "license_spdx": "AGPL-3.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "A versatile workflow automation platform to create, organize, and execute AI workflows, from a single LLM to complex AI-driven workflows.",
+      "html_url": "https://github.com/jbexta/AgentPilot",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "aiwaves-cn/agents",
+      "stars": 5962,
+      "pushed_at": "2024-09-26T03:12:53Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "An Open-source Framework for Data-centric, Self-evolving Autonomous Language Agents",
+      "html_url": "https://github.com/aiwaves-cn/agents",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "eumemic/ai-legion",
+      "stars": 1436,
+      "pushed_at": "2025-05-27T23:52:06Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "An LLM-powered autonomous agent platform",
+      "html_url": "https://github.com/eumemic/ai-legion",
+      "language": "TypeScript",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Aider-AI/aider",
+      "stars": 48913,
+      "pushed_at": "2026-05-22T14:02:20Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "aider is AI pair programming in your terminal",
+      "html_url": "https://github.com/Aider-AI/aider",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "myshell-ai/AIlice",
+      "stars": 1417,
+      "pushed_at": "2025-08-18T03:24:03Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "AIlice is a fully autonomous, general-purpose AI agent.",
+      "html_url": "https://github.com/myshell-ai/AIlice",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "microsoft/autogen",
+      "stars": 60939,
+      "pushed_at": "2026-04-15T11:59:09Z",
+      "license_spdx": "CC-BY-4.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A programming framework for agentic AI",
+      "html_url": "https://github.com/microsoft/autogen",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Significant-Gravitas/AutoGPT",
+      "stars": 187278,
+      "pushed_at": "2026-09-12T10:38:23Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "master",
+      "description": "AutoGPT is the vision of accessible AI for everyone, to use and to build on. Our mission is to provide the tools, so that you can focus on what matters.",
+      "html_url": "https://github.com/Significant-Gravitas/AutoGPT",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "stepanogil/autonomous-hr-chatbot",
+      "stars": 462,
+      "pushed_at": "2026-04-29T06:34:58Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "An autonomous HR agent that can answer user queries using tools",
+      "html_url": "https://github.com/stepanogil/autonomous-hr-chatbot",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "yoheinakajima/babyagi",
+      "stars": 22353,
+      "pushed_at": "2026-01-31T05:05:45Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "",
+      "html_url": "https://github.com/yoheinakajima/babyagi",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "saten-private/BabyCommandAGI",
+      "stars": 61,
+      "pushed_at": "2025-06-11T15:37:12Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "BabyCommandAGI is designed to test what happens when you combine CLI and LLM, which are older computer interfaces than GUI. Based on BabyAGI, and using Latest LLM API. Imagine LLM and CLI having a conversation. It's exciting to think about what could happen. I hope you will all try it out.",
+      "html_url": "https://github.com/saten-private/BabyCommandAGI",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "pgalko/BambooAI",
+      "stars": 788,
+      "pushed_at": "2026-06-03T04:53:42Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A Python library powered by Language Models (LLMs) for conversational data discovery and analysis.",
+      "html_url": "https://github.com/pgalko/BambooAI",
+      "language": "Python",
+      "notes": [
+        "来源：curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Justin0504/Aegis",
+      "stars": 340,
+      "pushed_at": "2026-09-06T03:16:51Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Runtime policy enforcement for AI agents. Cryptographic audit trail, human-in-the-loop approvals, kill switch. Zero code changes.                                                                         ",
+      "html_url": "https://github.com/Justin0504/Aegis",
+      "language": "TypeScript",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "sagents-ai/sagents",
+      "stars": 273,
+      "pushed_at": "2026-09-10T19:45:27Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Build interactive AI agents in Elixir with OTP supervision, middleware composition, human-in-the-loop approvals, sub-agent delegation, and real-time Phoenix LiveView integration. Built on LangChain.",
+      "html_url": "https://github.com/sagents-ai/sagents",
+      "language": "Elixir",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "agentailor/fullstack-langgraph-nextjs-agent",
+      "stars": 130,
+      "pushed_at": "2026-09-04T14:17:24Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "  Production-ready Next.js template for building AI agents with LangGraph.js. Features MCP integration for dynamic tool loading, human-in-the-loop tool approval, persistent conversation memory   with PostgreSQL, and real-time streaming responses. Built with TypeScript, React, Prisma, and Tailwind CSS.",
+      "html_url": "https://github.com/agentailor/fullstack-langgraph-nextjs-agent",
+      "language": "TypeScript",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "sathish316/pied-piper",
+      "stars": 80,
+      "pushed_at": "2026-08-05T17:45:47Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Pied Piper is a team of AI SubAgents that can autonomously/semi-autonomously work on long-running or complex coding tasks with full End-to-end tracking and human-in-the-loop approvals. Subagents can run on Claude Code, Coding CLIs that support SubAgents, Docker, Cloud Desktop etc.",
+      "html_url": "https://github.com/sathish316/pied-piper",
+      "language": "Go",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "escapeboy/agent-fleet-o",
+      "stars": 68,
+      "pushed_at": "2026-09-12T10:29:56Z",
+      "license_spdx": "AGPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Open-source AI agent orchestration platform — self-hosted mission control for autonomous multi-agent systems. Visual DAG workflows, 450+ MCP tools, human-in-the-loop approvals. Works with Claude, GPT-4o, Gemini, Ollama, Codex.",
+      "html_url": "https://github.com/escapeboy/agent-fleet-o",
+      "language": "PHP",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "MaxInGaussian/pi-plans",
+      "stars": 66,
+      "pushed_at": "2026-09-09T10:48:50Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Human-in-the-loop planning extension for the Pi coding agent. Turns rough change requests into versioned Markdown plans, stores them in a configurable artifact root, refines them through reviewer/criticizer subagents, and gates implementation behind tracked execution and explicit approval.",
+      "html_url": "https://github.com/MaxInGaussian/pi-plans",
+      "language": "TypeScript",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "xbrxr03/clawos",
+      "stars": 56,
+      "pushed_at": "2026-06-30T19:00:37Z",
+      "license_spdx": "AGPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "🤖 Local AI agent for your laptop. Voice activation, multi-step tool use, 7-layer memory, human-in-the-loop approvals. Zero cloud. Zero API keys. Zero telemetry.",
+      "html_url": "https://github.com/xbrxr03/clawos",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "makerchecker/MakerChecker",
+      "stars": 52,
+      "pushed_at": "2026-09-11T00:14:45Z",
+      "license_spdx": "AGPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Open-source security gateway & static scanner for AI agents. Enforce role-based access control (RBAC), human-in-the-loop approvals,   segregation of duties, and cryptographically signed, offline-verifiable audit logs.",
+      "html_url": "https://github.com/makerchecker/MakerChecker",
+      "language": "TypeScript",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "ultraworkers/claw-code",
+      "stars": 195210,
+      "pushed_at": "2026-08-16T06:18:45Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "An agent-managed museum exhibit, built in Rust with Gajae-Code / LazyCodex — developed and maintained with no human intervention.",
+      "html_url": "https://github.com/ultraworkers/claw-code",
+      "language": "Rust",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "yoavbls/pretty-ts-errors",
+      "stars": 14103,
+      "pushed_at": "2026-09-10T08:40:16Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "🔵 Make TypeScript errors prettier and human-readable in VSCode 🎀",
+      "html_url": "https://github.com/yoavbls/pretty-ts-errors",
+      "language": "TypeScript",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "ifixai-ai/iFixAi",
+      "stars": 14015,
+      "pushed_at": "2026-09-11T19:05:30Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Independent Auditing of AI Agents. Run by human or the agent itself, to answer the most crucial question in the AI Agent Economy. Is the agent doing what is supposed to do? With iFixAi you can have this answer in less than 120 seconds.",
+      "html_url": "https://github.com/ifixai-ai/iFixAi",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "PySimpleGUI/PySimpleGUI",
+      "stars": 13815,
+      "pushed_at": "2026-08-30T16:02:28Z",
+      "license_spdx": "LGPL-3.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Python GUIs for Humans! Create any GUI simple or complicated in a way that's intuitive.  Launched in 2018. NEW for 2026 - the LGPL3 Version 6.  Transforms tkinter, Qt, WxPython, and Remi into a simple, intuitive, and fun experience for both hobbyists and expert users. ",
+      "html_url": "https://github.com/PySimpleGUI/PySimpleGUI",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "mockery/mockery",
+      "stars": 10725,
+      "pushed_at": "2026-09-11T06:19:29Z",
+      "license_spdx": "BSD-3-Clause",
+      "archived": false,
+      "default_branch": "1.6.x",
+      "description": "Mockery is a simple yet flexible PHP mock object framework for use in unit testing with PHPUnit, PHPSpec or any other testing framework. Its core goal is to offer a test double framework with a succinct API capable of clearly defining all possible object operations and interactions using a human readable Domain Specific Language (DSL).",
+      "html_url": "https://github.com/mockery/mockery",
+      "language": "PHP",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Imbad0202/academic-research-skills-codex",
+      "stars": 10642,
+      "pushed_at": "2026-09-02T14:16:25Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Codex-native Academic Research Skills suite for human-in-the-loop academic research workflows",
+      "html_url": "https://github.com/Imbad0202/academic-research-skills-codex",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "MrLesk/Backlog.md",
+      "stars": 6710,
+      "pushed_at": "2026-09-03T16:05:09Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Backlog.md - A tool for managing project collaboration between humans and AI Agents in a git ecosystem",
+      "html_url": "https://github.com/MrLesk/Backlog.md",
+      "language": "TypeScript",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Mai-with-u/MaiBot",
+      "stars": 5930,
+      "pushed_at": "2026-09-12T03:41:57Z",
+      "license_spdx": "GPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "MaiSaka, an LLM-based intelligent agent, is a digital lifeform devoted to understanding you and interacting in the style of a real human. She does not pursue perfection, nor does she seek efficiency; instead, she values warmth, authenticity, and genuine connection.",
+      "html_url": "https://github.com/Mai-with-u/MaiBot",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "agentscope-ai/AgentTeams",
+      "stars": 5607,
+      "pushed_at": "2026-09-11T17:37:56Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "An open-source Collaborative Multi-Agent OS for transparent, human-in-the-loop task coordination via Matrix rooms.",
+      "html_url": "https://github.com/agentscope-ai/AgentTeams",
+      "language": "Go",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "mr-karan/doggo",
+      "stars": 4474,
+      "pushed_at": "2026-09-01T09:47:04Z",
+      "license_spdx": "GPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": ":dog: Command-line DNS Client for Humans. Written in Golang",
+      "html_url": "https://github.com/mr-karan/doggo",
+      "language": "Go",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "MikeChongCan/scylla",
+      "stars": 4019,
+      "pushed_at": "2025-06-09T01:51:36Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Intelligent proxy pool for Humans™ to extract content from the internet and build your own Large Language Models in this new AI era",
+      "html_url": "https://github.com/MikeChongCan/scylla",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "FireRedTeam/FireRed-OpenStoryline",
+      "stars": 3395,
+      "pushed_at": "2026-07-31T03:16:31Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "FireRed-OpenStoryline is an AI video editing agent that transforms manual editing into intention-driven directing through natural language interaction, LLM-powered planning, and precise tool orchestration. It facilitates transparent, human-in-the-loop creation with reusable Style Skills for consistent, professional storytelling.",
+      "html_url": "https://github.com/FireRedTeam/FireRed-OpenStoryline",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "danielpalme/ReportGenerator",
+      "stars": 3094,
+      "pushed_at": "2026-09-05T14:49:44Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "ReportGenerator converts coverage reports generated by coverlet, OpenCover, dotCover, Visual Studio, NCover, Cobertura, JaCoCo, Clover, gcov or lcov into human readable reports in various formats.",
+      "html_url": "https://github.com/danielpalme/ReportGenerator",
+      "language": "C#",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "langchain-ai/social-media-agent",
+      "stars": 2785,
+      "pushed_at": "2026-09-09T05:49:56Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "📲 An agent for sourcing, curating, and scheduling social media posts with human-in-the-loop.",
+      "html_url": "https://github.com/langchain-ai/social-media-agent",
+      "language": "TypeScript",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "YanjieZe/GMR",
+      "stars": 2682,
+      "pushed_at": "2026-04-02T09:34:42Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "[ICRA 2026] GMR: General Motion Retargeting. Retarget human motions into diverse humanoid robots in real time on CPU. Retargeter for TWIST.",
+      "html_url": "https://github.com/YanjieZe/GMR",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "aigc3d/LHM",
+      "stars": 2671,
+      "pushed_at": "2026-03-17T05:17:23Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "[ICCV2025] LHM: Large Animatable Human Reconstruction Model from a Single Image in Seconds",
+      "html_url": "https://github.com/aigc3d/LHM",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "sopaco/deepwiki-rs",
+      "stars": 2431,
+      "pushed_at": "2026-08-14T17:03:46Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Turn code into clarity. Generate accurate technical docs and AI-ready context in minutes—perfectly structured for human teams and intelligent agents.",
+      "html_url": "https://github.com/sopaco/deepwiki-rs",
+      "language": "Rust",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "MouseLand/cellpose",
+      "stars": 2357,
+      "pushed_at": "2026-06-14T13:21:03Z",
+      "license_spdx": "BSD-3-Clause",
+      "archived": false,
+      "default_branch": "main",
+      "description": "a generalist algorithm for cellular segmentation with human-in-the-loop capabilities",
+      "html_url": "https://github.com/MouseLand/cellpose",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "langchain-ai/agents-from-scratch",
+      "stars": 2216,
+      "pushed_at": "2026-08-11T15:37:42Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Build an email assistant with human-in-the-loop and memory",
+      "html_url": "https://github.com/langchain-ai/agents-from-scratch",
+      "language": "Jupyter Notebook",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "Weizhena/Deep-Research-skills",
+      "stars": 2143,
+      "pushed_at": "2026-08-23T03:25:28Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Structured deep research skill for Claude Code/Open Code/Codex with human-in-the-loop control",
+      "html_url": "https://github.com/Weizhena/Deep-Research-skills",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "diffgram/diffgram",
+      "stars": 1909,
+      "pushed_at": "2026-06-22T07:33:28Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "master",
+      "description": "The AI Datastore for Schemas, BLOBs, and Predictions. Use with your apps or integrate built-in Human Supervision, Data Workflow, and UI Catalog to get the most value out of your AI Data.",
+      "html_url": "https://github.com/diffgram/diffgram",
+      "language": "Python",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "questflowai/investorskills",
+      "stars": 1849,
+      "pushed_at": "2026-08-23T07:17:36Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Investor Skills is an open-source library that turns durable investing judgment into portable, structured formats. It collects how great investors think, filter opportunities, size risk, and act under uncertainty — then structures those patterns so humans can study them and AI finance agents can apply them.",
+      "html_url": "https://github.com/questflowai/investorskills",
+      "language": "Swift",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    },
+    {
+      "full_name": "luoxiu/Schedule",
+      "stars": 1819,
+      "pushed_at": "2026-03-12T01:32:09Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Schedule timing task in Swift using a fluent API. (A friendly alternative to Timer)",
+      "html_url": "https://github.com/luoxiu/Schedule",
+      "language": "Swift",
+      "notes": [
+        "未评分（超出本轮模型预算）",
+        "来源：keyword",
+        "未评分（超出本轮模型预算）"
+      ]
+    }
+  ],
+  "below_bar": [
+    {
+      "full_name": "jina-ai/dalle-flow",
+      "stars": 2829,
+      "pushed_at": "2023-05-16T09:54:02Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "🌊 A Human-in-the-Loop workflow for creating HD images from text",
+      "html_url": "https://github.com/jina-ai/dalle-flow",
+      "language": "Python"
+    },
+    {
+      "full_name": "h1st-ai/h1st",
+      "stars": 797,
+      "pushed_at": "2023-07-31T17:48:41Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Power Tools for AI Engineers With Deadlines",
+      "html_url": "https://github.com/h1st-ai/h1st",
+      "language": "Jupyter Notebook"
+    },
+    {
+      "full_name": "agentkitai/agentgate",
+      "stars": 33,
+      "pushed_at": "2026-09-06T20:12:49Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Approval workflows for AI agents",
+      "html_url": "https://github.com/agentkitai/agentgate",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "derive-to/derive",
+      "stars": 28,
+      "pushed_at": "2026-09-11T19:00:31Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Review and approval for work made by AI agents. Fair Source, self-hostable, and MCP-native.",
+      "html_url": "https://github.com/derive-to/derive",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "Freespirits/social-auto-engine",
+      "stars": 25,
+      "pushed_at": "2026-07-18T21:09:10Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Multi-channel social media platform. Manage Facebook, Instagram, LinkedIn, TikTok, and X from one dashboard. AI content generation, approval workflows, 17 content skills, scales to 100 pages.",
+      "html_url": "https://github.com/Freespirits/social-auto-engine",
+      "language": "Python"
+    },
+    {
+      "full_name": "aipermission/aipermission",
+      "stars": 19,
+      "pushed_at": "2026-09-09T08:12:47Z",
+      "license_spdx": "AGPL-3.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Local-first permission gateway for AI agents with scoped connector access, human approval, audit trails, and encrypted local credentials.",
+      "html_url": "https://github.com/aipermission/aipermission",
+      "language": "Go"
+    },
+    {
+      "full_name": "rulego/gflow-engine",
+      "stars": 18,
+      "pushed_at": "2026-09-11T10:04:52Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Embeddable approval workflow engine for Go, built on RuleGo — JSON DSL, full approval semantics, multi-tenant.",
+      "html_url": "https://github.com/rulego/gflow-engine",
+      "language": "Go"
+    },
+    {
+      "full_name": "OthmaneBlial/term_mcp_deepseek",
+      "stars": 18,
+      "pushed_at": "2026-08-27T14:13:23Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Approval-first MCP terminal control: inspect risk, permissions and limits before bounded execution, then keep signed receipts.",
+      "html_url": "https://github.com/OthmaneBlial/term_mcp_deepseek",
+      "language": "Python"
+    },
+    {
+      "full_name": "DylanMerigaud/approvals-ui",
+      "stars": 17,
+      "pushed_at": "2026-08-14T18:05:43Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Approval workflow components for React Flow, distributed as a shadcn registry. Quorum gates, thresholds, policy lint, plain-language editing behind a human gate.",
+      "html_url": "https://github.com/DylanMerigaud/approvals-ui",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "edictum-ai/edictum-console",
+      "stars": 17,
+      "pushed_at": "2026-09-12T10:29:29Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Self-hostable operations console for governed AI agents. Contract management, HITL approvals, audit feeds, fleet monitoring.",
+      "html_url": "https://github.com/edictum-ai/edictum-console",
+      "language": "Python"
+    },
+    {
+      "full_name": "luarvic/click2approve",
+      "stars": 15,
+      "pushed_at": "2026-09-11T21:11:36Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Free, open-source, cross-platform document approval system with a responsive UI",
+      "html_url": "https://github.com/luarvic/click2approve",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "sidclawhq/platform",
+      "stars": 14,
+      "pushed_at": "2026-09-07T13:47:44Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "The approval and accountability layer for agentic AI. Identity → Policy → Approval → Trace. Try: npx sidclaw-demo",
+      "html_url": "https://github.com/sidclawhq/platform",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "antoinekh/netbox-change-control",
+      "stars": 13,
+      "pushed_at": "2026-09-07T11:42:33Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Policy-driven change control and mandatory review for NetBox branches",
+      "html_url": "https://github.com/antoinekh/netbox-change-control",
+      "language": "Python"
+    },
+    {
+      "full_name": "9904099/opsledger",
+      "stars": 11,
+      "pushed_at": "2026-06-03T05:17:12Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Self-hosted cloud operations ledger, CMDB, credential approvals, audit logs, cost snapshots, and WebSSH for SRE and DevOps teams.",
+      "html_url": "https://github.com/9904099/opsledger",
+      "language": "Go"
+    },
+    {
+      "full_name": "azdhril/Sentinel",
+      "stars": 11,
+      "pushed_at": "2026-01-25T21:26:06Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "🛡️ Zero-trust governance for AI agents. Intercept, approve, and audit LLM actions with one decorator. Fail-secure by default.",
+      "html_url": "https://github.com/azdhril/Sentinel",
+      "language": "Python"
+    },
+    {
+      "full_name": "renezander030/draftcat",
+      "stars": 9,
+      "pushed_at": "2026-09-06T05:54:18Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Governed AI pipelines for service businesses. Deterministic-first, single Go binary, operator-approved.",
+      "html_url": "https://github.com/renezander030/draftcat",
+      "language": "Go"
+    },
+    {
+      "full_name": "yohey-w/kagemusha",
+      "stars": 9,
+      "pushed_at": "2026-09-11T14:58:02Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "影武者 / kagemusha: a Markdown governance kit for Claude Code and AI agents—approval queues, correction promotion, and judgment distillation.",
+      "html_url": "https://github.com/yohey-w/kagemusha",
+      "language": "Python"
+    },
+    {
+      "full_name": "Kalpan2007/Expense_Mang...",
+      "stars": 8,
+      "pushed_at": "2025-11-03T08:23:12Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "💰 A full-stack Expense Management System built with Node.js, React, and Supabase, designed to simplify expense tracking, approvals, and analytics for modern teams. 🚀 Features include AI receipt scanning, multi-currency support, real-time dashboards, and multi-level approvals — all wrapped in a ",
+      "html_url": "https://github.com/Kalpan2007/Expense_Mang...",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "pghoshal/LeanNodes",
+      "stars": 8,
+      "pushed_at": "2026-08-07T16:44:54Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Solves Cold Start problem & saves upto 90% cost for EKS. On demand Dynamic service provisioning for business and Enterprise. CPU, GPU & AI Workloads",
+      "html_url": "https://github.com/pghoshal/LeanNodes",
+      "language": "Go"
+    },
+    {
+      "full_name": "jeffersongoncalves/laravel-service-desk",
+      "stars": 8,
+      "pushed_at": "2026-09-06T00:31:39Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A complete, headless Service Desk package for Laravel featuring ticket management, SLA tracking, knowledge base, service catalog with approval workflows, and multi-channel email integration.",
+      "html_url": "https://github.com/jeffersongoncalves/laravel-service-desk",
+      "language": "PHP"
+    },
+    {
+      "full_name": "anikamin940/hitl-agent-ts",
+      "stars": 7,
+      "pushed_at": "2026-04-17T07:40:06Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "HITL agent workflows in TypeScript: pause for human approval, multi-approver gates, timeouts, audit-friendly stores, Slack/webhook notify.",
+      "html_url": "https://github.com/anikamin940/hitl-agent-ts",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "coldsmirk/vef-framework-go",
+      "stars": 7,
+      "pushed_at": "2026-09-07T10:53:26Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A comprehensive, enterprise-grade web framework for Go that accelerates the development of scalable, maintainable applications",
+      "html_url": "https://github.com/coldsmirk/vef-framework-go",
+      "language": "Go"
+    },
+    {
+      "full_name": "bablsoft/accessflow",
+      "stars": 5,
+      "pushed_at": "2026-09-11T15:31:24Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Open-source database, API access & deployment governance platform A SQL, NoSQL, and API proxy that puts review, approval, and audit between your team and production data and services. ",
+      "html_url": "https://github.com/bablsoft/accessflow",
+      "language": "Java"
+    },
+    {
+      "full_name": "dbflow-labs/dbflow-filament",
+      "stars": 5,
+      "pushed_at": "2026-09-07T02:11:10Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Standard Filament integration for DBFlow Core — workflow tasks, instances, definitions, and audit timelines for Laravel admin panels.",
+      "html_url": "https://github.com/dbflow-labs/dbflow-filament",
+      "language": "PHP"
+    },
+    {
+      "full_name": "yeomyeonggeori/blueclaw",
+      "stars": 5,
+      "pushed_at": "2026-09-10T07:55:12Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A POSIX-isolated agent host: a Go daemon that runs an AI agent harness on behalf of the person who asked, executes every tool call as that person's own unprivileged Linux user, holds side-effecting calls at an approval gate, and writes every step to a durable event ledger.",
+      "html_url": "https://github.com/yeomyeonggeori/blueclaw",
+      "language": "Go"
+    },
+    {
+      "full_name": "azkaban/azkaban",
+      "stars": 4509,
+      "pushed_at": "2024-07-03T06:07:59Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Azkaban workflow manager.",
+      "html_url": "https://github.com/azkaban/azkaban",
+      "language": "Java"
+    },
+    {
+      "full_name": "brigadecore/brigade",
+      "stars": 2419,
+      "pushed_at": "2023-03-07T03:41:43Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Event-driven scripting for Kubernetes",
+      "html_url": "https://github.com/brigadecore/brigade",
+      "language": "Go"
+    },
+    {
+      "full_name": "LehengTHU/Agent4Rec",
+      "stars": 503,
+      "pushed_at": "2024-07-07T05:45:01Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "[SIGIR 2024 perspective] The implementation of paper \"On Generative Agents in Recommendation\"",
+      "html_url": "https://github.com/LehengTHU/Agent4Rec",
+      "language": "Python"
+    },
+    {
+      "full_name": "OpenBMB/AgentVerse",
+      "stars": 5121,
+      "pushed_at": "2024-09-09T05:47:44Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "🤖 AgentVerse 🪐 is designed to facilitate the deployment of multiple LLM-based agents in various applications, which primarily provides two frameworks: task-solving and simulation",
+      "html_url": "https://github.com/OpenBMB/AgentVerse",
+      "language": "JavaScript"
+    },
+    {
+      "full_name": "erik-megarad/beebot",
+      "stars": 453,
+      "pushed_at": "2023-10-22T23:25:16Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "An Autonomous AI Agent that works",
+      "html_url": "https://github.com/erik-megarad/beebot",
+      "language": "Python"
+    },
+    {
+      "full_name": "seahyinghang8/blinky",
+      "stars": 90,
+      "pushed_at": "2024-06-03T01:34:13Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "master",
+      "description": "An open-source debugging agent in VSCode",
+      "html_url": "https://github.com/seahyinghang8/blinky",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "agruai/multiagent-business-automation",
+      "stars": 49,
+      "pushed_at": "2026-05-29T14:36:39Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "Multi Agent for Business Automation is a multi-agent orchestration platform for business automation and decision support. It coordinates specialized AI agents—each with distinct roles, personalities, and tools—through LangGraph workflows, shared memory, and human-in-the-loop (HITL) approval gates.",
+      "html_url": "https://github.com/agruai/multiagent-business-automation",
+      "language": "Python"
+    },
+    {
+      "full_name": "monteslu/agentgate",
+      "stars": 44,
+      "pushed_at": "2026-05-08T23:48:35Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "API gateway for AI agents to access your personal data with human-in-the-loop write approval.",
+      "html_url": "https://github.com/monteslu/agentgate",
+      "language": "JavaScript"
+    },
+    {
+      "full_name": "openagentidentityprotocol/agentidentityprotocol",
+      "stars": 37,
+      "pushed_at": "2026-03-05T13:49:19Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Agent Identity Protocol - Zero-trust security layer for AI agents. Policy enforcement proxy for MCP with Human-in-the-Loop approval, DLP scanning, and audit logging.",
+      "html_url": "https://github.com/openagentidentityprotocol/agentidentityprotocol",
+      "language": ""
+    },
+    {
+      "full_name": "polos-dev/polos",
+      "stars": 36,
+      "pushed_at": "2026-02-24T19:45:55Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "The open-source runtime for AI agents. Sandboxed execution with built-in tools, human-in-the-loop approvals, Slack integration, and durable workflows with automatic retries and prompt caching. You write the agent. Polos handles the infrastructure.",
+      "html_url": "https://github.com/polos-dev/polos",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "romanklis/openclaw-contained",
+      "stars": 32,
+      "pushed_at": "2026-09-11T12:41:49Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "TaskForge Platform runs AI agents in sandboxed Docker containers with capability-based security. Agents start with minimal permissions and must request new capabilities (packages, network access, tools) through a human-in-the-loop approval process. Every approval triggers a container image rebuild, and every LLM interaction is logged for audit.",
+      "html_url": "https://github.com/romanklis/openclaw-contained",
+      "language": "Python"
+    },
+    {
+      "full_name": "jordigilh/kubernaut",
+      "stars": 29,
+      "pushed_at": "2026-09-12T06:10:20Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "An AIOps platform that closes the loop from Kubernetes alert to automated remediation: An AI Agent investigates via MCP tools, selects a fix from a pre-seeded workflow catalog and delegates execution (K8s Job, Tekton, Ansible) — or escalates with a full RCA. Approval gates, OPA policies, and audit trails keep humans in control.",
+      "html_url": "https://github.com/jordigilh/kubernaut",
+      "language": "Go"
+    },
+    {
+      "full_name": "git-syl/hermes-agent-demo",
+      "stars": 27,
+      "pushed_at": "2026-08-30T07:13:52Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": " A multi-model Agent runtime built on Spring Boot 4 / Spring AI 2.0: model routing (Anthropic / DeepSeek / OpenAI /   custom), thinking toggle, Task subagents, hot-pluggable Skills, Docker sandbox + Code Interpreter, MCP tools, dify/n8n   integration, RAG with pgvector, Human-in-the-Loop approvals — all streamed as structured SSE events.",
+      "html_url": "https://github.com/git-syl/hermes-agent-demo",
+      "language": "Java"
+    },
+    {
+      "full_name": "mcheemaa/mistri",
+      "stars": 18,
+      "pushed_at": "2026-09-06T22:22:30Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "The agent harness for Ruby applications. Durable sessions, streaming, human-in-the-loop approval, compaction, structured output, sub-agents, and MCP, with zero runtime dependencies.",
+      "html_url": "https://github.com/mcheemaa/mistri",
+      "language": "Ruby"
+    },
+    {
+      "full_name": "AsteyaTech-com/clawgate-api",
+      "stars": 15,
+      "pushed_at": "2026-02-12T17:16:22Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Opensource Repo for the Clawgate.ai api that is used to enable face id and passkey auth for AI agents like OpenClaw. Now Your AI agents can leverage your phones authentication mechanisms for sensitive and high risk actions that require a human-in -the-loop approval step.",
+      "html_url": "https://github.com/AsteyaTech-com/clawgate-api",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "airlock-dev/airlock",
+      "stars": 14,
+      "pushed_at": "2026-08-22T19:29:12Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Permissions-aware MCP gateway with human-in-the-loop approval for AI agents.",
+      "html_url": "https://github.com/airlock-dev/airlock",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "johnuopini/secret-gate",
+      "stars": 13,
+      "pushed_at": "2026-08-13T23:03:45Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Human-in-the-loop secret approval for AI coding agents. Retrieve secrets from 1Password with Telegram-based approval.",
+      "html_url": "https://github.com/johnuopini/secret-gate",
+      "language": "Go"
+    },
+    {
+      "full_name": "kyungseo/ai-workflow-harness",
+      "stars": 13,
+      "pushed_at": "2026-08-01T11:02:32Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A manual-first, human-in-the-loop workflow harness for AI-assisted development—aligns plans, approval gates, validation, and project state across Claude Code, Codex, Antigravity, and Cursor.",
+      "html_url": "https://github.com/kyungseo/ai-workflow-harness",
+      "language": "Shell"
+    },
+    {
+      "full_name": "dabit3/agent-gate",
+      "stars": 13,
+      "pushed_at": "2026-02-20T12:06:21Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "master",
+      "description": "Human-in-the-loop approval gateway for AI agents. Intercept sensitive actions, queue for review, and audit decisions.",
+      "html_url": "https://github.com/dabit3/agent-gate",
+      "language": "TypeScript"
+    },
+    {
+      "full_name": "abhishekpan5/agentic-ai-predictive-maintenance-oil-and-gas",
+      "stars": 10,
+      "pushed_at": "2025-07-01T17:23:43Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "> An AI-powered predictive maintenance platform for oil & gas equipment. > Features real-time anomaly detection, agentic AI workflows, human-in-the-loop approvals, and an interactive analytics dashboard.",
+      "html_url": "https://github.com/abhishekpan5/agentic-ai-predictive-maintenance-oil-and-gas",
+      "language": "Python"
+    },
+    {
+      "full_name": "deepset-ai/hitl-hayhooks-redis-openwebui",
+      "stars": 10,
+      "pushed_at": "2026-07-24T13:42:19Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A Redis-based Human-in-the-Loop implementation for Haystack Agents, integrated with Open WebUI for interactive tool approval workflows.",
+      "html_url": "https://github.com/deepset-ai/hitl-hayhooks-redis-openwebui",
+      "language": "Python"
+    },
+    {
+      "full_name": "josephkamau32/erp-lite-mcp",
+      "stars": 9,
+      "pushed_at": "2026-09-08T15:41:46Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "A Model Context Protocol (MCP) server exposing ERP-style data (sales orders, inventory, purchase requisitions) to AI agents — with a real human-in-the-loop approval gate on write actions. FastAPI + FastMCP + PostgreSQL, Streamable HTTP transport, Dockerized, tested.",
+      "html_url": "https://github.com/josephkamau32/erp-lite-mcp",
+      "language": "Python"
+    },
+    {
+      "full_name": "egradman/extendo-cli",
+      "stars": 9,
+      "pushed_at": "2026-02-21T02:34:52Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "Human-in-the-loop decisions for AI agents — structured approvals, reviews, and choices via mobile push notifications",
+      "html_url": "https://github.com/egradman/extendo-cli",
+      "language": "JavaScript"
+    },
+    {
+      "full_name": "kennethleungty/Human-in-the-Loop-Workflow-LangGraph",
+      "stars": 8,
+      "pushed_at": "2026-03-18T16:34:46Z",
+      "license_spdx": "MIT",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Setup of basic human-in-the-loop (HITL) workflows with review and approval process in LangGraph",
+      "html_url": "https://github.com/kennethleungty/Human-in-the-Loop-Workflow-LangGraph",
+      "language": "Python"
+    },
+    {
+      "full_name": "mrveiss/AutoBot-AI",
+      "stars": 8,
+      "pushed_at": "2026-09-12T10:31:51Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "Dev_new_gui",
+      "description": "Self-hosted, agentic AI you own — voice, vision-driven browser & computer control, visual workflows, human-in-the-loop approvals, multi-user RBAC, and a knowledge graph. Runs on your infrastructure. Your data. Your AI.",
+      "html_url": "https://github.com/mrveiss/AutoBot-AI",
+      "language": "Python"
+    },
+    {
+      "full_name": "alphaparkinc/genpark-human-in-the-loop-approval-gate-interrupt-skill",
+      "stars": 8,
+      "pushed_at": "2026-09-06T14:17:18Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "GenPark AI Agent Skill - Human-in-the-loop (HIL) approval gate and execution interrupt controller with cryptographic review tokens and diff inspection.",
+      "html_url": "https://github.com/alphaparkinc/genpark-human-in-the-loop-approval-gate-interrupt-skill",
+      "language": "Python"
+    },
+    {
+      "full_name": "sohamkamani/javascript-design-patterns-for-humans",
+      "stars": 4480,
+      "pushed_at": "2024-01-08T05:07:39Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "master",
+      "description": "An ultra-simplified explanation of design patterns implemented in javascript",
+      "html_url": "https://github.com/sohamkamani/javascript-design-patterns-for-humans",
+      "language": ""
+    },
+    {
+      "full_name": "NAalytics/Assemblies-of-putative-SARS-CoV2-spike-encoding-mRNA-sequences-for-vaccines-BNT-162b2-and-mRNA-1273",
+      "stars": 3353,
+      "pushed_at": "2021-12-14T23:40:15Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "RNA vaccines have become a key tool in moving forward through the challenges raised both in the current pandemic and in numerous other public health and medical challenges.  With the rollout of vaccines for COVID-19, these synthetic mRNAs have become broadly distributed RNA species in numerous human populations.  Despite their ubiquity, sequences are not always available for such RNAs.  Standard methods facilitate such sequencing.  In this note, we provide experimental sequence information for the RNA components of the initial Moderna (https://pubmed.ncbi.nlm.nih.gov/32756549/) and Pfizer/BioNTech (https://pubmed.ncbi.nlm.nih.gov/33301246/) COVID-19 vaccines, allowing a working assembly of the former and a confirmation of previously reported sequence information for the latter RNA.  Sharing of sequence information for broadly used therapeutics has the benefit of allowing any researchers or clinicians using sequencing approaches to rapidly identify such sequences as therapeutic-derived rather than host or infectious in origin.   For this work, RNAs were obtained as discards from the small portions of vaccine doses that remained in vials after immunization; such portions would have been required to be otherwise discarded and were analyzed under FDA authorization for research use.  To obtain the small amounts of RNA needed for characterization, vaccine remnants were phenol-chloroform extracted using TRIzol Reagent (Invitrogen), with intactness assessed by Agilent 2100 Bioanalyzer before and after extraction.    Although our analysis mainly focused on RNAs obtained as soon as possible following discard, we also analyzed samples which had been refrigerated (~4 ℃) for up to 42 days with and without the addition of EDTA.  Interestingly a substantial fraction of the RNA remained intact in these preparations.  We note that the formulation of the vaccines includes numerous key chemical components which are quite possibly unstable under these conditions-- so these data certainly do not suggest that the vaccine as a biological agent is stable.  But it is of interest that chemical stability of RNA itself is not sufficient to preclude eventual development of vaccines with a much less involved cold-chain storage and transportation.   For further analysis, the initial RNAs were fragmented by heating to 94℃, primed with a random hexamer-tailed adaptor, amplified through a template-switch protocol (Takara SMARTerer Stranded RNA-seq kit), and sequenced using a MiSeq instrument (Illumina) with paired end 78-per end sequencing.  As a reference material in specific assays, we included RNA of known concentration and sequence (from bacteriophage MS2).  From these data, we obtained partial information on strandedness and a set of segments that could be used for assembly.  This was particularly useful for the Moderna vaccine, for which the original vaccine RNA sequence was not available at the time our study was carried out.  Contigs encoding full-length spikes were assembled from the Moderna and Pfizer datasets.  The Pfizer/BioNTech data [Figure 1] verified the reported sequence for that vaccine (https://berthub.eu/articles/posts/reverse-engineering-source-code-of-the-biontech-pfizer-vaccine/), while the Moderna sequence [Figure 2] could not be checked against a published reference.   RNA preparations lacking dsRNA are desirable in generating vaccine formulations as these will minimize an otherwise dramatic biological (and nonspecific) response that vertebrates have to double stranded character in RNA (https://www.nature.com/articles/nrd.2017.243).  In the sequence data that we analyzed, we found that the vast majority of reads were from the expected sense strand.  In addition, the minority of antisense reads appeared different from sense reads in lacking the characteristic extensions expected from the template switching protocol.  Examining only the reads with an evident template switch (as an indicator for strand-of-origin), we observed that both vaccines overwhelmingly yielded sense reads (>99.99%).  Independent sequencing assays and other experimental measurements are ongoing and will be needed to determine whether this template-switched sense read fraction in the SmarterSeq protocol indeed represents the actual dsRNA content in the original material.  This work provides an initial assessment of two RNAs that are now a part of the human ecosystem and that are likely to appear in numerous other high throughput RNA-seq studies in which a fraction of the individuals may have previously been vaccinated.  ProtoAcknowledgements: Thanks to our colleagues for help and suggestions (Nimit Jain, Emily Greenwald, Lamia Wahba, William Wang, Amisha Kumar, Sameer Sundrani, David Lipman, Bijoyita Roy).  Figure 1: Spike-encoding contig assembled from BioNTech/Pfizer BNT-162b2 vaccine.  Although the full coding region is included, the nature of the methodology used for sequencing and assembly is such that the assembled contig could lack some sequence from the ends of the RNA.  Within the assembled sequence, this hypothetical sequence shows a perfect match to the corresponding sequence from documents available online derived from manufacturer communications with the World Health Organization [as reported by https://berthub.eu/articles/posts/reverse-engineering-source-code-of-the-biontech-pfizer-vaccine/].  The 5’ end for the assembly matches the start site noted in these documents, while the read-based assembly lacks an interrupted polyA tail (A30(GCATATGACT)A70) that is expected to be present in the mRNA. ",
+      "html_url": "https://github.com/NAalytics/Assemblies-of-putative-SARS-CoV2-spike-encoding-mRNA-sequences-for-vaccines-BNT-162b2-and-mRNA-1273",
+      "language": ""
+    },
+    {
+      "full_name": "jina-ai/dalle-flow",
+      "stars": 2829,
+      "pushed_at": "2023-05-16T09:54:02Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "main",
+      "description": "🌊 A Human-in-the-Loop workflow for creating HD images from text",
+      "html_url": "https://github.com/jina-ai/dalle-flow",
+      "language": "Python"
+    },
+    {
+      "full_name": "cbsudux/awesome-human-pose-estimation",
+      "stars": 2479,
+      "pushed_at": "2022-10-12T12:34:44Z",
+      "license_spdx": null,
+      "archived": false,
+      "default_branch": "master",
+      "description": "A collection of awesome resources in Human Pose estimation.",
+      "html_url": "https://github.com/cbsudux/awesome-human-pose-estimation",
+      "language": ""
+    },
+    {
+      "full_name": "Daniil-Osokin/lightweight-human-pose-estimation.pytorch",
+      "stars": 2238,
+      "pushed_at": "2024-04-30T09:54:40Z",
+      "license_spdx": "Apache-2.0",
+      "archived": false,
+      "default_branch": "master",
+      "description": "Fast and accurate human pose estimation in PyTorch. Contains implementation of \"Real-time 2D Multi-Person Pose Estimation on CPU: Lightweight OpenPose\" paper.",
+      "html_url": "https://github.com/Daniil-Osokin/lightweight-human-pose-estimation.pytorch",
+      "language": "Python"
+    },
+    {
+      "full_name": "h1st-ai/h1st",
+      "stars": 797,
+      "pushed_at": "2023-07-31T17:48:41Z",
+      "license_spdx": "NOASSERTION",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Power Tools for AI Engineers With Deadlines",
+      "html_url": "https://github.com/h1st-ai/h1st",
+      "language": "Jupyter Notebook"
+    }
+  ],
+  "skipped": [
+    {
+      "full_name": "jina-ai/dalle-flow",
+      "reason": "最后 push 距今 1215 天 > 730",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "h1st-ai/h1st",
+      "reason": "最后 push 距今 1138 天 > 730",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "agentkitai/agentgate",
+      "reason": "stars 33 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "derive-to/derive",
+      "reason": "stars 28 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "Freespirits/social-auto-engine",
+      "reason": "stars 25 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "aipermission/aipermission",
+      "reason": "stars 19 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "rulego/gflow-engine",
+      "reason": "stars 18 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "OthmaneBlial/term_mcp_deepseek",
+      "reason": "stars 18 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "DylanMerigaud/approvals-ui",
+      "reason": "stars 17 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "edictum-ai/edictum-console",
+      "reason": "stars 17 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "luarvic/click2approve",
+      "reason": "stars 15 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "sidclawhq/platform",
+      "reason": "stars 14 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "antoinekh/netbox-change-control",
+      "reason": "stars 13 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "9904099/opsledger",
+      "reason": "stars 11 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "azdhril/Sentinel",
+      "reason": "stars 11 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "renezander030/draftcat",
+      "reason": "stars 9 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "yohey-w/kagemusha",
+      "reason": "stars 9 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "Kalpan2007/Expense_Mang...",
+      "reason": "stars 8 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "pghoshal/LeanNodes",
+      "reason": "stars 8 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "jeffersongoncalves/laravel-service-desk",
+      "reason": "stars 8 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "anikamin940/hitl-agent-ts",
+      "reason": "stars 7 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "coldsmirk/vef-framework-go",
+      "reason": "stars 7 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "bablsoft/accessflow",
+      "reason": "stars 5 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "dbflow-labs/dbflow-filament",
+      "reason": "stars 5 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "yeomyeonggeori/blueclaw",
+      "reason": "stars 5 < 50",
+      "source": "topic(human-in-the-loop,approval-workflow,guardrails)"
+    },
+    {
+      "full_name": "azkaban/azkaban",
+      "reason": "最后 push 距今 801 天 > 730",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "brigadecore/brigade",
+      "reason": "最后 push 距今 1285 天 > 730",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "camunda/camunda-bpm-platform",
+      "reason": "仓库已归档",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "LehengTHU/Agent4Rec",
+      "reason": "最后 push 距今 797 天 > 730",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "reworkd/AgentGPT",
+      "reason": "仓库已归档",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "OpenBMB/AgentVerse",
+      "reason": "最后 push 距今 733 天 > 730",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "emrgnt-cmplxty/automata",
+      "reason": "仓库已归档",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "irgolic/AutoPR",
+      "reason": "仓库已归档",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "erik-megarad/beebot",
+      "reason": "最后 push 距今 1055 天 > 730",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "seahyinghang8/blinky",
+      "reason": "最后 push 距今 831 天 > 730",
+      "source": "curated(meirwah/awesome-workflow-engines,e2b-dev/awesome-ai-agents)"
+    },
+    {
+      "full_name": "agruai/multiagent-business-automation",
+      "reason": "stars 49 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "monteslu/agentgate",
+      "reason": "stars 44 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "openagentidentityprotocol/agentidentityprotocol",
+      "reason": "stars 37 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "polos-dev/polos",
+      "reason": "stars 36 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "romanklis/openclaw-contained",
+      "reason": "stars 32 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "jordigilh/kubernaut",
+      "reason": "stars 29 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "git-syl/hermes-agent-demo",
+      "reason": "stars 27 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "mcheemaa/mistri",
+      "reason": "stars 18 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "AsteyaTech-com/clawgate-api",
+      "reason": "stars 15 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "airlock-dev/airlock",
+      "reason": "stars 14 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "johnuopini/secret-gate",
+      "reason": "stars 13 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "kyungseo/ai-workflow-harness",
+      "reason": "stars 13 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "dabit3/agent-gate",
+      "reason": "stars 13 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "abhishekpan5/agentic-ai-predictive-maintenance-oil-and-gas",
+      "reason": "stars 10 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "deepset-ai/hitl-hayhooks-redis-openwebui",
+      "reason": "stars 10 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "josephkamau32/erp-lite-mcp",
+      "reason": "stars 9 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "egradman/extendo-cli",
+      "reason": "stars 9 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "kennethleungty/Human-in-the-Loop-Workflow-LangGraph",
+      "reason": "stars 8 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "mrveiss/AutoBot-AI",
+      "reason": "stars 8 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "alphaparkinc/genpark-human-in-the-loop-approval-gate-interrupt-skill",
+      "reason": "stars 8 < 50",
+      "source": "keyword"
+    },
+    {
+      "full_name": "sohamkamani/javascript-design-patterns-for-humans",
+      "reason": "最后 push 距今 978 天 > 730",
+      "source": "keyword"
+    },
+    {
+      "full_name": "facebookresearch/VideoPose3D",
+      "reason": "仓库已归档",
+      "source": "keyword"
+    },
+    {
+      "full_name": "NAalytics/Assemblies-of-putative-SARS-CoV2-spike-encoding-mRNA-sequences-for-vaccines-BNT-162b2-and-mRNA-1273",
+      "reason": "最后 push 距今 1732 天 > 730",
+      "source": "keyword"
+    },
+    {
+      "full_name": "jina-ai/dalle-flow",
+      "reason": "最后 push 距今 1215 天 > 730",
+      "source": "keyword"
+    },
+    {
+      "full_name": "cbsudux/awesome-human-pose-estimation",
+      "reason": "最后 push 距今 1430 天 > 730",
+      "source": "keyword"
+    },
+    {
+      "full_name": "Daniil-Osokin/lightweight-human-pose-estimation.pytorch",
+      "reason": "最后 push 距今 865 天 > 730",
+      "source": "keyword"
+    },
+    {
+      "full_name": "h1st-ai/h1st",
+      "reason": "最后 push 距今 1138 天 > 730",
+      "source": "keyword"
+    }
+  ],
+  "searched": 263,
+  "sourcing": {
+    "keyword": 31,
+    "topic": 64,
+    "curated": 35,
+    "known": 5,
+    "seed": 0,
+    "topics_used": [
+      "human-in-the-loop",
+      "approval-workflow",
+      "guardrails"
+    ],
+    "lists_used": [
+      "meirwah/awesome-workflow-engines",
+      "e2b-dev/awesome-ai-agents"
+    ],
+    "known_used": [
+      "humanlayer/humanlayer",
+      "cline/cline",
+      "OpenInterpreter/open-interpreter",
+      "All-Hands-AI/OpenHands",
+      "langchain-ai/langgraph"
+    ],
+    "extra": 104
+  }
+}

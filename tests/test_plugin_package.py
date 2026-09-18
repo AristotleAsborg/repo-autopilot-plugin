@@ -13,6 +13,8 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
+import json
 import re
 import shutil
 import sys
@@ -26,6 +28,7 @@ MANIFEST = HERE / "plugin.yaml"
 HOST = HERE / "host.js"
 SMOKE = HERE / "scripts" / "smoke.py"
 INSTALL = HERE / "scripts" / "install.py"
+BUNDLED = HERE / "vendor" / "repo-autopilot"
 
 
 def _load_script(module_name: str, path: Path):
@@ -233,9 +236,13 @@ def test_parameters_root_stays_open(host_source: str) -> None:
 
 def test_required_is_a_root_level_array(host_source: str) -> None:
     """报错原文：`harness.defineTool parameters.mode.required belongs to the containing
-    raw object schema`（pkg-2 死在这条）。"""
+    raw object schema`（pkg-2 死在这条）。
+
+    `mode` 必填；`repo_root` **不强求** —— 自包含时它由安装时写进 host.local.js 的
+    `DEFAULT_REPO_ROOT` 兜底，传参只是覆盖。
+    """
     block = _parameters_block(host_source)
-    assert "required: ['mode', 'repo_root']" in block, "必填项要写成根级数组"
+    assert "required: ['mode']" in block, "必填项要写成根级数组，且只要求 mode"
     assert "required: true" not in block, "逐属性 required: true 会被宿主拒绝"
 
 
@@ -534,3 +541,114 @@ def test_bootstrap_advice_matches_what_the_machine_actually_has() -> None:
 
     with_neither = install.bootstrap_advice({"uv": None, "winget": None, "py": None}, venv_dir=venv_dir)
     assert any("python.org" in line for line in with_neither)
+
+
+# --------------------------------------------------- 自包含：自带副本 + 防漂移
+#
+# 这一节钉住"插件自带一份 repo-autopilot"这件事的两个要害：
+#   1. 自带的那份确实在，且与它自己的 MANIFEST 逐文件 sha256 一致（没被改过）；
+#   2. 路径是**安装时写进 host.local.js** 的 —— Host 半边拿不到自己的磁盘位置。
+
+
+def _tiny_bundle(root: Path) -> Path:
+    """造一个最小可校验的"包"：一个文件 + 一份含它 sha256 的清单。"""
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "a.txt").write_text("hello\n", encoding="utf-8")
+    digest = hashlib.sha256((root / "a.txt").read_bytes()).hexdigest()
+    (root / "MANIFEST.json").write_text(
+        json.dumps({"source": {"commit": "deadbee"}, "files": {"a.txt": {"sha256": digest}}}),
+        encoding="utf-8",
+    )
+    return root
+
+
+def test_bundled_copy_is_shipped_and_matches_its_manifest() -> None:
+    """
+    **自包含的底线**：随插件打包的那份 repo-autopilot 必须真的在，且逐文件 sha256 与
+    它自己的 MANIFEST 一致。这条要是红了，"装完不用另 clone"就是空话。
+    """
+    install = _load_script("plugin_install", INSTALL)
+    assert BUNDLED.is_dir(), f"没有自带副本：{BUNDLED}（应当由 tools/package.py build 打出并复制进来）"
+    ok, notes = install.verify_manifest(BUNDLED)
+    assert ok, notes
+    assert install.bundled_repo_root() == BUNDLED
+
+
+def test_smoke_defaults_to_the_bundled_copy() -> None:
+    """不打 --repo-root 时，冒烟脚本查的就该是自带副本。"""
+    smoke = _load_smoke()
+    assert smoke.BUNDLED == BUNDLED
+
+
+def test_verify_manifest_accepts_an_untouched_bundle(scratch) -> None:
+    install = _load_script("plugin_install", INSTALL)
+    ok, notes = install.verify_manifest(_tiny_bundle(scratch / "bundle"))
+    assert ok is True, notes
+
+
+def test_verify_manifest_catches_a_changed_file(scratch) -> None:
+    install = _load_script("plugin_install", INSTALL)
+    bundle = _tiny_bundle(scratch / "bundle")
+    (bundle / "a.txt").write_text("tampered\n", encoding="utf-8")
+    ok, notes = install.verify_manifest(bundle)
+    assert ok is False
+    assert any("内容不符" in note for note in notes), notes
+
+
+def test_verify_manifest_catches_a_missing_file(scratch) -> None:
+    install = _load_script("plugin_install", INSTALL)
+    bundle = _tiny_bundle(scratch / "bundle")
+    (bundle / "a.txt").unlink()
+    ok, notes = install.verify_manifest(bundle)
+    assert ok is False
+    assert any("缺失" in note for note in notes), notes
+
+
+def test_verify_manifest_reports_a_missing_manifest(scratch) -> None:
+    install = _load_script("plugin_install", INSTALL)
+    ok, notes = install.verify_manifest(scratch / "nothing-here")
+    assert ok is False and any("没有清单" in note for note in notes), notes
+
+
+def test_emit_host_bakes_the_path_and_changes_only_that_line(scratch) -> None:
+    install = _load_script("plugin_install", INSTALL)
+    target = scratch / "host.local.js"
+    install.emit_host(BUNDLED, target)
+
+    original = HOST.read_text(encoding="utf-8").splitlines()
+    emitted = target.read_text(encoding="utf-8").splitlines()
+    assert len(original) == len(emitted)
+    differing = [(n, a, b) for n, (a, b) in enumerate(zip(original, emitted), 1) if a != b]
+    assert len(differing) == 1, f"只应当改 DEFAULT_REPO_ROOT 那一行，实际改了 {len(differing)} 行"
+    _, before, after = differing[0]
+    assert before.strip() == "const DEFAULT_REPO_ROOT = ''"
+    assert str(BUNDLED).replace("\\", "\\\\") in after
+
+
+def test_emit_host_refuses_a_host_without_the_marker(scratch, monkeypatch) -> None:
+    """占位符没了就**响亮报错**，不能生成一份"看着像、其实没写路径"的 host。"""
+    install = _load_script("plugin_install", INSTALL)
+    package = scratch / "pkg"
+    (package / "scripts").mkdir(parents=True)
+    (package / "host.js").write_text("// 没有占位符\n", encoding="utf-8")
+    monkeypatch.setattr(install, "HERE", package / "scripts")
+    with pytest.raises(SystemExit):
+        install.emit_host(BUNDLED, scratch / "out.js")
+
+
+def test_host_js_ships_with_an_empty_placeholder(host_source: str) -> None:
+    """
+    发布出去的 host.js 里，`DEFAULT_REPO_ROOT` 必须是**空串占位** ——
+    填好路径的那份是 `host.local.js`（安装时生成、已 gitignore），不进仓库。
+
+    注意**不要**顺手断言"host.js 里不许出现 D:\\"：报错文案里那句
+    「例如 D:\\PythonEnv\\venv\\Scripts\\python.exe」是给人看的**示例路径**，不是本机默认值。
+    （第一版就是这么写的，误报了。）
+    """
+    assert "const DEFAULT_REPO_ROOT = ''" in host_source, "必须是空串占位"
+    declarations = [
+        line.strip() for line in host_source.splitlines() if line.strip().startswith("const DEFAULT_REPO_ROOT")
+    ]
+    assert declarations == ["const DEFAULT_REPO_ROOT = ''"], f"占位必须是空串：{declarations}"
+    # 而且它得**真的被用上**（否则"自带副本"这条路径根本没接进解析逻辑）。
+    assert "? args.repo_root : DEFAULT_REPO_ROOT" in host_source, "repo_root 缺省时要落到 DEFAULT_REPO_ROOT"

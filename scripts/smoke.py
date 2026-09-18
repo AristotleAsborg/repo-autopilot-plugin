@@ -30,6 +30,9 @@ from pathlib import Path
 
 MIN_PYTHON = (3, 12)
 
+#: 随插件一起打包的那份 repo-autopilot（自包含）。不打 --repo-root 时查的就是它。
+BUNDLED = Path(__file__).resolve().parent.parent / "vendor" / "repo-autopilot"
+
 # 依赖紧跟 repo-autopilot 的实际用法：yaml 读配置、requests 走网络、numpy 做向量。
 REQUIRED_MODULES: tuple[tuple[str, str], ...] = (
     ("yaml", "读 config/ 与 state/ 里的 YAML"),
@@ -139,10 +142,15 @@ def render(checks: list[Check]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="repo-autopilot 插件的干净机器冒烟自检")
-    parser.add_argument("--repo-root", required=True, help="repo-autopilot 仓库的绝对路径")
+    parser.add_argument(
+        "--repo-root",
+        help="repo-autopilot 仓库的绝对路径；不给就用随插件打包的自带副本",
+    )
     args = parser.parse_args(argv)
 
-    checks = run_checks(Path(args.repo_root))
+    # 自包含：不打参数时直接查**随插件打包的那份**，省掉"还要自己找一份仓库"这一步。
+    root = Path(args.repo_root) if args.repo_root else BUNDLED
+    checks = run_checks(root)
     print(render(checks))
     return 1 if any(not item.ok for item in checks) else 0
 

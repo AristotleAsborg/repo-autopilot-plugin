@@ -3,10 +3,56 @@
 把 [repo-autopilot](https://github.com/AristotleAsborg/repo-autopilot) 的**只读检查**注册成
 DeepSeek Harness 的模型工具。
 
-* 提供 **1 个工具**、**4 种模式**：`doctor` / `drill` / `acceptance` / `compare`
-* **只读**：不建仓库、不评论、不打标签、不开 PR、不推送
-* **零凭证**：不读任何 GitHub token
-* **适配器**：不含 repo-autopilot 的业务逻辑，只调用它已有的只读入口点
+---
+
+## 这个插件做什么
+
+提供 **1 个工具**：`repo_autopilot_check`，四种模式：
+
+| 模式 | 检查什么 |
+|---|---|
+| `doctor` | 七项环境自检（state 完整性 / 闸门悬挂审批 / 本地小模型 / GitHub 连通性 …） |
+| `drill` | 7 天实战演练台账是否合格 |
+| `acceptance` | 验收步骤表能否加载 |
+| `compare` | 源仓库 ↔ 副本的**逐文件内容哈希比对**（合并两份副本之前跑） |
+
+对外只做三件事：**执行一条只读命令 → 把退出码翻译成人话 → 把原始输出带回来**。
+
+**自包含**：仓库里带着一份**已打好的 repo-autopilot**（`vendor/repo-autopilot/`，190 个文件，
+含 `MANIFEST.json` 逐文件 sha256）。装完**不需要另外 clone** repo-autopilot；
+需要时也可以用 `repo_root` 参数指向你自己的检出。
+
+**边界**：不建仓库、不评论、不打标签、不开 PR、不推送；不读取任何 GitHub 凭证。
+
+## 基本原理
+
+```text
+模型调用 repo_autopilot_check(mode, repo_root?)
+        │
+        ▼
+Host 半边（host.js · Cordis dynamic Package · Node 侧）
+  ① 定位仓库根    ② 解析解释器    ③ 拼一条命令行    ④ 经 shell 服务起子进程
+        │
+        ▼
+repo-autopilot 的既有只读入口点（scripts/doctor.py 等 · Python 侧）
+        │
+        ▼
+stdout / stderr + 退出码
+  ⑤ 误诊分类 → 退出码语义 → 渲染成「结论 + 解释器 + 命令行 + 输出尾部」
+```
+
+五条基本设计：
+
+1. **自包含 + 可校验** —— 随插件带一份打好包的 repo-autopilot，并用它自己的 `MANIFEST.json` 逐文件
+   sha256 校验；装完即用，且"自带的那份有没有被改过"是**可验的**，不是靠信。
+2. **适配器，不是分叉** —— 插件里没有一行 repo-autopilot 的业务逻辑，只负责"调哪个入口点 + 怎么解释退出码"。两条入口（对话指令 / 插件）共享同一套实现。
+3. **退出码语义内置** —— 这套系统的工具用退出码表达**状态**而非**成败**（`drill` 的 `1` 是"还没满 7 天，不是失败"）。语义写在模式表里，不让模型去猜。
+4. **先分清"谁的错"** —— 拿到 stderr 先做一次误诊分类：解释器找不到 / 缺依赖 / 路径错，各归各的账，绝不把**适配器的故障**说成**仓库的故障**。
+5. **零凭证、只读** —— 四种模式全是只读命令；源码里不存在任何读取凭证的路径。GitHub 写操作属于 repo-autopilot 本体，不在本插件范围内。
+
+> **仓库根怎么定位**：`repo_root` 参数 → 否则用安装时写进 `host.local.js` 的自带副本路径。
+> Host 半边拿不到自己的磁盘位置（没有 `fs` / `__dirname` / `process`），所以这个路径必须在
+> **安装时**写进去 —— 见 [2.5](#25-注册成-cordis-package)。
 
 ---
 
@@ -15,9 +61,10 @@ DeepSeek Harness 的模型工具。
 - [一、环境要求](#一环境要求)
 - [二、安装](#二安装)
 - [三、使用方法](#三使用方法)
-- [四、技术路线](#四技术路线)
-- [五、排错](#五排错)
-- [六、许可证](#六许可证)
+- [四、本地小模型与 API 替代接法](#四本地小模型与-api-替代接法)
+- [五、技术路线](#五技术路线)
+- [六、排错](#六排错)
+- [七、许可证](#七许可证)
 
 ---
 
@@ -27,7 +74,7 @@ DeepSeek Harness 的模型工具。
 |---|---|---|---|
 | **Python** | 3.12 或更高 | 要跑 repo-autopilot 的 `tools/` | 全部模式都跑不了 |
 | **Python 模块** | `yaml`、`requests`、`numpy` | 读配置 / 走网络 / 本地模型向量 | 对应模式报「解释器缺依赖」 |
-| **repo-autopilot 仓库** | 一份本地检出即可 | 插件是适配器，业务逻辑全在那里 | 全部模式都跑不了 |
+| **repo-autopilot 仓库** | **随插件自带**（`vendor/repo-autopilot/`），无需另外准备 | 插件是适配器，业务逻辑全在那里 | 全部模式都跑不了（可用 `repo_root` 指向你自己的检出） |
 | **shell 服务** | PowerShell 系（Windows 上即 `pwsh`） | 命令行用 `&` 调用符拼接 | 插件报「没有 shell 服务」或 PowerShell 解析错误 |
 | **git** | 可选 | 只有本地保存类功能需要 | 只读模式不受影响 |
 
@@ -53,8 +100,7 @@ powershell -ExecutionPolicy Bypass -File scripts\install.ps1 -RepoRoot "D:\work\
 ```
 
 `install.ps1` 找解释器分**两趟**：先找「版本够 **且依赖齐**」的，找不到再退而求其次找「版本够」的。
-不分两趟的话，PATH 上那个"没装依赖的 python"会把真正能用的解释器挡在后面（实测就是这个症状）。
-它把**所有检查与报告都留给 `install.py`** —— 两套判据迟早会漂移。
+所有检查与报告都由 `install.py` 完成，`install.ps1` 只负责找解释器并转参数。
 
 脚本会依次做四件事：
 
@@ -89,9 +135,8 @@ powershell -ExecutionPolicy Bypass -File scripts\install.ps1 -RepoRoot "D:\work\
 这个最大障碍的**低成本**解法。加 `--use-uv` 时脚本才会真的去建环境；**默认只打印命令**，
 不下载、不安装任何东西。
 
-> **为什么不做 GUI 向导 / 单文件 exe**：真正的安装摩擦只有「Python+依赖」和「找到仓库」两条，
-> GUI 对这两条都没帮助；而 exe 也解决不了核心依赖 —— `tools/` 仍然要一个能用的 Python。
-> 脚本能覆盖，成本还低一个量级。
+`install.py` / `smoke.py` **只用标准库**（装依赖的脚本自己不能依赖三方库），
+并且只检查**正在跑它的那个解释器**。设计取舍与理由见 [`NOTES.md`](NOTES.md) 第八节。
 
 成功时：
 
@@ -159,14 +204,24 @@ python scripts/smoke.py --repo-root <repo-autopilot 的绝对路径>
 `install.py` 面向"装之前"，`smoke.py` 面向"装之后随时查"。两者检查项一致，都用标准库：
 
 ```bash
-python scripts/smoke.py --repo-root <repo-autopilot 的绝对路径>
+python scripts/smoke.py                 # 默认查随插件自带的那份
+python scripts/smoke.py --repo-root <你自己的 repo-autopilot 检出>
 ```
 
 退出码：**0 = 全过**，**1 = 有缺件**。
 
 ### 2.5 注册成 Cordis Package
 
-`host.js` 的**全部内容**就是喂给 `cordis_define` 的 `code.host` —— 普通 JavaScript，
+**先生成 `host.local.js`**（把自带副本的绝对路径写进去）：
+
+```bash
+python scripts/install.py --emit-host
+```
+
+它只改 `host.js` 里的一行 —— `const DEFAULT_REPO_ROOT = ''` 会被填成自带副本的绝对路径。
+生成的那份**已 gitignore**（里面是本机路径，不该进仓库）。
+
+然后把 **`host.local.js`** 的**全部内容**喂给 `cordis_define`：它是普通 JavaScript，
 没有 TypeScript、没有 `import` / `require`、不依赖未声明的全局。
 
 ```js
@@ -174,10 +229,14 @@ cordis_define({
   plugin: { kind: 'new', idPrefix: 'rauto' },
   name: '<包名>',
   purpose: '<一句话用途>',
-  code: { host: <host.js 的全部内容> },
+  code: { host: <host.local.js 的全部内容> },
 })
 // 然后用返回的 pluginId / packageId 调 cordis_run（首次 mode: 'run'）
 ```
+
+> 为什么必须"写进去"而不是运行时自己找：Host 半边没有 `fs`、没有 `__dirname`、
+> 没有 `process`，**拿不到自己的磁盘位置**。所以自带副本在哪，只能在安装时确定。
+> 不改 `host.js` 也能用 —— 每次调用传 `repo_root` 参数即可。
 
 ### 2.6 包自检
 
@@ -198,7 +257,7 @@ python -m pytest -q
 | 参数 | 必填 | 类型 | 说明 |
 |---|---|---|---|
 | `mode` | 是 | string | `doctor` / `drill` / `acceptance` / `compare` |
-| `repo_root` | 是 | string | repo-autopilot 仓库的**绝对路径** |
+| `repo_root` | 否 | string | repo-autopilot 仓库的**绝对路径**；不填则用随插件自带的那份 |
 | `target` | 仅 `compare` | string | 要比对的副本目录 |
 | `python` | 否 | string | 解释器绝对路径；不填则自动探测（见 [3.4](#34-解释器解析顺序)） |
 
@@ -352,9 +411,73 @@ repo_autopilot_check(mode='drill', repo_root='D:\work\repo-autopilot')
 
 ---
 
-## 四、技术路线
+## 四、本地小模型与 API 替代接法
 
-### 4.1 形态与数据流
+repo-autopilot 的**分类 / 查重 / 停止判断 / 文件定位**默认走**本机小模型**
+（Ollama + `qwen3:4b` + `bge-m3`）。本插件不直接调用模型，但 `doctor` 模式会检查它 ——
+这一节说明**没有本机模型时怎么换成 API**。
+
+### 4.1 两种接法
+
+| 用途 | 本机档位（默认） | API 替代档位 |
+|---|---|---|
+| 对话（分类 / 打标 / 停止判断） | `tiers.local_small` · Ollama `/api/chat` | `tiers.*` 里写 `api_style: "openai"` |
+| **向量**（查重 / 文件定位精排） | `embed.local` · Ollama `/api/embeddings` | `embed.api` · OpenAI 兼容 `/embeddings` |
+
+切换方式：改 `config/models.yaml` 里的 **`embed.active`**（`local` / `api`），**不用改代码**。
+档位名写错会**响亮报错并列出可选项**，不会静默退回本机。
+
+### 4.2 API 填在哪
+
+**Key 只放两处**（二选一，取到就用）：
+
+| 方式 | 位置 |
+|---|---|
+| 环境变量（推荐） | `DEEPSEEK_API_KEY` |
+| 文件 | `$DSH_HOME/.deepseek_key` 的**首行** |
+
+**不要**把 key 写进 `config/models.yaml` —— `config/` 是进 git 的。
+
+**端点与模型名**填在 `config/models.yaml`：
+
+```yaml
+embed:
+  active: "api"                              # ← 改这里切档
+  api:
+    base_url: "https://api.deepseek.com/v1"  # ← 换成你的 OpenAI 兼容端点
+    model: "your-embedding-model"            # ← 换成服务商实际的 embedding 模型 id
+    api_style: "openai"
+    dim: 1024                                # ← 必须与模型真实维度一致
+```
+
+对话档位同理，在 `tiers` 下写 `base_url` / `model` / `api_style: "openai"`。
+
+### 4.3 换档后必须做的两件事
+
+1. **重标定 dedup 阈值。** 文件末尾的 `dedup.suggest_close` / `dedup.cluster`
+   （默认 `0.98` / `0.92`）是**拿 bge-m3 标出来的**。换 embedding 模型后余弦分布会变，
+   沿用旧值等于阈值失效 —— 而失效**不会报错**。
+2. **核对 `dim`。** 配了 `dim` 就会**硬校验**：实际维度对不上直接抛错，而不是让阈值悄悄错下去。
+
+> 向量条数对不上、维度对不上、响应里没有 `data`、缺 key —— 这四种都**立刻抛错**，不返回部分结果。
+> OpenAI 兼容端点**不保证**返回顺序与输入一致，插件按响应里的 `index` 归位后才使用。
+
+### 4.4 安全声明
+
+* **数据会离开本机。** 切到 API 档后，查重与文件定位会把 **issue 正文、文件路径与代码片段**
+  发往 `base_url` 指向的第三方。**涉密仓库请留在 `local` 档**（本机档位不出网）。
+* **默认不外发。** 出厂配置是 `embed.active: "local"`；不主动改配置就不会有任何内容发出去。
+* **凭证边界。** API key 只从上面那两处读，**不写进仓库、不进日志、不回显** ——
+  报错时只回报"来源"（环境变量名或文件路径），不回报 key 本身。
+* **与本插件的只读承诺不冲突。** 本插件自身不调用任何模型、不读任何凭证；
+  这一节讲的是它**检查的那个系统**的模型配置。
+* **成本。** API 档按量计费；本机档位不花钱。重试与失败的调用也会记入 `state/` 下的用量日志。
+
+---
+
+## 五、技术路线
+
+### 5.1 形态与数据流
 
 ```
 模型
@@ -378,7 +501,7 @@ stdout / stderr + 退出码
 * **不复制业务逻辑**：插件里没有一行 repo-autopilot 的算法，只有「调用哪个入口点 + 怎么解释退出码」。
 * 对话指令与插件两条入口共享同一套实现，不允许出现逻辑分叉。
 
-### 4.2 生命周期
+### 5.2 生命周期
 
 * `shell` 通过 `ctx.get('shell')` 读取并做**缺席判断**；没有 shell 时插件**显式报告自己不可用**，
   而不是静默地注册不出工具。
@@ -386,9 +509,9 @@ stdout / stderr + 退出码
   `stop` / `update` / `undefine` 时自动移除，不留残留。
 * `execute` 转发 `exec.signal`，取消能传导到子进程。
 
-### 4.3 与宿主的静态契约
+### 5.3 与宿主的静态契约
 
-`harness.defineTool` 的参数 schema 有三条硬性要求（都是实测撞出来的，各有一条回归用例）：
+`harness.defineTool` 的参数 schema 有三条硬性要求（各有一条回归用例钉住）：
 
 | # | 要求 | 违反时的报错 |
 |---|---|---|
@@ -396,7 +519,7 @@ stdout / stderr + 退出码
 | 2 | 必填项写成**根级数组** `required: [...]` | `parameters.x.required belongs to the containing raw object schema` |
 | 3 | 命令行用 `& 'exe' 'arg'` | 裸拼 `"exe" "arg"` → PowerShell `ParserError` |
 
-### 4.4 shell 与命令行拼接
+### 5.4 shell 与命令行拼接
 
 `ShellExecRequest.command` 是一条**命令行**（不是 argv），在 Windows 上由 `pwsh -Command` 执行。
 因此：
@@ -407,7 +530,7 @@ stdout / stderr + 退出码
 
 **已知限制**：`&` 是 PowerShell 的调用符；bash 系 shell 的 `&` 是后台运算符，语义不同，此时插件不可用。
 
-### 4.5 误诊表
+### 5.5 误诊表
 
 拿到 stderr 后先做一次「谁的错」分类，命中就不把责任推给仓库。
 三条模式的文案都是**从真机输出里原文抄下来的**（而不是想象外部系统会怎么报错）：
@@ -418,7 +541,7 @@ stdout / stderr + 退出码
 | `ModuleNotFoundError` / `No module named` | 解释器缺依赖（环境问题） |
 | `can't open file` / `No such file or directory` | 入口点找不到（路径问题） |
 
-### 4.6 安全边界
+### 5.6 安全边界
 
 * 四种模式**全是只读**，不改任何文件；
 * **不读取任何凭证**：源码里没有 `process.env` / `environ` / `authorization` / `.write_token`
@@ -426,62 +549,62 @@ stdout / stderr + 退出码
 * 不自动下载、不自动安装（`--install-deps` 为显式开关，且只作用于 Python 依赖）；
 * GitHub 写操作（评论、开 PR、合并、建仓）**不在本插件范围内**，属于 repo-autopilot 本身的闸门流程。
 
-### 4.7 目录结构
+### 5.7 目录结构
 
 ```text
 plugin-repo-autopilot/
 ├── plugin.yaml                     # 清单：入口、工具命名空间、触发器、偏差与验证记录
 ├── host.js                         # Host 半边源码（其全文即 cordis_define 的 code.host）
 ├── scripts/
-│   ├── install.py                  # 一键安装/自检（标准库）
+│   ├── install.py                  # 一键安装/自检/完整性校验/--emit-host（标准库）
 │   ├── install.ps1                 # Windows 薄包装：找到解释器后交给 install.py
-│   └── smoke.py                    # 干净机器冒烟自检（标准库）
-├── tests/test_plugin_package.py    # 包自检 35 例（不需要 DSH 运行时）
+│   └── smoke.py                    # 干净机器冒烟自检（标准库，默认查自带副本）
+├── vendor/repo-autopilot/          # **随插件打包的 repo-autopilot**（190 文件 + MANIFEST.json）
+├── tests/test_plugin_package.py    # 包自检 44 例（不需要 DSH 运行时）
 ├── pytest.ini                      # 测试配置（含沙箱下的临时目录注意事项）
 ├── README.md                       # 本文档
 ├── NOTES.md                        # 工程记录：踩过的坑与实测证据
 └── LICENSE
+
+host.local.js                       # 安装时生成（已 gitignore）：DEFAULT_REPO_ROOT 已填好
 ```
 
-> `install.ps1` 是 **UTF-8 with BOM**，这不是洁癖：**Windows PowerShell 5.1 在没有 BOM 时会把
-> UTF-8 当 ANSI 读**，中文注释被解码成乱码，解析器接着就在字符串里找不到收尾引号、
-> 直接报 `ParserError`，整个脚本跑不起来（实测）。改动它时务必保留 BOM —— 有用例钉住。
+`install.ps1` 是 **UTF-8 with BOM**：Windows PowerShell 5.1 在没有 BOM 时会把 UTF-8 当 ANSI 读，
+中文注释被解码成乱码、解析器随即在字符串里找不到收尾引号并报 `ParserError`。改动它时保留 BOM。
 
-### 4.8 测试策略
+### 5.8 测试策略
 
 ```bash
-python -m pytest -q          # 35 passed
+python -m pytest -q          # 44 passed
 ```
 
-覆盖五类：
+覆盖六类：
 
 1. **清单语义**：字段齐全、命名规范（kebab-case）、版本 semver、触发器只声明真能用的、
    偏差必须显式记录（不隐藏）、只读与零凭证承诺；
 2. **`host.js` 代码约束**：无 `import` / `require` / JSX / 未声明全局
    （判据是**语法**而非"这些字母出现过"）；
 3. **清单 ↔ 实现一致**：模式集合、退出码语义；
-4. **宿主静态契约**：4.3 的三条，各附报错原文；
-5. **行为测试**：把误诊表的正则抠出来喂**真机抓下来的**报错原文；
+4. **宿主静态契约**：5.3 的三条，各附报错原文；
+5. **自包含与防漂移**：自带副本在不在、与它的 `MANIFEST.json` 逐文件 sha256 是否一致、
+   篡改与缺失能否被抓到、`--emit-host` 是否只改那一行、占位符丢了会不会响亮报错；
+6. **行为测试**：把误诊表的正则抠出来喂**真机抓下来的**报错原文；
    冒烟/安装脚本的正面与负面路径、GBK 控制台安全性、`--dry-run` 不落盘。
 
-> 测试的一个原则：**夹具必须来自真机输出**。曾经因为把外部系统的报错文案"想象"出来，
-> 代码和用例基于同一个错误假设、手拉手地一起错，用例全绿而功能是坏的。
-> 详见 `NOTES.md`。
-
-### 4.9 已知限制（不隐藏，逐条记录在 `plugin.yaml` 的 `deviations`）
+### 5.9 已知限制（不隐藏，逐条记录在 `plugin.yaml` 的 `deviations`）
 
 | 限制 | 说明 |
 |---|---|
 | shell 必须是 PowerShell 系 | 命令行用 `&`；bash 语义不同，此时不可用 |
-| Python 运行时不打包 | 假设本机已有 Python 3.12+ 与依赖；不做自包含分发。纯 Node 降级未做 |
-| `REPO_AUTOPILOT_PYTHON` 候选 | 机制已验证（变量未设时报 `InvalidOperation` 且退出码为空 → 正确跳过；设上后 exit 0），但**没能端到端验证** —— 插件的 shell 继承 DSH 进程环境，开发会话里改不了它 |
+| Python 运行时不打包 | 自带的是 repo-autopilot 的**代码包**，不是 Python 解释器：仍需本机有 Python 3.12+ 与依赖。纯 Node 降级未做 |
+| `REPO_AUTOPILOT_PYTHON` 候选 | 机制已验证，但**未端到端验证**（插件的 shell 继承 DSH 进程环境，开发会话里改不了它） |
 | 触发器只有 `manual` | 无公网入口，事件驱动（issues/PR）与 cron 只能靠轮询，故不在清单里承诺 |
 | MCP 命名空间 | 未单独起 MCP server，走 harness 的 dynamic Tool |
 | `drill` 的人类评审环节 | 脚本只负责出材料；补丁质量由人判断，脚本不代替 |
 
 ---
 
-## 五、排错
+## 六、排错
 
 | 现象 | 原因 | 处理 |
 |---|---|---|
@@ -490,12 +613,12 @@ python -m pytest -q          # 35 passed
 | 「repo_root 下找不到这个入口点」 | `repo_root` 给错（少一层/多一层） | 指向**含 `scripts/` 与 `tools/` 的那一层** |
 | 「找不到能用的解释器」 | 三个候选都不满足依赖要求 | 设 `REPO_AUTOPILOT_PYTHON` |
 | 「不可用：这个环境没有 shell 服务」 | 宿主没有 `shell` service | 该环境不支持本插件 |
-| PowerShell `ParserError` | shell 不是 PowerShell 系 | 见 [4.4](#44-shell-与命令行拼接) 的已知限制 |
+| PowerShell `ParserError` | shell 不是 PowerShell 系 | 见 [5.4](#54-shell-与命令行拼接) 的已知限制 |
 | `doctor` 报某项失败但模型/Ollama 正常 | 多半是解释器不对（详见 `NOTES.md`） | 先确认「解释器：」那一行指对了没有 |
 | `compare` 报副本缺失 | 副本确实少了文件，或反向比对（工作副本当作源） | 以**正仓为源**比对；确认差异是谁改的 |
 
 ---
 
-## 六、许可证
+## 七、许可证
 
 MIT，见 [`LICENSE`](LICENSE)。

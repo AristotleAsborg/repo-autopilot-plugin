@@ -3,3 +3,7 @@ __pycache__/
 .ruff_cache/
 .cache/
 *.pyc
+
+# 安装时由 `install.py --emit-host` 生成：里面写死了**本机**的绝对路径，
+# 所以它属于"装出来的东西"，不进仓库（发布的那份 host.js 里是空串占位）。
+host.local.js
