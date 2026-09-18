@@ -177,6 +177,25 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 # 逻辑在 install_profile.py 里（可被 Python 用例覆盖），这里只负责用同一个解释器调它。
 if ($InstallProfile) {
     $profileArgs = @((Join-Path $here 'install_profile.py'), '--profile', $Profile)
+    # 把找到的 dsh 一并传下去 —— 否则 install_profile 里的 A（包管理器）永远因为找不到 dsh
+    # 而失败、每次都退到 B。B 能用，但 A 才是"正统"那条，不该白白浪费。
+    $dshBin = $env:DSH_BIN
+    if (-not $dshBin) {
+        $onPath = Get-Command 'dsh' -ErrorAction SilentlyContinue
+        if ($onPath) { $dshBin = $onPath.Source }
+    }
+    if (-not $dshBin) {
+        foreach ($candidate in @(
+                'D:\dsh\runtime\dsh\node_modules\.bin\dsh.cmd',
+                (Join-Path $env:APPDATA 'npm\dsh.cmd')
+            )) {
+            if (Test-Path -LiteralPath $candidate) { $dshBin = $candidate; break }
+        }
+    }
+    if ($dshBin) {
+        Write-Host "(install_profile 用 dsh: $dshBin)"
+        $profileArgs += @('--dsh-bin', $dshBin)
+    }
     if ($DryRun) { $profileArgs += '--dry-run' }
     & $exe @rest @profileArgs
 }
