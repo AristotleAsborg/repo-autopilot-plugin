@@ -7,3 +7,8 @@ __pycache__/
 # 安装时由 `install.py --emit-host` 生成：里面写死了**本机**的绝对路径，
 # 所以它属于"装出来的东西"，不进仓库（发布的那份 host.js 里是空串占位）。
 host.local.js
+
+# 兜底：工作区内那份 repo-autopilot 副本（`install_profile.py --link-root` 的默认值
+# 是插件目录的上一级）。正常情况下它**不该**出现在这里 —— 一旦出现，说明有人从插件目录里
+# 跑了安装器，运行期写的卡片/报告会落进来。ignore 掉，免得顺手提交上去。
+.repo-autopilot/

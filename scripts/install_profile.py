@@ -525,7 +525,10 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     dsh_bin = args.dsh_bin or shutil.which("dsh") or ""
-    link_root = Path(args.link_root) if args.link_root else (Path.cwd() / ".repo-autopilot")
+    # 默认放在**插件目录的上一级**（本项目里那一级就是会话工作区），
+    # **不要**依赖 cwd：实测从插件目录里跑会把副本建进插件自己的 git 仓，
+    # 于是运行期写的卡片/报告会弄脏插件仓。要改就显式 --link-root。
+    link_root = Path(args.link_root) if args.link_root else (PLUGIN_DIR.parent / ".repo-autopilot")
     detail = ""
     used = ""
     if args.method in ("auto", "manager"):
