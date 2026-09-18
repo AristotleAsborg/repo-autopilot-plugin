@@ -241,16 +241,31 @@ def test_parameters_root_stays_open(host_source: str) -> None:
     )
 
 
-def test_required_is_a_root_level_array(host_source: str) -> None:
-    """报错原文：`harness.defineTool parameters.mode.required belongs to the containing
-    raw object schema`（pkg-2 死在这条）。
+def test_parameters_use_the_form_both_loaders_accept(host_source: str) -> None:
+    """
+    判据是**两条装载方式都收的那一种写法**，不是"哪种顺手"。
 
-    `mode` 必填；`repo_root` **不强求** —— 自包含时它由安装时写进 host.local.js 的
+    这条用例原来断言根级 `required: ['mode']` 数组 —— 那是从 sandbox 的报错
+    `harness.defineTool parameters.mode.required belongs to the containing raw
+    object schema` 里学来的，而它其实是 **dynamic Package 独有**的写法。
+    2026-09-18 包入口（profile 层）第一次真机加载时，`defineTool()` 走
+    `parameterSchemaSpecToJsonSchema`（property-map），直接抛
+
+        unsupported JSON schema: parameters.type must be a value schema object
+
+    插件树加载失败 → DSH 起不来；而源码自检全绿、`--dump-config` 也过。
+    逐属性 `required: true` 是唯一两边都收的写法：
+      * sandbox：`normalizeParameterSchemaSpec` 的非 object 分支（`raw=false`），
+        这个位置它明确要求是 `true`；
+      * 包入口：`compilePropertyMap`（property-map 形态）。
+
+    `mode` 必填；`repo_root` **不强制** —— 自包含时它由安装时写进 host.local.js 的
     `DEFAULT_REPO_ROOT` 兜底，传参只是覆盖。
     """
     block = _parameters_block(host_source)
-    assert "required: ['mode']" in block, "必填项要写成根级数组，且只要求 mode"
-    assert "required: true" not in block, "逐属性 required: true 会被宿主拒绝"
+    assert "required: true" in block, "必填项要写成逐属性 `required: true`（两条装载方式的公共写法）"
+    assert block.count("required: true") == 1, "只有 mode 必填"
+    assert "required: ['mode']" not in block, "根级 required 数组只有 sandbox 收，包入口的 defineTool 会拒绝"
 
 
 def test_shell_command_is_a_pwsh_command_line(host_source: str) -> None:

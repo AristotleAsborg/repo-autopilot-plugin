@@ -37,6 +37,24 @@ HEADER = """// 本文件由 `scripts/build_module.py` 从 `host.js` **生成** �
 //   * 插件包（profile 层）—— 本文件导出 apply，由 `dsh plugin add` 装载。
 // 两条入口必须共享同一套实现（ROADMAP 7.3 / AGENTS.md：不允许逻辑分叉）。
 
+// ── 这里补的是**两条装载方式的差异** ────────────────────────────────────────
+// `harness` 不是 JavaScript 的东西，是 dynamic Package 沙箱**内置**的一个对象
+// （`@deepseek-ai/dsh-cordis-host-runner` 的 `HOST_BUILTIN_INSPECTION` 里写着它的
+// 三个函数）。profile 层的 ESM 入口没有沙箱，所以本文件必须把同样这三个动词装回去，
+// 否则 `host.js` 一执行到 `harness.defineTool` 就抛 `harness is not defined`，
+// **整个插件树加载失败、DSH 起不来**（2026-09-18 真机事故）。
+//   1. `harness.defineTool(def)`    ≡ `defineTool(def)`（`@deepseek-ai/dsh-tools`）
+//   2. `harness.registerTool(ctx,…)` ≡ `ctx.tools.register(tool)`
+//      —— 第一方工具插件就是这么注册的（见 `@deepseek-ai/dsh-tool-bash/lib/index.js`）。
+// 差异之二在文件末尾的 `inject`：沙箱的 ctx façade 无条件给 `ctx.tools`，
+// 真实 Cordis 上下文要求先在 `inject` 里声明才允许读这个服务。
+import { defineTool } from '@deepseek-ai/dsh-tools'
+
+const harness = {
+  defineTool: (definition) => defineTool(definition),
+  registerTool: (ctx, tool) => ctx.tools.register(tool),
+}
+
 const plugin = (() => {
 """
 
@@ -46,6 +64,9 @@ FOOTER = """})()
 TAIL = """
 export const name = 'repo-autopilot'
 export const apply = plugin.apply
+// `tools` 是真实 Cordis 服务：不声明 inject 就读不到（sandbox 的 ctx façade 例外，
+// 它无条件给 `ctx.tools`）。第一方工具插件同样声明这一条。
+export const inject = ['tools']
 """
 
 

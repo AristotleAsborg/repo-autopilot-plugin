@@ -33,6 +33,7 @@ import shutil
 import stat
 import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -195,6 +196,125 @@ def verify(profile_dir: Path) -> tuple[bool, list[str]]:
     return ok, notes
 
 
+def find_node(home: Path) -> str | None:
+    """跑 boot 检查用的 node：`DSH_NODE` → PATH → DSH_HOME 旁边那套 runtime。"""
+    for candidate in (
+        os.environ.get("DSH_NODE"),
+        shutil.which("node"),
+        str(home.parent / "runtime" / "node" / "node.exe"),
+    ):
+        if candidate and Path(candidate).is_file():
+            return str(candidate)
+    return None
+
+
+def find_dsh_bin(home: Path, explicit: str | None) -> str | None:
+    """dsh 的入口 **.js**（boot 检查要用 node 直接执行它，所以 .cmd 不算）。"""
+    for candidate in (
+        explicit,
+        os.environ.get("DSH_BIN"),
+        str(
+            home.parent
+            / "runtime"
+            / "dsh"
+            / "node_modules"
+            / "@deepseek-ai"
+            / "dsh"
+            / "lib"
+            / "bin.js"
+        ),
+    ):
+        if candidate and Path(candidate).is_file() and candidate.lower().endswith(".js"):
+            return str(candidate)
+    found = shutil.which("dsh")
+    if found and found.lower().endswith(".js"):
+        return found
+    return None
+
+
+def boot_check(
+    home: Path,
+    profile: str,
+    *,
+    node: str,
+    dsh_bin: str | None,
+    timeout_s: int = 120,
+) -> tuple[bool, str]:
+    """
+    真机 boot 一次 —— **唯一会真的执行 `apply()` 的检查**。
+
+    为什么非有这一步不可（2026-09-18 两次事故的共同形状）：
+      * `dsh --dump-config` 只组合 patch 层就退出，**不加载插件代码**；
+      * 安装器的 `verify()` 只看文件在不在；
+      * 插件树加载失败**不会**写进 session 日志（会话还没建）。
+    于是"装好了"和"DSH 起不来了"可以同时成立。判据只有一个：
+    stdout 上出现 `dsh web: http://...` 那一行。
+
+    用 `--port 0` 让系统挑空闲端口，所以正在跑的 harness 不会干扰这次检查，
+    也**不需要**为了检查先把用户的 harness 停掉。
+    """
+    if dsh_bin is None:
+        return False, "找不到 dsh 的 bin.js（用 --dsh-bin 指定；这一步不能当作已通过）"
+
+    workspace = home.parent / "workspace"
+    env = dict(os.environ)
+    env["DSH_HOME"] = str(home)
+    env.setdefault("DSH_TELEMETRY_MODE", "DISABLED")
+
+    args = [node, dsh_bin, "--profile", profile, "--no-open", "--port", "0"]
+    lines: list[str] = []
+    try:
+        proc = subprocess.Popen(
+            args,
+            cwd=str(workspace if workspace.is_dir() else home),
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            bufsize=1,
+        )
+    except OSError as error:
+        return False, f"起不来 boot 检查子进程：{error}"
+
+    def pump() -> None:
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            lines.append(line.rstrip())
+
+    threading.Thread(target=pump, daemon=True).start()
+
+    served = False
+    deadline = time.time() + timeout_s
+    while time.time() < deadline:
+        if any("dsh web: http" in line for line in lines):
+            served = True
+            break
+        if proc.poll() is not None:
+            break
+        time.sleep(0.25)
+
+    # 无论结果如何都把子进程（及其子进程）收干净，别让探测自己变成僵尸 harness。
+    try:
+        subprocess.run(
+            ["taskkill", "/PID", str(proc.pid), "/T", "/F"],
+            capture_output=True,
+            check=False,
+        )
+    except OSError:
+        pass
+    try:
+        proc.kill()
+    except OSError:
+        pass
+
+    tail = "\n".join(f"        {line}" for line in lines[-12:]) or "        (没有任何输出)"
+    if served:
+        return True, "profile 带着这一行真的启动了（stdout 出现 `dsh web: http`）"
+    return False, "profile 没有走到 serving 那一行，最后 12 行输出：\n" + tail
+
+
 def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(errors="replace")
@@ -205,6 +325,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dsh-bin", help="dsh 可执行文件；默认在常见位置里找")
     parser.add_argument("--method", choices=("auto", "manager", "bundle"), default="auto")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--boot-check",
+        dest="boot_check",
+        action="store_true",
+        default=True,
+        help="装完真的 boot 一次这个 profile，要求它 serve（默认开，--port 0 所以不撞正在跑的 harness）",
+    )
+    parser.add_argument(
+        "--no-boot-check",
+        dest="boot_check",
+        action="store_false",
+        help="跳过 boot 检查；**不要**拿 --dump-config 当代替品（它不加载插件代码）",
+    )
     args = parser.parse_args(argv)
 
     home = Path(args.dsh_home) if args.dsh_home else default_dsh_home()
@@ -250,6 +383,20 @@ def main(argv: list[str] | None = None) -> int:
     if ok and not args.dry_run:
         print("\n下一步：**重开一个会话**（或重启 harness），然后试 repo_autopilot_check(mode='doctor')")
         print(f"卸载（B 装法）：删 {profile_dir / 'node_modules' / package_name()}，并从 bundles 里去掉 {package_name()}")
+    if ok and not args.dry_run and args.boot_check:
+        node = find_node(home)
+        dsh_bin = find_dsh_bin(home, args.dsh_bin)
+        print("\n[boot check] -------------------------------")
+        if node is None:
+            ok = False
+            print("  ** 找不到 node（设 DSH_NODE，或用 --no-boot-check 明确跳过）")
+        else:
+            served, detail = boot_check(home, args.profile, node=node, dsh_bin=dsh_bin)
+            print(f"  {'ok  ' if served else 'FAIL'} {detail}")
+            ok = ok and served
+    elif ok and not args.dry_run:
+        print("\n[.. boot ..] 已被 --no-boot-check 跳过 —— 这一步没跑，别把它理解成通过")
+
     return 0 if ok else 1
 
 

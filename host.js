@@ -10,9 +10,15 @@
 return {
   apply(ctx) {
     // `shell` 是这个插件的**硬依赖**：它的全部工作就是"在给定仓库根上跑一条只读命令"。
-    // 但这里仍用 ctx.get + 缺席时给出可读错误（而不是 inject 进等待态）——
-    // 理由：插件在少 shell 的环境里应当**显式报告自己不可用**，而不是静默地注册不出工具。
-    const shell = ctx.get('shell')
+    //
+    // ⚠️ **千万不要在 apply 时就把服务取出来存着**（2026-09-18 事故的第二个形状）：
+    // 服务是**按可用性激活**的，apply 往往早于 shell 注册 —— 那样取到的是 undefined，
+    // 而且会被闭包**永久记住**，于是插件"装载成功、调用时永远说没有 shell"。
+    // 实测：装进 profile 后 `repo_autopilot_check` 能调、但永远返回
+    // 「不可用：这个环境没有 shell 服务」，而 `shell` 服务其实一直在（Inspect 里能查到）。
+    //
+    // 所以：**在每次调用时现取**（见 runMode 开头）。这样既不会记错状态，
+    // 也仍然保留"环境里真没有 shell 就显式说不可用"的诚实行为（而不是静默不注册工具）。
 
     // 模式表：一条模式 = 一条只读命令 + 它的退出码语义。
     // 退出码语义写在这里而不是交给模型猜 —— 这套系统的工具**大量用退出码表达状态**
@@ -76,7 +82,7 @@ return {
 
     let probedPython = null
 
-    async function resolvePython(explicit, root, signal) {
+    async function resolvePython(explicit, root, signal, shell) {
       if (explicit !== '') {
         return { path: explicit, raw: false, origin: '由 python 参数指定（未探测）' }
       }
@@ -153,6 +159,8 @@ return {
     }
 
     async function runMode(args, signal) {
+      // **现取**，不在 apply 时缓存（见文件开头那段说明：缓存会把 undefined 记一辈子）。
+      const shell = ctx.get('shell')
       if (shell === undefined) {
         return { exit: -1, command: '', verdict: '不可用：这个环境没有 shell 服务', tail: '' }
       }
@@ -179,7 +187,7 @@ return {
       }
       const explicit = text(args.python, '')
       // 先探解释器，再跑命令 —— 顺序反了就会产生"解释器不对、却怪仓库"的误诊。
-      const resolved = await resolvePython(explicit, root, signal)
+      const resolved = await resolvePython(explicit, root, signal, shell)
       if (resolved.path === null) {
         return {
           exit: -3,
@@ -239,30 +247,33 @@ return {
       // 参数根由宿主隐式当成**开放对象**，所以这里**不能**写 `additionalProperties: false`
       // —— 写了会在 apply() 阶段直接抛错（本机实测：pkg-1 就是这么挂的）。
       parameters: {
-        type: 'object',
-        // 必填项写成**根级数组**：逐属性写 `required: true` 会被宿主拒绝
-        // （本机实测报错："parameters.mode.required belongs to the containing raw object schema"）。
-        required: ['mode'],
-        properties: {
-          mode: {
-            type: 'string',
-            enum: ['doctor', 'drill', 'acceptance', 'compare'],
-            description: '要跑的只读检查。',
-          },
-          repo_root: {
-            type: 'string',
-            description:
-              'repo-autopilot 仓库的绝对路径。不填则用随插件打包的那份自带副本' +
-              '（需要先跑 install.py --emit-host 生成 host.local.js）。',
-          },
-          target: {
-            type: 'string',
-            description: 'compare 模式要比对的副本目录（其它模式忽略）。',
-          },
-          python: {
-            type: 'string',
-            description: '解释器绝对路径；默认 `python`（本机常用 D:\\PythonEnv\\venv\\Scripts\\python.exe）。',
-          },
+        // 每个属性**逐条**列在这里，必填项写成 `required: true`。
+        // 这是两条装载方式**唯一的公共写法**：
+        //   * dynamic Package 的 sandbox 把它当隐式开放对象（`raw=false`，
+        //     逐属性 `required: true` 正是它认的写法）；
+        //   * 包入口的 `defineTool` 走 `parameterSchemaSpecToJsonSchema`（property-map）。
+        // 反过来不成立：根级 `required: ['mode']` 数组只有 sandbox 收，包入口会抛
+        // `unsupported JSON schema: parameters.type must be a value schema object`
+        // （2026-09-18 实测 —— 这是那次插件树加载失败的第二颗雷）。
+        mode: {
+          type: 'string',
+          required: true,
+          enum: ['doctor', 'drill', 'acceptance', 'compare'],
+          description: '要跑的只读检查。',
+        },
+        repo_root: {
+          type: 'string',
+          description:
+            'repo-autopilot 仓库的绝对路径。不填则用随插件打包的那份自带副本' +
+            '（需要先跑 install.py --emit-host 生成 host.local.js）。',
+        },
+        target: {
+          type: 'string',
+          description: 'compare 模式要比对的副本目录（其它模式忽略）。',
+        },
+        python: {
+          type: 'string',
+          description: '解释器绝对路径；默认 `python`（本机常用 D:\\PythonEnv\\venv\\Scripts\\python.exe）。',
         },
       },
       output: {
