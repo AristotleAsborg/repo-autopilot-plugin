@@ -1,0 +1,79 @@
+name: repo-autopilot-plugin
+version: 0.2.0
+summary: 把 repo-autopilot 的**只读**检查接成 harness 插件（默认零凭证、零写入）
+license: MIT
+homepage: https://github.com/AristotleAsborg/repo-autopilot
+
+# 形态说明（对着 ROADMAP 7.3 写）：
+#   7.3 要求"打包为 dsh 插件：plugin.yaml（声明触发器）+ 复用 skills/ + MCP 工具命名空间"。
+#   这一版先做**工具命名空间 + manual 触发器**；触发器只声明 manual，
+#   因为本机没有公网入口，事件驱动（issues.opened / schedule.cron）在这台机器上只能靠轮询 ——
+#   **不许在清单里承诺做不到的事**（宁可写清楚）。
+entry:
+  host: host.js
+  client: null          # 第一版只做 Host 半边；客户端的问答卡片在下一轮加
+
+tools:
+  namespace: repo_autopilot
+  provides:
+    - name: repo_autopilot_check
+      mode: read-only
+      needs_credentials: false
+      summary: 在给定仓库根上跑 doctor / drill / acceptance / compare 四种只读检查之一
+
+triggers:
+  - kind: manual
+    description: 由人类在对话里唤起（唯一在本机真正可用的触发器）
+
+# 与路线 7.3 的偏差（记录，不隐藏）：
+deviations:
+  - "events（issues.opened / pull_request.opened）：本机无公网入口，未实现；只能用轮询代替。"
+  - "triggers.schedule.cron：未实现；本机的定时能力实际是 tools/cadence.py 的到期审计 + 人工唤起。"
+  - "MCP 命名空间：第一版走 harness 的 dynamic Tool（同一个名字空间在清单里声明），未单独起 MCP server。"
+  - "shell 平台假设：host.js 用 PowerShell 的调用符 `&` + 单引号拼命令行（本机 shell 是 pwsh -Command）。
+     在 bash 系 shell 上 `&` 是后台运算符、语义不同，本插件不可用 —— 这是**已知限制**，未隐藏。
+     证据：`& 'python.exe' 'scripts/doctor.py' '--json'` → 七项自检全过、exit 0；
+     而裸双引号形式 → ParserError（连带把 doctor 误报成「自检有异常」）。"
+  - "Python 运行时不打包：插件假设本机已有 Python 3.12+ 与 yaml/requests/numpy，自身不做自包含分发。
+     缓解：不填 python 参数时会按 `REPO_AUTOPILOT_PYTHON` → `python3` → `python` 逐个探测；
+     `scripts/smoke.py` 能在缺依赖的机器上把缺件逐条报出来。**纯 Node 降级方案未做。**"
+  - "`REPO_AUTOPILOT_PYTHON` 这条候选**未端到端验证**：插件的 shell 继承 DSH 进程的环境，
+     而开发会话里改不了它。已验证的是机制本身（变量未设时 `& $env:...` 报 InvalidOperation、
+     `$LASTEXITCODE` 为空 → 探测正确跳过；变量设上后 exit 0）与跳过行为。**如实记录，不假装验过。**"
+
+# 真机验证记录（2026-09-18 · 本机 DSH 进程内实跑）：
+#   定义 7 个 Package 才走到现在，**前 3 个都死在宿主静态契约上**（见 tests/ 里那三条用例）；
+#   `rauto-1/pkg-7` 运行中（run-7），四个模式都**真调用成功**：
+#     doctor      → 七项自检全过（exit 0）
+#     drill       → 7 天演练台账合格，7/7 全 full、人类介入 0、对外写 0（exit 0）
+#     acceptance  → 验收步骤表可加载，0.1~8.2 全在（exit 0）
+#     compare     → 189 个包内文件内容哈希逐一相同，无合并风险（exit 0）
+#   负向也验了：不给 python → 明确报"环境问题"；repo_root 给错 → 明确报"路径问题"。
+#   Package 源码与 host.js 逐行一致，无漂移（cordis_inspect_self 回读比对）。
+#   包自检 27 passed；冒烟脚本正面/负面路径各验了一次。
+verification:
+  host_platform: "Windows + PowerShell（`&` 调用符）"
+  live_run: "rauto-1/pkg-7 (run-7)"
+  tool_calls_verified:
+    - "repo_autopilot_check mode=doctor → exit 0，七项全过"
+    - "repo_autopilot_check mode=drill → exit 0，7/7 合格"
+    - "repo_autopilot_check mode=acceptance → exit 0，0.1~8.2 全在"
+    - "repo_autopilot_check mode=compare target=D:\\apps\\repo-autopilot → exit 0，189/189 一致"
+    - "不给 python → 「找不到能用的解释器……这是环境问题，不是仓库问题」"
+    - "repo_root 给错 → 「repo_root 下找不到这个入口点……不是仓库坏了」"
+  smoke_script:
+    - "venv + 正确仓库 → 10 条全 OK，exit 0"
+    - "裸 python（缺依赖）→ 3 条缺件 + 补法，exit 1"
+    - "--repo-root 给错 → 4 个入口点缺失并标出绝对路径，exit 1"
+  package_self_check: "27 passed"
+  source_drift: "无（Package 回读 == host.js）"
+  packages_burned_learning_the_contract: 3
+
+requires:
+  runtime: "python >= 3.12（要跑 repo-autopilot 的 tools/）"
+  external: "git（本地模式用）；GitHub token **不需要**"
+  repo: "repo-autopilot 仓库本体：插件是适配器，调用它的只读入口点，不复制逻辑"
+
+install:
+  kind: local-folder
+  note: 把本目录作为插件源码；host.js 的全部内容就是喂给 cordis_define 的 code.host。
