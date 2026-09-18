@@ -1,5 +1,5 @@
 name: repo-autopilot-plugin
-version: 0.2.0
+version: 0.3.0
 summary: 把 repo-autopilot 的**只读**检查接成 harness 插件（默认零凭证、零写入）
 license: MIT
 homepage: https://github.com/AristotleAsborg/repo-autopilot
@@ -77,3 +77,13 @@ requires:
 install:
   kind: local-folder
   note: 把本目录作为插件源码；host.js 的全部内容就是喂给 cordis_define 的 code.host。
+  one_command: "python scripts/install.py --repo-root <repo-autopilot 绝对路径>"
+  check: "python scripts/smoke.py --repo-root <repo-autopilot 绝对路径>"
+  self_test: "python -m pytest -q"
+  design_notes:
+    - "install.py / smoke.py **只用标准库**：装依赖的脚本本身不能依赖三方库，否则缺 yaml 时它自己先崩。"
+    - "默认**不下载任何东西**；--install-deps 是显式开关，且只作用于 Python 依赖。"
+    - "不抓子进程输出（沙箱禁止管道抓输出，会 EPERM），因此只检查**当前解释器** —— 也更诚实。"
+    - "控制台按 errors=replace 输出，且报错文案里**不放 emoji**：中文 Windows 的 GBK 控制台
+       遇到 `⚠️` 会 UnicodeEncodeError 把脚本打崩，且偏偏崩在「要报告缺件」的时候。
+       （2026-09-18 实测；双引号在此处是 YAML 分隔符，所以内层一律用「」）"

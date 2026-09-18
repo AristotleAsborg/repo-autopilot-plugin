@@ -25,20 +25,25 @@ HERE = Path(__file__).resolve().parents[1]
 MANIFEST = HERE / "plugin.yaml"
 HOST = HERE / "host.js"
 SMOKE = HERE / "scripts" / "smoke.py"
+INSTALL = HERE / "scripts" / "install.py"
 
 
-def _load_smoke():
-    """按路径加载 `scripts/smoke.py`（它不是包，也不该为测试改结构）。
+def _load_script(module_name: str, path: Path):
+    """按路径加载 `scripts/` 下的脚本（它们不是包，也不该为测试改结构）。
 
     **必须先登记进 `sys.modules`**：`@dataclass` 在解析字段类型时要顺着
     `cls.__module__` 去 `sys.modules` 里找自己，不登记就 `AttributeError`。
     """
-    spec = importlib.util.spec_from_file_location("plugin_smoke", SMOKE)
+    spec = importlib.util.spec_from_file_location(module_name, path)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
-    sys.modules["plugin_smoke"] = module
+    sys.modules[module_name] = module
     spec.loader.exec_module(module)
     return module
+
+
+def _load_smoke():
+    return _load_script("plugin_smoke", SMOKE)
 
 
 @pytest.fixture(scope="module")
@@ -419,3 +424,60 @@ def test_smoke_exit_codes_are_honest(scratch, monkeypatch, capsys) -> None:
 
     assert smoke.main(["--repo-root", str(scratch / "nope")]) == 1
     assert "不能跑" in capsys.readouterr().out
+
+
+# --------------------------------------------------------------- 一键安装脚本
+
+
+def test_install_autodetects_the_repo_root(scratch, monkeypatch) -> None:
+    install = _load_script("plugin_install", INSTALL)
+    repo = _synthetic_repo(scratch / "somewhere" / "repo-autopilot")
+    # 只认这个合成仓库。
+    # 不加这行的话，"找不到"这一半根本测不了 —— 因为合成仓库的**祖先目录里就有一个真的
+    # `repo-autopilot`**（本插件就放在它旁边），逐级向上找会**正确地**找到它。
+    # 那不是 bug，是搜索逻辑按设计工作；但它会让断言变成"看这台机器上有什么"。
+    monkeypatch.setattr(install, "is_repo_root", lambda candidate: candidate == repo.resolve())
+    assert install.autodetect_repo_root(scratch / "somewhere") == repo.resolve()
+    assert install.autodetect_repo_root(scratch / "nowhere") is None
+
+
+def test_install_says_ok_for_a_complete_setup(scratch, capsys) -> None:
+    install = _load_script("plugin_install", INSTALL)
+    repo = _synthetic_repo(scratch / "repo-autopilot")
+    assert install.main(["--repo-root", str(repo)]) == 0
+    assert "可以注册" in capsys.readouterr().out
+
+
+def test_install_fails_loudly_on_a_missing_repo_root(scratch, capsys) -> None:
+    install = _load_script("plugin_install", INSTALL)
+    assert install.main(["--repo-root", str(scratch / "nope")]) == 1
+    out = capsys.readouterr().out
+    assert "不能直接注册" in out
+    assert "--repo-root" in out
+
+
+def test_install_next_steps_survive_a_gbk_console() -> None:
+    """
+    **这条是真机 bug 逼出来的**：中文 Windows 的控制台是 GBK，
+    报错文案里带一个 `⚠️` 就会 `UnicodeEncodeError` 把脚本**当场打崩** ——
+    而且偏偏崩在"要报告缺件"的那一刻，用户最需要输出时反而看到 traceback。
+
+    判据很直接：把要打印的文案按 GBK 编一遍，编不过就是会崩。
+    """
+    install = _load_script("plugin_install", INSTALL)
+    for all_good in (True, False):
+        text = install.render_next_steps(sys.executable, Path("X:/repo"), all_good=all_good)
+        text.encode("gbk")  # 抛 UnicodeEncodeError 就说明这条用例失败
+
+
+def test_install_dry_run_never_installs_anything(scratch, monkeypatch, capsys) -> None:
+    """`--dry-run` 只说不做：一旦真的调了 pip，这条用例就会炸。"""
+    install = _load_script("plugin_install", INSTALL)
+
+    def _explode(*_args, **_kwargs):
+        raise AssertionError("--dry-run 不应该真的执行 pip")
+
+    monkeypatch.setattr(install.subprocess, "call", _explode)
+    repo = _synthetic_repo(scratch / "repo-autopilot")
+    install.main(["--repo-root", str(repo), "--install-deps", "--dry-run"])
+    capsys.readouterr()
