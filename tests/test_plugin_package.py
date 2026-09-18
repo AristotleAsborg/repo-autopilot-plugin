@@ -867,3 +867,43 @@ def test_pnpm_lookup_prefers_path_then_corepack(monkeypatch) -> None:
 
     monkeypatch.setattr(module.shutil, "which", lambda name: None)
     assert module.find_pnpm() is None, "两样都没有时要明确返回 None，好让调用方退回 B"
+
+
+# ------------------------------------- 沙箱拦下工作区外的写：交给人类，而不是反复提权
+#
+# 这份部署的沙箱是**故意**钉成 workspace-write 的（%DSH_HOME%\cordis.patch.yml 里
+# 显式写明 danger-full-access 不启用、并把该预设从表里删掉）。而装 profile 必须写
+# %DSH_HOME%\profiles\...，天然在工作区之外 —— 于是 agent 每跑一次就要人批一次。
+# 正确的分工：用户双击 install.cmd（不经沙箱、零提示）；agent 只把命令交出去。
+
+
+def test_bundle_install_hands_the_command_out_instead_of_failing(scratch, monkeypatch) -> None:
+    profile = _fake_profile(scratch)
+    module = _load_script("plugin_install_profile_outside", HERE / "scripts" / "install_profile.py")
+
+    def _denied(_destination):
+        raise PermissionError("[WinError 5] 拒绝访问 —— 沙箱拦下了工作区之外的写")
+
+    monkeypatch.setattr(module, "copy_plugin", _denied)
+    with pytest.raises(module.NeedsOutsideSandbox) as excinfo:
+        module.install_by_bundle(profile, dry_run=False)
+
+    assert "install_profile.py" in excinfo.value.command, "要把可粘贴的命令交出去"
+    assert "--profile web" in excinfo.value.command
+
+
+def test_main_exits_3_with_a_pasteable_command_when_denied(scratch, monkeypatch, capsys) -> None:
+    """退出码 3 = 「请你在沙箱外跑一次」，与 1（真失败）区分开。"""
+    profile = _fake_profile(scratch)
+    module = _load_script("plugin_install_profile_exit3", HERE / "scripts" / "install_profile.py")
+
+    monkeypatch.setattr(module.shutil, "which", lambda name: None)  # 让 A 直接失败，走 B
+    monkeypatch.setattr(
+        module,
+        "install_by_bundle",
+        lambda *_a, **_k: (_ for _ in ()).throw(module.NeedsOutsideSandbox("python x.py", PermissionError("denied"))),
+    )
+    rc = module.main(["--profile", "web", "--dsh-home", str(scratch)])
+    out = capsys.readouterr().out
+    assert rc == 3, out
+    assert "沙箱" in out and "install.cmd" in out, out

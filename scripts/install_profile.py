@@ -130,6 +130,26 @@ def force_remove(path: Path) -> None:
     shutil.rmtree(path)
 
 
+class NeedsOutsideSandbox(RuntimeError):
+    """
+    目标在工作区之外，被文件沙箱拦下了 —— **不要在这里反复申请提权**，
+    把"请在沙箱外跑一次"的那条命令交给人类。
+
+    为什么：这份部署的沙箱是**故意**钉成 `workspace-write` 的
+    （`%DSH_HOME%\\cordis.patch.yml` 里显式写明 `danger-full-access` 不启用，
+    并把该预设从选择表里删掉以防误点）。而装 profile 必须写 `%DSH_HOME%\\profiles\\...`，
+    天然在工作区之外 —— 于是 agent 每跑一次就要人批一次。
+
+    正确的分工：**用户双击 `install.cmd`（不经沙箱、零提示）；
+    agent 只把命令交出去**，而不是一次次触发审批。
+    """
+
+    def __init__(self, command: str, error: OSError) -> None:
+        super().__init__(str(error))
+        self.command = command
+        self.error = error
+
+
 def install_by_bundle(profile_dir: Path, *, dry_run: bool) -> tuple[bool, str]:
     """B：不经过包管理器，直接把终态写出来。"""
     name = package_name()
@@ -143,24 +163,35 @@ def install_by_bundle(profile_dir: Path, *, dry_run: bool) -> tuple[bool, str]:
     if dry_run:
         return True, f"（--dry-run）会把 {PLUGIN_DIR} 复制到 {target}，并更新 {manifest_path}"
 
-    if target.exists():
-        force_remove(target)
-    target.mkdir(parents=True, exist_ok=True)
-    skipped = copy_plugin(target)
+    # 从这里开始的写都落在 %DSH_HOME% 里 —— 也就是**会话工作区之外**。
+    # 沙箱会拒（这份部署是故意钉成 workspace-write 的），这时**不要**一遍遍申请提权，
+    # 而是把"请在沙箱外跑一次"的命令交给人类（见 NeedsOutsideSandbox 的说明）。
+    # 注意**删除也算写**：升级时先 force_remove 旧副本，那一步同样会被拦，所以它在 try 里。
+    outside_hint = f'python "{PLUGIN_DIR / "scripts" / "install_profile.py"}" --profile {profile_dir.name}'
+    try:
+        if target.exists():
+            force_remove(target)
+        target.mkdir(parents=True, exist_ok=True)
+        skipped = copy_plugin(target)
 
-    backup = manifest_path.with_name(f"package.json.bak-install-profile-{time.strftime('%Y%m%d-%H%M%S')}")
-    backup.write_text(manifest_path.read_text(encoding="utf-8"), encoding="utf-8")
+        backup = manifest_path.with_name(
+            f"package.json.bak-install-profile-{time.strftime('%Y%m%d-%H%M%S')}"
+        )
+        backup.write_text(manifest_path.read_text(encoding="utf-8"), encoding="utf-8")
 
-    dependencies = manifest.setdefault("dependencies", {})
-    dependencies[name] = f"file:{PLUGIN_DIR.as_posix()}"
-    dsh = manifest.setdefault("dsh", {})
-    profile_section = dsh.setdefault("profile", {})
-    bundles = profile_section.setdefault("bundles", [])
-    if name not in bundles:
-        bundles.append(name)
-    manifest_path.write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
+        dependencies = manifest.setdefault("dependencies", {})
+        dependencies[name] = f"file:{PLUGIN_DIR.as_posix()}"
+        dsh = manifest.setdefault("dsh", {})
+        profile_section = dsh.setdefault("profile", {})
+        bundles = profile_section.setdefault("bundles", [])
+        if name not in bundles:
+            bundles.append(name)
+        manifest_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+    except OSError as error:
+        raise NeedsOutsideSandbox(outside_hint, error) from error
+
     note = f"已直接安装到 {target}（备份：{backup.name}）"
     if skipped:
         note += f"；跳过 {len(skipped)} 个读不了的文件：{'、'.join(skipped[:3])}"
@@ -369,7 +400,18 @@ def main(argv: list[str] | None = None) -> int:
 
     if not used:
         print("\n[B 免包管理器] 直接写出终态")
-        ok, detail = install_by_bundle(profile_dir, dry_run=args.dry_run)
+        try:
+            ok, detail = install_by_bundle(profile_dir, dry_run=args.dry_run)
+        except NeedsOutsideSandbox as blocked:
+            # **不要**在这里申请提权：这份部署的沙箱是故意钉死的。
+            # 正确的做法是把命令交出去 —— 用户双击或在普通终端里跑，零提示、一次装完。
+            print("            [!] 写不进去：目标在工作区之外，被文件沙箱拦下了")
+            print(f"                {blocked.error}")
+            print()
+            print("            → 请在**沙箱之外**（资源管理器双击 install.cmd，或普通终端）执行：")
+            print(f"                {blocked.command}")
+            print("            → 装完重开会话即可；本步不需要 agent 提权。")
+            return 3
         print(f"            {'成功' if ok else '失败'}：{detail}")
         if not ok:
             return 1
