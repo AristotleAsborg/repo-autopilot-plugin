@@ -141,6 +141,13 @@ def render(checks: list[Check]) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # 兜底：控制台编码装不下的字符**替换**掉，而不是抛异常。
+    # 英文 Windows 的默认控制台是 cp1252，打印中文会 UnicodeEncodeError 直接退出 1 ——
+    # 实测：GitHub 的 windows-latest 就是这么红的，而 ubuntu 全绿。
+    # （install.py 早有这一行，smoke.py 漏了 —— 同一个 bug 犯两次。）
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="replace")
+
     parser = argparse.ArgumentParser(description="repo-autopilot 插件的干净机器冒烟自检")
     parser.add_argument(
         "--repo-root",

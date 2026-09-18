@@ -524,6 +524,30 @@ def test_install_ps1_probes_contain_no_double_quotes() -> None:
         assert '"' not in line, f"探测代码里不许出现双引号：{line}"
 
 
+def test_smoke_survives_a_strict_console_encoding(monkeypatch) -> None:
+    """
+    **这条是 CI 逼出来的**：GitHub 的 `windows-latest` 是英文 Windows，控制台编码 **cp1252**，
+    `smoke.py` 打印中文时 `UnicodeEncodeError` 直接退出 1 —— 而那一步在 ubuntu 上是绿的，
+    本地（中文 Windows，GBK）也照样绿，所以只在 CI 上暴露。
+
+    这里把 stdout 换成**严格 cp1252** 的 TextIOWrapper 真跑一遍 `main()`：
+    只要有兜底就不会抛；没有兜底这条用例会直接 `UnicodeEncodeError`。
+    （`install.py` 当初也犯过同一个错，那边已有用例。）
+    """
+    import io
+
+    smoke = _load_smoke()
+    raw = io.BytesIO()
+    monkeypatch.setattr(sys, "stdout", io.TextIOWrapper(raw, encoding="cp1252", errors="strict"))
+    try:
+        rc = smoke.main([])  # 默认查自带副本
+    finally:
+        sys.stdout.flush()
+    written = raw.getvalue().decode("cp1252")
+    assert written.strip(), "应当有输出"
+    assert rc in (0, 1), rc
+
+
 def test_bootstrap_advice_matches_what_the_machine_actually_has() -> None:
     """引导档要**按本机实际有什么**分档，不能一律甩一句"去装 Python"。"""
     install = _load_script("plugin_install", INSTALL)
