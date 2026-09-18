@@ -1,0 +1,150 @@
+{
+  "need": "在沙箱里执行不可信代码并跑测试（进程/文件系统隔离）",
+  "scores": {
+    "google/nsjail": {
+      "score": {
+        "relevance": 0.95,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "README 明确写着这是 'Linux process isolation tool using namespaces, resource limits, and seccomp-bpf syscall filters'，功能涵盖 'Filesystem constraints: chroot(), pivot_root(), read-only mounts' 与 PID/MOUNT/USER 等 'Namespace isolation'，目录里也有 mnt.cc/mnt_newapi.cc/cgroup.cc/contain.cc 和 config.proto+configs 说明它是可直接调用的独立命令行沙箱，正好满足在沙箱里跑不可信代码并执行测试的需求；其 Apache-2.0 许可证（caps.cc/caps.h 头部均为 Apache License 2.0）无风险，可直接作为外部依赖执行。"
+      },
+      "evidence_chars": 3202
+    },
+    "ioi/isolate": {
+      "score": {
+        "relevance": 0.9,
+        "usage": "dependency",
+        "license_risk": "warn",
+        "reason": "README 明确说明它是用 Linux namespaces 和 cgroups 安全运行不可信可执行文件的沙箱，且 cg.c（Control Groups）、isolate.c、config.c 等核心文件正对应进程/文件系统隔离需求，可直接作为外部沙箱工具调用；但许可证显示 NOASSERTION，无法确认具体条款，需先核实。"
+      },
+      "evidence_chars": 3051
+    },
+    "containers/bubblewrap": {
+      "score": {
+        "relevance": 0.9,
+        "usage": "dependency",
+        "license_risk": "warn",
+        "reason": "README 明确说明它用 user namespaces 为无特权用户构建沙箱（\"Bubblewrap uses these to build the sandbox\"），且仓库含 bind-mount.c/network.c/chroot_realpath.c 等进程与文件系统隔离实现，正好对应沙箱执行不可信代码的需求；但它是独立的 bwrap 命令行工具而非可内嵌库，适合作为依赖调用；元数据许可证标为 NOASSERTION，而 bind-mount.c/bubblewrap.c 头部标 SPDX-License-Identifier: LGPL-2.0-or-later，二者不一致需人工确认。"
+      },
+      "evidence_chars": 3204
+    },
+    "abshkbh/arrakis": {
+      "score": {
+        "relevance": 0.85,
+        "usage": "reference",
+        "license_risk": "block",
+        "reason": "README 明确说明它用 MicroVM 隔离不可信代码执行并支持 snapshot-and-restore，正好对应“沙箱跑测试+进程/文件系统隔离”的需求，cmd/cmdserver/main.go 也显示了文件上传与 baseDir 路径穿越防护的命令执行面；但证据只有目录树与两个 main.go 前 40 行，没有可直接复用的隔离实现代码，且 AGPL-3.0 对网络服务有传染性，因此只宜参考其设计（或以服务形式集成），不宜直接抄代码。｜许可证查表结果：AGPL-3.0 属强 copyleft"
+      },
+      "evidence_chars": 2707
+    },
+    "judge0/judge0": {
+      "score": {
+        "relevance": 0.75,
+        "usage": "dependency",
+        "license_risk": "block",
+        "reason": "README 标题为 Judge0 且顶层含 Dockerfile、docker-compose.yml、judge0.conf，符合「沙箱执行不可信代码」的判题系统定位，但给出的 app/ 代码只有 health_controller 的 Resque 队列统计与 home_controller，看不到进程/文件系统隔离（如 isolate/cgroup）实现，故只能作为整体服务引入参考。｜许可证查表结果：GPL-3.0 属强 copyleft"
+      },
+      "evidence_chars": 2619
+    },
+    "moby/moby": {
+      "score": {
+        "relevance": 0.75,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "README 明确说 Moby 提供 containerization 的 toolkit 组件，顶层有 daemon/、cmd/dockerd、integration/ 等容器运行时目录，可作为隔离跑不可信代码的运行时依赖；但可见的 cmd/docker-proxy 代码只是 TCP/UDP 转发，与沙箱隔离无直接可抄逻辑，故不选 copy。"
+      },
+      "evidence_chars": 3248
+    },
+    "podman-container-tools/podman": {
+      "score": {
+        "relevance": 0.7,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "README 明确说明它是管理 OCI 容器与 pod 的工具，容器可提供进程/文件系统隔离，适合作为沙箱执行不可信代码的运行时依赖；但给出的核心文件只有 cmd/podman-mac-helper（darwin 下的 docker.sock 系统助手，注释自承 security sensitive），未见容器创建/隔离 API 代码，故相关度按证据打折并以 Apache-2.0 判定许可证风险为 ok。"
+      },
+      "evidence_chars": 3233
+    },
+    "elusznik/mcp-server-code-execution-mode": {
+      "score": {
+        "relevance": 0.45,
+        "usage": "reference",
+        "license_risk": "block",
+        "reason": "README 自称 'rootless security' 且模块 docstring 写明 'bridge backed by a containerised sandbox'，说明确有沙箱隔离设计，但顶层只有 main.py、mcp_server_code_execution_mode.py 和 tests（无 Dockerfile/seccomp 等隔离实现证据），核心定位是 MCP 上下文压缩代理而非跑不可信代码，故只能参考设计而无法直接抄用，且 GPL-3.0 属传染性许可需谨慎。｜许可证查表结果：GPL-3.0 属强 copyleft"
+      },
+      "evidence_chars": 1860
+    },
+    "justjake/quickjs-emscripten": {
+      "score": {
+        "relevance": 0.4,
+        "usage": "reference",
+        "license_risk": "warn",
+        "reason": "README 称其可安全执行不可信 Javascript（QuickJS 编译为 WASM），但证据中只看到 JS 解释器绑定与构建配置，没有进程/文件系统隔离实现；且许可证被判为 NOASSERTION，因此只能参考其 WASM 沙箱设计，不能直接满足沙箱跑测试的需求。"
+      },
+      "evidence_chars": 3140
+    },
+    "trailofbits/claude-code-devcontainer": {
+      "score": {
+        "relevance": 0.4,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "README 只声明为运行 Claude Code（bypassPermissions）提供 filesystem isolation，install.sh/post_install.py 都是 devcontainer 管理、onboarding 与 tmux 配置，没有执行不可信代码并跑测试的沙箱/测试运行器实现，且 Dockerfile 内容未给出，故只能作为容器隔离配置的参考，不能直接照搬。"
+      },
+      "evidence_chars": 2661
+    },
+    "zopefoundation/RestrictedPython": {
+      "score": {
+        "relevance": 0.35,
+        "usage": "reference",
+        "license_risk": "warn",
+        "reason": "证据显示它是 AST/编译期限制 Python 语言的库（compile_restricted_eval、Guards.py 里 \"tiny set of safe builtins\"、Limits.py），只做语言层访问限制，没有进程/文件系统隔离能力，与沙箱执行不可信代码的核心需求只部分相关；LICENSE.txt 头声明 Zope Public License 2.1 但元数据许可证为 NOASSERTION，需要额外确认。"
+      },
+      "evidence_chars": 3221
+    },
+    "docker/compose": {
+      "score": {
+        "relevance": 0.1,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有 Docker Compose 的 CLI 入口（cmd/main.go 导入 dockercli、cobra、cmd/compatibility）和编排相关的目录树，没有任何进程/文件系统隔离或沙箱执行不可信代码的代码，README 也只说明它是 Compose 工具，与沙箱跑测试需求不匹配；仅 Apache-2.0 许可证本身无风险。"
+      },
+      "evidence_chars": 2069
+    },
+    "engineer-man/piston": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 1376
+    },
+    "hyperlight-dev/hyperlight": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 3407
+    },
+    "9fans/vx32": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "warn",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 1717
+    },
+    "cofy-x/axern": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 2126
+    }
+  },
+  "justified": []
+}

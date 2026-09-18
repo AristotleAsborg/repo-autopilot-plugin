@@ -1,0 +1,150 @@
+{
+  "need": "GitHub issue 自动分类打标（bug/feature/question）",
+  "scores": {
+    "wshm-dev/wshm": {
+      "score": {
+        "relevance": 0.85,
+        "usage": "reference",
+        "license_risk": "warn",
+        "reason": "src/cli.rs 里明确有 `Triage(TriageArgs)` 子命令并注释 \"Classify issues\"，README 也自称五合一工具含 \"triage\"，与 issue 自动分类打标直接对口；但它是一个自托管 Rust 二进制应用（src/ 含 daemon、tui、web-dist 等），并非可独立调用的分类库，且许可证为 NOASSERTION、未给出全文，故只宜借鉴其 triage 设计与配置（如 config.rs 的 GitHub App 凭据处理），存在许可证不确定性。"
+      },
+      "evidence_chars": 3156
+    },
+    "github/issue-labeler": {
+      "score": {
+        "relevance": 0.7,
+        "usage": "dependency",
+        "license_risk": "ok",
+        "reason": "README 明确是『label issues based on the body content』并通过 .github/labeler.yml 的标签+正则规则自动打标，正好覆盖 issue 自动打标场景（Top 层还有 action.yml/src/__tests__、MIT 许可证），但它靠用户手写正则而非 bug/feature/question 分类，且证据里 lib/index.js 只是 webpack 打包产物、src 未给全文，逻辑无法核实，故作为 GitHub Action 直接引入使用而非抄代码。"
+      },
+      "evidence_chars": 2240
+    },
+    "yazinsai/auto-maintainer": {
+      "score": {
+        "relevance": 0.6,
+        "usage": "reference",
+        "license_risk": "ok",
+        "reason": "它是 MIT 许可的 CLI 脚手架工具（生成 triage-agent.yml 等工作流并定义 kind/state/risk/resolution/release 标签命名空间），其 src/labels.ts 的标签分类设计可参考，但证据只给了测试片段、没有可复用的分类 API 全文，也没有显示 kind 下是否含 bug/feature/question，故不能直接 copy，只能参考设计。"
+      },
+      "evidence_chars": 3172
+    },
+    "kenn-io/forge": {
+      "score": {
+        "relevance": 0.3,
+        "usage": "reference",
+        "license_risk": "warn",
+        "reason": "README 只说明它是同步仓库到本地 SQLite 的本地维护者控制台（issues/reviews/PR 浏览），证据中没有任何自动分类或打 bug/feature/question 标签的逻辑；可见文件仅是 cmd/e2e-server（http/tls/httptest 测试服务器）、cmd/kenn-forge-github-app/browser.go（openInBrowser）与 go-github 依赖，最多可参考其 GitHub 数据同步与 API 客户端设计，且许可证为 NOASSERTION 无法确认授权。"
+      },
+      "evidence_chars": 3209
+    },
+    "withastro/triagebot-action": {
+      "score": {
+        "relevance": 0.2,
+        "usage": "reference",
+        "license_risk": "block",
+        "reason": "README 描述的是 reproduce/diagnose/fix 的 AI 修复流水线（label-driven state machine），src 里只有 labels.ts/LabelConfig 做状态标签，并无把 issue 分类为 bug/feature/question 的逻辑，且许可证“未声明”无法合法复用其代码。"
+      },
+      "evidence_chars": 2989
+    },
+    "openclaw/gitcrawl": {
+      "score": {
+        "relevance": 0.15,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "README 只说它是把 GitHub「Pull down to earth」的抓取类工具，cmd/gitcrawl/main.go 仅是 CLI 入口（转发到 internal/cli、支持 gh 别名），全部证据里没有任何 bug/feature/question 分类或自动打标逻辑，因此无法满足 issue 自动分类打标需求；仅 MIT 许可证无风险。"
+      },
+      "evidence_chars": 2407
+    },
+    "gitalk/gitalk": {
+      "score": {
+        "relevance": 0.1,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里 src/gitalk.jsx、src/index.js 显示 gitalk 是一个基于 GitHub Issues 的 React 评论组件（渲染评论框、拉取 getComments、分页 pagerDirection），并不包含任何 issue 自动分类或打标签（bug/feature/question）的逻辑，与需求无关，故跳过；许可证 MIT 无风险。"
+      },
+      "evidence_chars": 2329
+    },
+    "actions/first-interaction": {
+      "score": {
+        "relevance": 0.1,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "src/main.ts 只处理 issue/PR 的 opened 事件并检查 sender（'Skipping...Not an Opened Event'），是 first-interaction 欢迎逻辑，未见任何 bug/feature/question 分类或打标代码；虽为 MIT 且同样监听 issue 事件，但仅可作事件过滤写法的参考，无法满足自动分类打标需求。"
+      },
+      "evidence_chars": 2881
+    },
+    "actions/stale": {
+      "score": {
+        "relevance": 0.1,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "README 标题为“Close Stale Issues and PRs”，src/main.ts 只调用 IssuesProcessor.processIssues() 做过期清理，证据中没有任何按 bug/feature/question 分类打标的逻辑，与需求不匹配。"
+      },
+      "evidence_chars": 3211
+    },
+    "asklokesh/loki-mode": {
+      "score": {
+        "relevance": 0.05,
+        "usage": "skip",
+        "license_risk": "warn",
+        "reason": "证据中 src/ 只有 audit（compliance.js、compliance-scheduler.js、crosslink.js）、integrations、observability、plugins、policies、protocols 等目录，全是自主编码代理的合规审计与策略模块，没有任何 issue 分类/打标（bug/feature/question）相关代码；且许可证为 NOASSERTION 并附带 COMMERCIAL-TERMS.md，授权不明确，不宜复用。"
+      },
+      "evidence_chars": 3297
+    },
+    "pamelafox/issue-triager-agent": {
+      "score": {
+        "relevance": 0.05,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里的README和graph.py都说明该仓库是用于提议关闭stale issues的LangGraph代理，github_client.py也只提供find_stale_open_issues、close_issue_with_comment等接口，没有体现bug/feature/question自动分类打标功能。"
+      },
+      "evidence_chars": 2768
+    },
+    "community/community": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "warn",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 885
+    },
+    "FeatherHunter/dsh-mattpocock-skills-deck": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 3229
+    },
+    "axa-group/nlp.js": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "ok",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 1454
+    },
+    "coleam00/dark-factory-experiment": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "warn",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 1996
+    },
+    "Ultramarine-Linux/triage": {
+      "score": {
+        "relevance": 0.0,
+        "usage": "skip",
+        "license_risk": "warn",
+        "reason": "证据里只有文档、没有代码，按路线 5.1 拒绝评分"
+      },
+      "evidence_chars": 536
+    }
+  },
+  "justified": []
+}

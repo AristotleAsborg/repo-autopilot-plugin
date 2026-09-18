@@ -1,0 +1,12 @@
+{
+  "frozen": true,
+  "date": "2026-09-12",
+  "accuracy": 0.7622,
+  "false_kill_rate": 0.0061,
+  "provenance": {
+    "source": "state/reports/triage-eval-2026-09-12-local_small-holdout1.json",
+    "cohort": "holdout",
+    "frozen_at": "2026-09-12T12:55:33Z",
+    "why": "triage-eval-*.json 是活文件（每次 3.1 验收都会重写），拿它当尺子会让基线漂移；冻成金样本之后，每周脏测试比的才是同一把尺子。容差见 dirty_weekly.ACCURACY_TOLERANCE。"
+  }
+}

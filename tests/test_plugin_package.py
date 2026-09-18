@@ -903,7 +903,7 @@ def test_main_exits_3_with_a_pasteable_command_when_denied(scratch, monkeypatch,
         "install_by_bundle",
         lambda *_a, **_k: (_ for _ in ()).throw(module.NeedsOutsideSandbox("python x.py", PermissionError("denied"))),
     )
-    rc = module.main(["--profile", "web", "--dsh-home", str(scratch)])
+    rc = module.main(["--profile", "web", "--dsh-home", str(scratch), "--method", "bundle"])
     out = capsys.readouterr().out
     assert rc == 3, out
     assert "沙箱" in out and "install.cmd" in out, out

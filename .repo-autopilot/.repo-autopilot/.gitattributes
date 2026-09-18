@@ -1,0 +1,22 @@
+# 换行一律 LF —— **仓库里存什么、检出就是什么**。
+#
+# 本机 `core.autocrlf=true`。不写死的话 git 会在"碰过"文件时把工作区改成 CRLF，
+# 于是**本地与远端逐字节比对就会出现"仅换行不同"**，把"内容一致"这个判据弄浑。
+# 本项目的规矩是**内容哈希说了算**，所以这里把换行也钉死，让它不再是一个变量。
+#
+# 注意 `scripts/install.ps1` 同时还是 **UTF-8 with BOM**（Windows PowerShell 5.1 需要），
+# 那是**文件内容**、不受这条规则影响；BOM + LF 在 5.1 上实测可正常运行。
+* text=auto eol=lf
+
+# `.cmd` 保持 CRLF：cmd.exe 对批处理的行尾敏感（跳转标签尤其）。
+# 这与 repo-autopilot 自己那份 `.gitattributes` 的口径一致。
+*.cmd text eol=crlf
+
+# 自带副本必须**逐字节**保持打包时的样子。
+#
+# `vendor/repo-autopilot/MANIFEST.json` 记的是那些字节的 sha256，而 repo-autopilot 打的包
+# 是**工作区**的字节（本机 `core.autocrlf=true`，所以是 CRLF）。上面那条 `eol=lf` 会在提交时
+# 把 CRLF 转成 LF —— 后果很隐蔽：本机工作区还是 CRLF、校验当然过，
+# 但**全新 clone 出来就变成 LF、sha256 全对不上**，CI 或别人装的时候才炸。
+# `-text` 关掉换行转换，存什么就是什么。
+vendor/** -text

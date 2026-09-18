@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-09-12T11:30:09",
+  "source": "GitHub REST /search/issues",
+  "ground_truth": "维护者标签；按类别取，跨类别并存则丢弃",
+  "type_label_map": {
+    "bug": "bug",
+    "t: bug": "bug",
+    "kind/bug": "bug",
+    "bug v2": "bug",
+    "type: bug": "bug",
+    "defect": "bug",
+    "enhancement": "feature",
+    "feature": "feature",
+    "feature request": "feature",
+    "kind/feature": "feature",
+    "type: feature": "feature",
+    "improvement": "feature",
+    "question": "question",
+    "kind/question": "question",
+    "type: question": "question",
+    "question/not a bug": "question",
+    "help wanted": "question"
+  },
+  "queries": [
+    {
+      "want": "bug",
+      "query": "label:bug state:closed type:issue language:Python stars:>200",
+      "page": 1,
+      "total_count": 1419,
+      "page_size": 50,
+      "kept": 43
+    },
+    {
+      "want": "bug",
+      "query": "label:bug state:closed type:issue language:Python stars:>200",
+      "page": 2,
+      "total_count": 1419,
+      "page_size": 50,
+      "kept": 45
+    },
+    {
+      "want": "feature",
+      "query": "label:enhancement state:closed type:issue language:Python stars:>200",
+      "page": 1,
+      "total_count": 1310,
+      "page_size": 50,
+      "kept": 39
+    },
+    {
+      "want": "feature",
+      "query": "label:enhancement state:closed type:issue language:Python stars:>200",
+      "page": 2,
+      "total_count": 1310,
+      "page_size": 50,
+      "kept": 41
+    },
+    {
+      "want": "question",
+      "query": "label:question state:closed type:issue language:Python stars:>200",
+      "page": 1,
+      "total_count": 203,
+      "page_size": 50,
+      "kept": 34
+    },
+    {
+      "want": "question",
+      "query": "label:question state:closed type:issue language:Python stars:>200",
+      "page": 2,
+      "total_count": 203,
+      "page_size": 50,
+      "kept": 39
+    }
+  ],
+  "search_requests_used": 6,
+  "total": 241,
+  "by_gold": {
+    "bug": 88,
+    "feature": 80,
+    "question": 73
+  },
+  "by_language": {
+    "latin-only": 222,
+    "cjk-heavy": 11,
+    "mixed": 8
+  },
+  "distinct_repos": 237,
+  "top_repos": [
+    [
+      "malcyon/wish",
+      2
+    ],
+    [
+      "Elured-code/traveller-world-gen",
+      2
+    ],
+    [
+      "Predator04/Hermes-CoAgent",
+      2
+    ],
+    [
+      "astropy/photutils",
+      2
+    ],
+    [
+      "Lindenfrost/ProgTrack-Release",
+      1
+    ],
+    [
+      "loaiattar/AgentLen",
+      1
+    ],
+    [
+      "honepad/honepad",
+      1
+    ],
+    [
+      "dnstapir/nodeman",
+      1
+    ],
+    [
+      "phasespace-labs/palinode",
+      1
+    ],
+    [
+      "PresentJay/dbt-plan",
+      1
+    ]
+  ],
+  "filters": {
+    "min_body": 80,
+    "max_body": 8000,
+    "min_text_chars": 10,
+    "state_reason": "completed 或未标注",
+    "cross_category_labels": "丢弃"
+  }
+}

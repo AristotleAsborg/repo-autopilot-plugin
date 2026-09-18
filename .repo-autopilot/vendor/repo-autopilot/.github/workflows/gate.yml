@@ -1,0 +1,78 @@
+# 本系统仓库的门禁（路线 1.6 子步骤 3）。
+#
+# 【2026-09-12 大修，两次失败逼出来的】
+#
+# 第一版（从陪练仓库抄来的）在 GitHub 上**必然红**，而且红得没有信息量：
+#   1. 依赖漏了 `httpx`（`src/github/client.py` 发 REST 用它）与 `jsonschema`
+#      （网关校验模型输出用它）→ 一批测试在 import 阶段就 ImportError；
+#   2. 它跑的是 `tools/acceptance.py --all`，而**完整验收入根本不属于 CI**：
+#      0.1/0.2 要求本机 venv、本地小模型（Ollama）、读写 token，裸 runner 上一个都没有
+#      → 只会得到一片 BLOCKED。"一直红着"的门禁等于没有门禁（8.4 自己也写了这句话）。
+#   3. **跑错平台**：`runs-on: ubuntu-latest`，而本系统的沙箱是**Windows 专用**
+#      （`src/sandbox/jobobject.py` 用 `ctypes.wintypes` 做 Job Object，
+#      `from ctypes import wintypes` 在 Linux 上直接抛 ValueError；
+#      `src/sandbox/__init__.py` 无条件 import 它 → 凡碰到 `src.sandbox` 的测试全在
+#      import 阶段就崩）。在 Linux 上跑这套测试，测的是一个**我们不支持的平台**，
+#      失败也不代表代码坏了。
+#      → 改成 `windows-latest`：**在与部署目标一致的平台上测**（路线 0.1 的
+#      `capabilities()` 就是按这台 Windows 机器探测的；本机又无 Docker、无 gh）。
+#
+# 于是 CI 的职责收窄成"**测试 + 反作弊脚本 + 验收表能加载**"：
+# 完整验收留在本机 `state/run-acceptance.cmd`（人类在自己机器上跑）。
+
+name: gate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # Windows 是这套系统的部署目标；在 Linux 上跑只会得到"平台不支持"造成的假红。
+    runs-on: windows-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      # 时间一律按 UTC 处理（报告与记账都显式写 UTC，不依赖机器时区）
+      TZ: UTC
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # 清单跟着 tests 的实际 import 走：漏一个就会在 import 阶段 ImportError，
+          # 看起来像"测试挂了"，其实是门禁自己没装齐（实测踩过 httpx/jsonschema）。
+          # `ruff` 也是必需的：`test_gatekeep.py` 与 `test_scaffold.py` 会断言
+          # "本环境里 ruff 可用"（门禁第 ④ 关要用它，装不上就等于那一关是假绿）。
+          python -m pip install pytest pydantic httpx jsonschema numpy pyyaml typing_extensions ruff
+
+      - name: Unit and integration tests
+        run: python -m pytest tests/unit tests/integration -q
+
+      - name: Acceptance registry must load
+        # 只验"验收表能加载"（登记项、导入、参数解析都正常）。完整验收要在本机跑 ——
+        # 原因见文件头：CI 没有本地小模型与 token，跑出来只会是一片 BLOCKED。
+        #
+        # `tools/cadence.py` 的退出码**有语义**：0=都没到期 / 1=有到期的 / 2=有节奏从来没有产物。
+        # 干净 checkout 上必然是 2（周/月演练的产物是运行期证据，不进版本库），
+        # 所以这里不能把非 0 一律当失败 —— 只把"0/1/2 之外的码"（它自己崩了）当失败。
+        # 这一条是实测踩出来的：第一版写成 `cadence.py --json`，CI 因此一直红在最后一步。
+        run: |
+          python tools/acceptance.py --list
+          python tools/cadence.py --json > $null
+          $code = $LASTEXITCODE
+          if ($code -notin 0, 1, 2) { Write-Error "cadence 崩了（退出码 $code）"; exit $code }
+          Write-Host "cadence 退出码 $code（0/1/2 都是它的正常语义；干净 checkout 上 2 属预期）"
+          exit 0
+
+      - name: Anticheat scripts must work
+        # 防"改测试过测试"：数用例数与 skip 数（只算本系统的测试，仓库副本不算）
+        run: python scripts/check_test_integrity.py --self-test
