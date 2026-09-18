@@ -46,6 +46,16 @@ DeepSeek Harness 的模型工具。
 python scripts/install.py --repo-root <repo-autopilot 的绝对路径>
 ```
 
+**Windows 上还可以走 PowerShell 包装**（它会先替你找到一个能用的解释器，再交给上面那个脚本）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\install.ps1 -RepoRoot "D:\work\repo-autopilot"
+```
+
+`install.ps1` 找解释器分**两趟**：先找「版本够 **且依赖齐**」的，找不到再退而求其次找「版本够」的。
+不分两趟的话，PATH 上那个"没装依赖的 python"会把真正能用的解释器挡在后面（实测就是这个症状）。
+它把**所有检查与报告都留给 `install.py`** —— 两套判据迟早会漂移。
+
 脚本会依次做四件事：
 
 1. 检查**正在跑它的那个解释器**（版本 ≥ 3.12、三个依赖模块是否齐）；
@@ -58,10 +68,30 @@ python scripts/install.py --repo-root <repo-autopilot 的绝对路径>
 | 参数 | 说明 |
 |---|---|
 | `--repo-root PATH` | repo-autopilot 仓库绝对路径；省略则从当前目录逐级向上自动查找 |
-| `--install-deps` | 缺依赖时**顺手装上**（默认只提示、不动手） |
-| `--dry-run` | 只打印要做什么，不执行（与 `--install-deps` 同用时不会真的调 pip） |
+| `--python PATH` | 指定解释器（仅用于展示/建议；脚本只检查**自己所在的**解释器） |
+| `--install-deps` | 缺依赖时用当前解释器的 pip **顺手装上**（默认只提示、不动手） |
+| `--use-uv` | 缺依赖时用 `uv` 建一个 `.venv` 并装依赖（需要本机有 uv） |
+| `--dry-run` | 只打印要做什么，不执行（与上面两个开关同用时不会真的执行） |
 
 退出码：**0 = 可以注册**，**1 = 有缺件**。
+
+#### 环境引导档（uv / winget）
+
+缺依赖时，脚本探测本机**实际有什么**，再给分档方案（`uv: 有/无｜winget: 有/无`）：
+
+| 本机情况 | 给出的方案 |
+|---|---|
+| 有 `uv` | `uv venv .venv --python 3.12` + `uv pip install --python .venv pyyaml requests numpy` |
+| 只有 `winget` | `winget install --id astral-sh.uv`（推荐）或 `winget install --id Python.Python.3.12` |
+| 都没有 | 指向 python.org 的手工下载 |
+
+`uv` 是 MIT/Apache-2.0 的开源工具，能同时管 Python 版本与依赖 —— 这是「本机没有 3.12」
+这个最大障碍的**低成本**解法。加 `--use-uv` 时脚本才会真的去建环境；**默认只打印命令**，
+不下载、不安装任何东西。
+
+> **为什么不做 GUI 向导 / 单文件 exe**：真正的安装摩擦只有「Python+依赖」和「找到仓库」两条，
+> GUI 对这两条都没帮助；而 exe 也解决不了核心依赖 —— `tools/` 仍然要一个能用的 Python。
+> 脚本能覆盖，成本还低一个量级。
 
 成功时：
 
@@ -404,18 +434,23 @@ plugin-repo-autopilot/
 ├── host.js                         # Host 半边源码（其全文即 cordis_define 的 code.host）
 ├── scripts/
 │   ├── install.py                  # 一键安装/自检（标准库）
+│   ├── install.ps1                 # Windows 薄包装：找到解释器后交给 install.py
 │   └── smoke.py                    # 干净机器冒烟自检（标准库）
-├── tests/test_plugin_package.py    # 包自检 32 例（不需要 DSH 运行时）
+├── tests/test_plugin_package.py    # 包自检 35 例（不需要 DSH 运行时）
 ├── pytest.ini                      # 测试配置（含沙箱下的临时目录注意事项）
 ├── README.md                       # 本文档
 ├── NOTES.md                        # 工程记录：踩过的坑与实测证据
 └── LICENSE
 ```
 
+> `install.ps1` 是 **UTF-8 with BOM**，这不是洁癖：**Windows PowerShell 5.1 在没有 BOM 时会把
+> UTF-8 当 ANSI 读**，中文注释被解码成乱码，解析器接着就在字符串里找不到收尾引号、
+> 直接报 `ParserError`，整个脚本跑不起来（实测）。改动它时务必保留 BOM —— 有用例钉住。
+
 ### 4.8 测试策略
 
 ```bash
-python -m pytest -q          # 32 passed
+python -m pytest -q          # 35 passed
 ```
 
 覆盖五类：

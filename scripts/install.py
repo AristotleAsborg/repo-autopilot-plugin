@@ -28,6 +28,7 @@
 from __future__ import annotations
 
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -73,6 +74,64 @@ def missing_modules(checks: list[smoke.Check]) -> list[str]:
     ]
 
 
+# --------------------------------------------------------------- 环境引导（uv / winget）
+#
+# 这一档**只做两件事**：告诉用户装什么、以及在用户明确要求时用 `uv` 建环境。
+# 刻意**不自动下载**任何东西 —— 自动下载安装器会引入网络与信任面，收益不值这个价。
+
+def detect_bootstrap_tools() -> dict[str, str | None]:
+    """探测本机有没有可用的引导工具。没有就返回 None，绝不猜。"""
+    return {name: shutil.which(name) for name in ("uv", "winget", "py")}
+
+
+def bootstrap_advice(tools: dict[str, str | None], *, venv_dir: Path) -> list[str]:
+    """给出**可复制粘贴**的补环境方案。按"本机实际有什么"分档。"""
+    lines: list[str] = []
+    if tools.get("uv"):
+        lines.append(f"  · 检测到 uv（{tools['uv']}）—— 用它建一个干净环境：")
+        lines.append(f"      uv venv \"{venv_dir}\" --python 3.12")
+        lines.append(
+            f"      uv pip install --python \"{venv_dir}\" pyyaml requests numpy"
+        )
+        lines.append(f"    装完把解释器指过去：$env:REPO_AUTOPILOT_PYTHON = \"{venv_dir / 'Scripts' / 'python.exe'}\"")
+    elif tools.get("winget"):
+        lines.append("  · 没有 uv，但有 winget —— 装一个（任选其一）：")
+        lines.append("      winget install --id astral-sh.uv          # 推荐：uv 能顺带管 Python")
+        lines.append("      winget install --id Python.Python.3.12    # 或者直接装 Python")
+        lines.append("    装完**重开一个终端**再跑一次本脚本。")
+    else:
+        lines.append("  · 既没有 uv 也没有 winget —— 手工装 Python 3.12+：")
+        lines.append("      https://www.python.org/downloads/")
+    lines.append("  · 只想用现成的解释器？直接指过来：--python <解释器绝对路径>")
+    return lines
+
+
+def uv_bootstrap(tools: dict[str, str | None], venv_dir: Path, *, dry_run: bool) -> bool:
+    """用 uv 建 venv 并装依赖。返回是否成功（uv 不存在直接返回 False）。
+
+    `uv` 是 MIT/Apache-2.0 的开源工具，能同时管 Python 版本与依赖 ——
+    这正是"本机没有 3.12"这个最大障碍的**低成本**解法。
+    """
+    uv = tools.get("uv")
+    if not uv:
+        return False
+    commands = [
+        [uv, "venv", str(venv_dir), "--python", "3.12"],
+        [uv, "pip", "install", "--python", str(venv_dir), "pyyaml", "requests", "numpy"],
+    ]
+    for command in commands:
+        print(f"  $ {' '.join(command)}")
+        if dry_run:
+            print("    （--dry-run：没有真的执行）")
+            continue
+        # 继承 stdio，不用管道 —— 沙箱里管道会 EPERM。
+        code = subprocess.call(command)
+        if code != 0:
+            print(f"    [!] 退出码 {code}，停下。")
+            return False
+    return True
+
+
 def render_next_steps(python: str, repo_root: Path, *, all_good: bool) -> str:
     lines: list[str] = ["", "下一步："]
     lines.append("  · 让插件固定用这个解释器（省掉每次指定）：")
@@ -96,11 +155,13 @@ def main(argv: list[str] | None = None) -> int:
 
     parser = argparse.ArgumentParser(description="repo-autopilot 插件的一键安装/自检")
     parser.add_argument("--repo-root", help="repo-autopilot 仓库的绝对路径；不给就自动找")
-    parser.add_argument("--install-deps", action="store_true", help="缺依赖就顺手装上（默认不装）")
+    parser.add_argument("--python", help="要用哪个解释器（仅用于展示/建议；本脚本只检查自己所在的解释器）")
+    parser.add_argument("--install-deps", action="store_true", help="缺依赖就用当前解释器的 pip 装上（默认不装）")
+    parser.add_argument("--use-uv", action="store_true", help="缺依赖时用 uv 建一个 .venv 并装依赖（需要本机有 uv）")
     parser.add_argument("--dry-run", action="store_true", help="只打印要做什么，不执行")
     args = parser.parse_args(argv)
 
-    print("=== 1/3 解释器与依赖 ===")
+    print("=== 1/4 解释器与依赖 ===")
     checks = [smoke.check_interpreter(), *[smoke.check_module(n, w) for n, w in smoke.REQUIRED_MODULES]]
     print(smoke.render(checks).rsplit("\n\n", 1)[0])
 
@@ -121,7 +182,25 @@ def main(argv: list[str] | None = None) -> int:
                 ]
                 missing = missing_modules(checks)
 
-    print("\n=== 2/3 repo-autopilot 仓库 ===")
+    print("\n=== 2/4 环境引导（uv / winget）===")
+    tools = detect_bootstrap_tools()
+    print(f"  uv: {'有' if tools.get('uv') else '无'}｜winget: {'有' if tools.get('winget') else '无'}")
+    if not missing:
+        print("  依赖齐了，这一档用不上。")
+    elif args.use_uv:
+        venv_dir = Path.cwd() / ".venv"
+        print(f"  用 uv 建环境（{venv_dir}）：")
+        ok = uv_bootstrap(tools, venv_dir, dry_run=args.dry_run)
+        if ok:
+            print(f"  [OK] 建好了。把解释器指过去：$env:REPO_AUTOPILOT_PYTHON = \"{venv_dir / 'Scripts' / 'python.exe'}\"")
+        else:
+            print("  [!] uv 不在，或执行失败 —— 退回手工方案：")
+            print("\n".join(bootstrap_advice(tools, venv_dir=venv_dir)))
+    else:
+        print("  缺依赖。补法（本脚本默认**不自动下载**，请挑一条自己执行）：")
+        print("\n".join(bootstrap_advice(tools, venv_dir=Path.cwd() / ".venv")))
+
+    print("\n=== 3/4 repo-autopilot 仓库 ===")
     repo_root = Path(args.repo_root).expanduser() if args.repo_root else autodetect_repo_root(Path.cwd())
     if repo_root is None:
         print("  [缺] 没有给 --repo-root，自动查找也没找到。")
@@ -132,12 +211,13 @@ def main(argv: list[str] | None = None) -> int:
         repo_checks = smoke.check_repo_root(repo_root)
         print(smoke.render(repo_checks).rsplit("\n\n", 1)[0])
 
-    print("\n=== 3/3 结论 ===")
+    print("\n=== 4/4 结论 ===")
     everything = [*checks, *(repo_checks or [])]
     failed = [item for item in everything if not item.ok]
     if missing:
         print(f"  依赖缺 {len(missing)} 个：{'、'.join(missing)}")
-        print(f"  （可以加 --install-deps 让本脚本装，或手工：{sys.executable} -m pip install {' '.join(missing)}）")
+        print(f"  （可以加 --install-deps 用当前解释器装，或 --use-uv 用 uv 建环境；"
+              f"手工：{sys.executable} -m pip install {' '.join(missing)}）")
     if failed:
         print(f"  **不能直接注册** —— {len(failed)} 项缺件。")
         rc = 1

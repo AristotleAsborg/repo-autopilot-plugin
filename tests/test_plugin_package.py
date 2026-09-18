@@ -481,3 +481,56 @@ def test_install_dry_run_never_installs_anything(scratch, monkeypatch, capsys) -
     repo = _synthetic_repo(scratch / "repo-autopilot")
     install.main(["--repo-root", str(repo), "--install-deps", "--dry-run"])
     capsys.readouterr()
+
+
+# ------------------------------------------- install.ps1：两条 PowerShell 5.1 的坑
+#
+# 这两条都是**真机跑出来的**，而且都不便宜：没 BOM 时整个脚本 ParserError 跑不起来；
+# 探测代码里带双引号时，装好依赖的解释器会被判成"依赖不齐"。各留一条钉子。
+
+
+def test_install_ps1_has_a_utf8_bom() -> None:
+    """
+    **Windows PowerShell 5.1 在没有 BOM 时把 UTF-8 当 ANSI 读** —— 中文注释被解码成乱码，
+    解析器接着就在字符串里找不到收尾引号，直接 `ParserError`，**整个脚本跑不起来**。
+    （`pwsh` 7 默认按 UTF-8 读，所以这个问题只在"Windows 自带的那个 shell"上出现 ——
+    而那恰恰是双击 .ps1 时用的那个。）
+    """
+    raw = (HERE / "scripts" / "install.ps1").read_bytes()
+    assert raw.startswith(b"\xef\xbb\xbf"), "install.ps1 必须以 UTF-8 BOM 开头，否则 PS 5.1 会解析失败"
+
+
+def test_install_ps1_probes_contain_no_double_quotes() -> None:
+    """
+    PowerShell 5.1 给原生命令传参时对**双引号**的处理是有损的：探测代码里的 `"yaml"`
+    经函数传参后被搞坏，Python 报语法错、退出码 1 —— 于是**装好依赖的解释器也被判成"依赖不齐"**。
+    实测：venv 明明依赖齐，却被判不齐，然后去走了"版本够但依赖不齐"那条路。
+    所以探测代码一律用 PowerShell 的 `''` 转义在 Python 里造字符串，**全程不见双引号**。
+    """
+    lines = [
+        line
+        for line in (HERE / "scripts" / "install.ps1").read_text(encoding="utf-8-sig").splitlines()
+        if line.strip().startswith("$probe")
+    ]
+    assert lines, "install.ps1 里应当能找到 $probe 开头的探测定义"
+    for line in lines:
+        assert '"' not in line, f"探测代码里不许出现双引号：{line}"
+
+
+def test_bootstrap_advice_matches_what_the_machine_actually_has() -> None:
+    """引导档要**按本机实际有什么**分档，不能一律甩一句"去装 Python"。"""
+    install = _load_script("plugin_install", INSTALL)
+    venv_dir = Path("X:/plugin/.venv")
+
+    with_uv = install.bootstrap_advice({"uv": "C:/uv.exe", "winget": None, "py": None}, venv_dir=venv_dir)
+    assert any("uv venv" in line for line in with_uv)
+    assert any("uv pip install" in line for line in with_uv)
+
+    with_winget = install.bootstrap_advice(
+        {"uv": None, "winget": "C:/winget.exe", "py": None}, venv_dir=venv_dir
+    )
+    assert any("winget install" in line for line in with_winget)
+    assert any("astral-sh.uv" in line for line in with_winget)
+
+    with_neither = install.bootstrap_advice({"uv": None, "winget": None, "py": None}, venv_dir=venv_dir)
+    assert any("python.org" in line for line in with_neither)

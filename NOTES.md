@@ -243,3 +243,21 @@ UnicodeEncodeError: 'gbk' codec can't encode character '\u26a0' in position 424
 逐级向上找**正确地**找到了它。断言变成了"看这台机器上有什么"。
 修法是把 `is_repo_root` 收窄成只认那个合成仓库，让"找不到"这一半可确定地测。
 **环境相关的断言要先把环境固定住。**
+
+### 8.5 `install.ps1`：PowerShell 5.1 连踩三个坑（全是真机跑出来的）
+
+写 Windows 包装脚本时，`pwsh` 7 下好好的东西，换到 **Windows 自带的 PowerShell 5.1**
+（双击 `.ps1` 时用的就是它）就全崩了。三个坑各留了一条回归用例：
+
+| # | 症状 | 真因 | 修法 |
+|---|---|---|---|
+| 1 | `ParserError: The string is missing the terminator`，**整个脚本跑不起来** | **PS 5.1 没有 BOM 就把 UTF-8 当 ANSI 读**，中文注释被解码成乱码、破坏字符串收尾 | 文件存成 **UTF-8 with BOM** |
+| 2 | 只输出 8 行就断了，还漏出 `python.exe : Traceback` | 探测**注定失败一次**（依赖不齐的候选），而 `$ErrorActionPreference='Stop'` 会让原生命令的 stderr 变成**终止性错误**；且 `*>` / `2>$null` 都拦不住 5.1 的原生 stderr | 探测改成**只用退出码说话、不往 stderr 写**（`raise SystemExit(...)`），并把偏好临时降为 `Continue` |
+| 3 | **装好依赖的 venv 被判成"依赖不齐"** | PS 5.1 给原生命令传参时对**双引号**的处理有损 —— 探测代码里的 `"yaml"` 经函数传参后被搞坏，Python 报语法错、退出码 1 | 探测代码里**一个双引号都不留**，用 PowerShell 的 `''` 转义在 Python 里造字符串 |
+
+**第 3 条最值得记**：它不报错、不崩，只是**静默地把结论弄反**——把能用的解释器判成不能用。
+要不是真机跑了一次"指定 venv 应当成功"，这个坑会一直待在那里。
+
+**共同教训**：跨 PowerShell 版本时，"看起来一样"和"实际一样"是两件事。
+`pwsh` 7 通过 ≠ Windows PowerShell 5.1 通过；**要在最终用户会用的那个 shell 里跑一次**。
+本机实测命令：`powershell -ExecutionPolicy Bypass -File scripts\install.ps1 -RepoRoot <路径>`。

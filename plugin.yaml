@@ -1,5 +1,5 @@
 name: repo-autopilot-plugin
-version: 0.3.0
+version: 0.4.0
 summary: 把 repo-autopilot 的**只读**检查接成 harness 插件（默认零凭证、零写入）
 license: MIT
 homepage: https://github.com/AristotleAsborg/repo-autopilot
@@ -78,6 +78,7 @@ install:
   kind: local-folder
   note: 把本目录作为插件源码；host.js 的全部内容就是喂给 cordis_define 的 code.host。
   one_command: "python scripts/install.py --repo-root <repo-autopilot 绝对路径>"
+  one_command_windows: "powershell -ExecutionPolicy Bypass -File scripts\\install.ps1 -RepoRoot <repo-autopilot 绝对路径>"
   check: "python scripts/smoke.py --repo-root <repo-autopilot 绝对路径>"
   self_test: "python -m pytest -q"
   design_notes:
@@ -87,3 +88,8 @@ install:
     - "控制台按 errors=replace 输出，且报错文案里**不放 emoji**：中文 Windows 的 GBK 控制台
        遇到 `⚠️` 会 UnicodeEncodeError 把脚本打崩，且偏偏崩在「要报告缺件」的时候。
        （2026-09-18 实测；双引号在此处是 YAML 分隔符，所以内层一律用「」）"
+    - "install.ps1 是 **UTF-8 with BOM** 且**必须在 Windows PowerShell 5.1 上验过**：
+       没 BOM 时 5.1 把 UTF-8 当 ANSI 读、脚本直接 ParserError 跑不起来；
+       探测代码里留双引号会让 5.1 传参有损，**把装好依赖的解释器判成依赖不齐**；
+       探测若往 stderr 写东西，`$ErrorActionPreference='Stop'` 会把它变成终止性错误打断整个脚本。
+       三条各有一条回归用例钉住。"
