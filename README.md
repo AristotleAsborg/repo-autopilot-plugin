@@ -1,11 +1,47 @@
 # repo-autopilot-plugin
 
-把 [repo-autopilot](https://github.com/AristotleAsborg/repo-autopilot) 的**只读检查**注册成
-DeepSeek Harness 的模型工具。
+把 [repo-autopilot](https://github.com/AristotleAsborg/repo-autopilot) **本体**打包成
+DeepSeek Harness 插件。仓库里自带一份打好的 repo-autopilot（`vendor/repo-autopilot/`），
+装完**不需要另外 clone**。
+
+---
+
+## repo-autopilot 是什么
+
+**[repo-autopilot](https://github.com/AristotleAsborg/repo-autopilot)** 是一个把**仓库维护工作
+自动化**的系统：它把「拿到反馈 → 分类 → 定位 → 改代码 → 过测试门禁 → 开 PR」这条链路
+做成可重复的流程，并且**在每一个对外写动作之前都插入人类闸门**。
+
+### 五个模块
+
+| 模块 | 做什么 |
+|---|---|
+| **M1** 细化 idea | 把一句话 idea 用「是 / 否」逐轮追问成**可施工的 spec** |
+| **M2** 处理反馈 | issue 分类打标 → 查重聚类 → 路由（该修 / 该问 / 该关） |
+| **M3** 修复 | 定位文件 → 修复循环 → **测试门禁** → 出报告 → 推送 PR |
+| **M4** 找轮子 | 搜索现成实现 → 硬过滤 → 看代码打分 → 抓取可用件 |
+| **M5** 建新项目 | 从 spec 生成骨架 + 内部测试 +（可选）建仓首推 |
+
+### 八条对话指令
+
+`/细化idea`　`/处理反馈`　`/一键处理`　`/修复`　`/找轮子`　`/建新项目`　`/体检`　`/应急`
+
+指令清单、`AGENTS.md` 路由表、`skills/` 三者**必须一一对应**，由 `tools/build_skills.py` 渲染并校验。
+
+### 工程上的硬约束
+
+* **人类闸门**：所有对外写（评论 / 打标 / 开 PR / 合并 / 建仓）都要过闸门，且闸门是**代码级**的；
+* **读写凭证物理分离**：读 token 与写 token 分开存放，写 token 只在闸门通过之后才被使用；
+* **模型分档**：判断题走**本地小模型**（断网可用、不花钱），生成 / 计划 / diff 走强模型；
+  两种档位都在 `config/models.yaml` 里声明，支持 **API 替代接法**（见 [四](#四本地小模型与-api-替代接法)）；
+* **不许静默劣化**：缺件、失败一律响亮报错，**绝不返回脏数据**；
+* **7 天实战演练 + 全量验收表**：`0.1`~`8.2` 逐步留证据，`/体检` 做全量回归与指标评测。
 
 ---
 
 ## 这个插件做什么
+
+把上面这套系统装进 harness，并把它已有的入口点接成模型可调用的工具。
 
 提供 **1 个工具**：`repo_autopilot_check`，四种模式：
 
@@ -19,12 +55,12 @@ DeepSeek Harness 的模型工具。
 对外只做三件事：**执行一条只读命令 → 把退出码翻译成人话 → 把原始输出带回来**。
 
 **自包含**：仓库里带着一份**已打好的 repo-autopilot**（`vendor/repo-autopilot/`，190 个文件，
-含 `MANIFEST.json` 逐文件 sha256）。装完**不需要另外 clone** repo-autopilot；
-需要时也可以用 `repo_root` 参数指向你自己的检出。
+含 `MANIFEST.json` 逐文件 sha256）。需要时也可以用 `repo_root` 参数指向你自己的检出。
 
-**边界**：不建仓库、不评论、不打标签、不开 PR、不推送；不读取任何 GitHub 凭证。
+**边界**：这四种模式**全是只读**的 —— 不建仓库、不评论、不打标签、不开 PR、不推送，
+也不读取任何 GitHub 凭证。repo-autopilot 的**写**能力属于它自己的闸门流程，不在本插件范围内。
 
-## 基本原理
+### 基本原理
 
 ```text
 模型调用 repo_autopilot_check(mode, repo_root?)
@@ -34,7 +70,7 @@ Host 半边（host.js · Cordis dynamic Package · Node 侧）
   ① 定位仓库根    ② 解析解释器    ③ 拼一条命令行    ④ 经 shell 服务起子进程
         │
         ▼
-repo-autopilot 的既有只读入口点（scripts/doctor.py 等 · Python 侧）
+repo-autopilot 的既有入口点（scripts/doctor.py 等 · Python 侧）
         │
         ▼
 stdout / stderr + 退出码
@@ -44,11 +80,11 @@ stdout / stderr + 退出码
 五条基本设计：
 
 1. **自包含 + 可校验** —— 随插件带一份打好包的 repo-autopilot，并用它自己的 `MANIFEST.json` 逐文件
-   sha256 校验；装完即用，且"自带的那份有没有被改过"是**可验的**，不是靠信。
-2. **适配器，不是分叉** —— 插件里没有一行 repo-autopilot 的业务逻辑，只负责"调哪个入口点 + 怎么解释退出码"。两条入口（对话指令 / 插件）共享同一套实现。
-3. **退出码语义内置** —— 这套系统的工具用退出码表达**状态**而非**成败**（`drill` 的 `1` 是"还没满 7 天，不是失败"）。语义写在模式表里，不让模型去猜。
-4. **先分清"谁的错"** —— 拿到 stderr 先做一次误诊分类：解释器找不到 / 缺依赖 / 路径错，各归各的账，绝不把**适配器的故障**说成**仓库的故障**。
-5. **零凭证、只读** —— 四种模式全是只读命令；源码里不存在任何读取凭证的路径。GitHub 写操作属于 repo-autopilot 本体，不在本插件范围内。
+   sha256 校验；装完即用，且「自带的那份有没有被改过」是**可验的**，不是靠信。
+2. **适配器，不是分叉** —— 插件里没有一行 repo-autopilot 的业务逻辑，只负责「调哪个入口点 + 怎么解释退出码」。两条入口（对话指令 / 插件）共享同一套实现。
+3. **退出码语义内置** —— 这套系统的工具用退出码表达**状态**而非**成败**（`drill` 的 `1` 是「还没满 7 天，不是失败」）。语义写在模式表里，不让模型去猜。
+4. **先分清「谁的错」** —— 拿到 stderr 先做一次误诊分类：解释器找不到 / 缺依赖 / 路径错，各归各的账，绝不把**适配器的故障**说成**仓库的故障**。
+5. **零凭证、只读** —— 四种模式全是只读命令；源码里不存在任何读取凭证的路径。
 
 > **仓库根怎么定位**：`repo_root` 参数 → 否则用安装时写进 `host.local.js` 的自带副本路径。
 > Host 半边拿不到自己的磁盘位置（没有 `fs` / `__dirname` / `process`），所以这个路径必须在
@@ -58,6 +94,8 @@ stdout / stderr + 退出码
 
 ## 目录
 
+- [repo-autopilot 是什么](#repo-autopilot-是什么)
+- [这个插件做什么](#这个插件做什么)
 - [一、环境要求](#一环境要求)
 - [二、安装](#二安装)
 - [三、使用方法](#三使用方法)
@@ -416,6 +454,9 @@ repo_autopilot_check(mode='drill', repo_root='D:\work\repo-autopilot')
 repo-autopilot 的**分类 / 查重 / 停止判断 / 文件定位**默认走**本机小模型**
 （Ollama + `qwen3:4b` + `bge-m3`）。本插件不直接调用模型，但 `doctor` 模式会检查它 ——
 这一节说明**没有本机模型时怎么换成 API**。
+
+配置写在 repo-autopilot 的 `config/models.yaml`：**随插件打包的那份**在
+`vendor/repo-autopilot/config/models.yaml`；如果你用 `repo_root` 指向自己的检出，就改你自己那份。
 
 ### 4.1 两种接法
 
