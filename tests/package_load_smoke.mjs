@@ -23,6 +23,14 @@
 
 const modulePath = process.argv[2] || './lib/index.js'
 
+// 绝对 Windows 路径不能直接交给 `import()` —— 它会被当成 scheme 为 `d:` 的 URL
+// （`ERR_UNSUPPORTED_ESM_URL_SCHEME`，实测）。而 `readFileSync` 要的恰恰是路径本身。
+// 所以两个用法分开：import 用 file:// URL，读文件用原路径。
+const { pathToFileURL } = await import('node:url')
+const moduleSpecifier = /^[a-zA-Z]:[\\/]/.test(modulePath)
+  ? pathToFileURL(modulePath).href
+  : modulePath
+
 let failures = 0
 function check(ok, label, detail) {
   console.log((ok ? '  ok   ' : '  FAIL ') + label + (detail === undefined ? '' : ' :: ' + detail))
@@ -30,7 +38,7 @@ function check(ok, label, detail) {
   return ok
 }
 
-const module_ = await import(modulePath)
+const module_ = await import(moduleSpecifier)
 
 // 1. The export surface the profile loader reads.
 check(module_.name === 'repo-autopilot', 'exports name = repo-autopilot', module_.name)
@@ -184,6 +192,54 @@ check(
   '命令拼错时不谈仓库的不合格项（误诊优先）',
   misdiagnosedResult.verdict,
 )
+
+// 5. **安装时烘入的解释器**：不传 python 参数时，只有它能 import 依赖 —— 就该选它。
+//
+// 这条治的是常态化摩擦（2026-09-20 报告②）：会话内改不了 REPO_AUTOPILOT_PYTHON，
+// 于是每次调用都得手传 python。烘进去以后应当**不用传**。
+// 只有模块被烘过（装进 profile 的那份）才有意义；仓库里那份是空串，跳过。
+const { readFileSync } = await import('node:fs')
+const moduleSource = readFileSync(modulePath, 'utf8')
+const bakedMatch = moduleSource.match(/const DEFAULT_PYTHON = "((?:[^"\\]|\\.)*)"/)
+// 源码里是**转义过**的 Windows 路径（`"D:\\PythonEnv\\..."`），必须反转义再拿去比对，
+// 否则子串永远匹配不上、探测全失败（第一版就是这么误报的）。
+const bakedPython = bakedMatch ? JSON.parse('"' + bakedMatch[1] + '"') : ''
+if (!bakedPython) {
+  console.log('  skip  未烘入解释器（仓库里的发布版就是这样）—— 跳过"不用传 python"这一项')
+} else {
+  const baked = contextWithShell(1, DOCTOR_JSON)
+  const probes = []
+  baked.ctx.get = (name) =>
+    name === 'shell'
+      ? {
+          resolve: (spec) => spec,
+          run: async (spec) => {
+            const cmd = String(spec.command)
+            if (cmd.includes('import ')) {
+              probes.push(cmd)
+              // 只放行烘入的那个：环境变量/python3/python 一律失败。
+              const isBaked = cmd.includes(bakedPython)
+              return { exitCode: isBaked ? 0 : 1, stdout: { text: '' }, stderr: { text: '' } }
+            }
+            return { exitCode: 1, stdout: { text: DOCTOR_JSON }, stderr: { text: '' } }
+          },
+        }
+      : undefined
+  module_.apply(baked.ctx, {})
+  const bakedResult = await baked.reg[0].execute({ mode: 'doctor', repo_root: '.' }, {})
+  check(
+    String(bakedResult.interpreter).includes('烘入'),
+    '不传 python 时选中了安装时烘入的解释器',
+    String(bakedResult.interpreter),
+  )
+  // `interpreter` 报的是**来源标签**，不是路径 —— 所以"选中了那个路径"这件事
+  // 只能从**探测命令**上看：烘入的那条必须真被探过（且只有它探测通过）。
+  check(
+    probes.some((cmd) => cmd.includes(bakedPython)),
+    '探测里确实用了烘入的那个路径',
+    bakedPython,
+  )
+}
 
 console.log(failures === 0 ? 'PACKAGE LOAD: PASS' : `PACKAGE LOAD: FAIL (${failures})`)
 process.exit(failures === 0 ? 0 : 1)

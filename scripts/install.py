@@ -90,18 +90,48 @@ def verify_manifest(root: Path) -> tuple[bool, list[str]]:
     return (not missing and not changed), notes
 
 
-def emit_host(root: Path, target: Path) -> Path:
+def _verified_python() -> str:
     """
-    生成 `host.local.js`：把 `DEFAULT_REPO_ROOT` 填成自带副本的绝对路径。
+    当前解释器**验证过**能 import 依赖就返回它的绝对路径，否则空串。
+
+    为什么验证而不是直接写 `sys.executable`：`--install-deps` 那条路会把依赖装进
+    一个**新 venv**，而当前解释器仍然是缺依赖的那个 —— 那时把它烘进去等于烘了个坏的。
+    验证一次只要几十毫秒，换的是"烘进去的必定能用"。
+    """
+    try:
+        completed = subprocess.run(
+            [sys.executable, "-c", "import yaml, requests"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=60,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    return sys.executable if completed.returncode == 0 else ""
+
+
+def emit_host(root: Path, target: Path, python: str = "") -> Path:
+    """
+    生成 `host.local.js`：把安装期已知的两条绝对路径写进去。
 
     为什么要这样做：Host 半边拿不到自己的磁盘位置（没有 fs、没有 __dirname、没有 process），
-    所以"自带的这份在哪"只能在**安装时**写进去。发布出去的 `host.js` 里那行是空串。
+    所以"自带的这份在哪"只能在**安装时**写进去。发布出去的 `host.js` 里那两行都是空串。
+
+    * `DEFAULT_REPO_ROOT` —— 自带副本的绝对路径；
+    * `DEFAULT_PYTHON` —— 哪个解释器**验证过**能 import 依赖（2026-09-20 加）：
+      会话内改不了 `REPO_AUTOPILOT_PYTHON`（shell 继承 DSH 进程环境），
+      不烘进去就只能每次手传 `python`。空串 = 不烘，退回盲探（与之前行为一致）。
     """
     source = (HERE.parent / "host.js").read_text(encoding="utf-8")
     marker = "const DEFAULT_REPO_ROOT = ''"
     if marker not in source:
         raise SystemExit("[!] host.js 里找不到 DEFAULT_REPO_ROOT 占位，无法生成（是不是被改过？）")
     emitted = source.replace(marker, f"const DEFAULT_REPO_ROOT = {json.dumps(str(root))}")
+    if python:
+        py_marker = "const DEFAULT_PYTHON = ''"
+        if py_marker not in emitted:
+            raise SystemExit("[!] host.js 里找不到 DEFAULT_PYTHON 占位，无法生成（是不是被改过？）")
+        emitted = emitted.replace(py_marker, f"const DEFAULT_PYTHON = {json.dumps(str(python))}")
     target.write_text(emitted, encoding="utf-8")
     return target
 
@@ -314,10 +344,15 @@ def main(argv: list[str] | None = None) -> int:
             if args.dry_run:
                 print(f"\n（--dry-run）会生成 {target}，DEFAULT_REPO_ROOT = {repo_root}")
             else:
-                written = emit_host(repo_root, target)
+                python = _verified_python()
+                written = emit_host(repo_root, target, python=python)
                 print(f"\n[OK] 已生成 {written}")
                 print(f"     DEFAULT_REPO_ROOT = {repo_root}")
-                print("     注册 Cordis Package 时**用这一份**（它把自带副本的路径写进去了）。")
+                print(
+                    "     DEFAULT_PYTHON     = "
+                    + (python or "（没烘：当前解释器 import 不了 yaml/requests，调用时仍需传 python）")
+                )
+                print("     注册 Cordis Package 时**用这一份**（两条路径都写进去了）。")
 
     print("\n=== 4/4 结论 ===")
     everything = [*checks, *(repo_checks or [])]

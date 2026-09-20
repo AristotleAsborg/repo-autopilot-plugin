@@ -158,7 +158,7 @@ class NeedsOutsideSandbox(RuntimeError):
 
 
 def install_by_bundle(
-    profile_dir: Path, *, dry_run: bool, bake_root: Path | None = None
+    profile_dir: Path, *, dry_run: bool, bake_root: Path | None = None, bake_python: str = ""
 ) -> tuple[bool, str]:
     """B：不经过包管理器，直接把终态写出来。"""
     name = package_name()
@@ -205,9 +205,13 @@ def install_by_bundle(
     if bake_root is not None:
         # **必须在复制之后**：先烘再装会被 copy_plugin 覆盖回空串（实测）。
         ensure_workspace_repo(bake_root)
-        baked = bake_default_repo_root(target / "lib" / "index.js", bake_root)
+        baked = bake_module_defaults(
+            target / "lib" / "index.js", repo_root=bake_root, python=bake_python
+        )
         note += f"；已烘入 {baked}"
         note += f"；运行期 state 落在 {bake_root / 'state'}"
+        if not bake_python:
+            note += "；**解释器没烘进去**（当前解释器 import 不了 yaml/requests）—— 调用时仍需手传 python"
     if skipped:
         note += f"；跳过 {len(skipped)} 个读不了的文件：{'、'.join(skipped[:3])}"
     return True, note
@@ -290,24 +294,61 @@ def install_by_junction(profile_dir: Path, link_root: Path, *, dry_run: bool) ->
 BAKE_MARKER = "const DEFAULT_REPO_ROOT = "
 
 
-def bake_default_repo_root(module_path: Path, repo_root: Path) -> str:
+def verified_python(explicit: str = "") -> str:
     """
-    把 `DEFAULT_REPO_ROOT` 填进**已安装**的 `lib/index.js`。
+    返回一个**验证过能 import 依赖**的解释器绝对路径；都不行就返回空串。
 
-    profile 层装的是 `lib/index.js`（由 `build_module.py` 从 `host.js` 生成），
-    里面的 `DEFAULT_REPO_ROOT` 是**空串占位** —— 不填的话工具一被调用就说
-    「没有 repo_root，且这份 host.js 里也没有内置路径」：**装载成功但用不了**。
-    （dynamic Package 那条路由 `install.py --emit-host` 负责同一件事。）
+    为什么是"验证"而不是"猜"：本机 `python` 指向的解释器没装 `yaml`/`requests`，
+    而插件靠这两个模块跑 doctor。安装脚本此刻**就**知道哪个解释器能用
+    （它自己正跑在某个解释器上），把它烘进模块，运行时就不必再盲探。
+    """
+    candidates = [explicit] if explicit else [sys.executable]
+    for candidate in candidates:
+        if not candidate:
+            continue
+        try:
+            completed = subprocess.run(
+                [candidate, "-c", "import yaml, requests"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=60,
+            )
+        except (OSError, subprocess.SubprocessError):
+            continue
+        if completed.returncode == 0:
+            return candidate
+    return ""
 
-    ⚠️ **必须在复制之后做**：实测先烘再装会被 `copy_plugin` 覆盖回空串。
+
+def bake_module_defaults(module_path: Path, *, repo_root: Path, python: str = "") -> str:
+    """
+    把安装期**已经知道答案**的两条绝对路径填进已安装的 `lib/index.js`：
+
+    * `DEFAULT_REPO_ROOT` —— 自带副本在哪（profile 层的 ESM 入口拿不到自己的磁盘位置，
+      不填的话工具一被调用就说「没有 repo_root」：**装载成功但用不了**）；
+    * `DEFAULT_PYTHON` —— 哪个解释器**验证过**能 import 依赖（见 `verified_python`）。
+
+    后者治的是常态化摩擦：会话内改不了 `REPO_AUTOPILOT_PYTHON`
+    （shell 继承 DSH 进程的环境），于是每次调用都得手传 `python`。
+    装的时候既然知道答案，就不该让运行时去盲探。
+
+    ⚠️ **必须在复制之后做**：先烘再装会被 `copy_plugin` 覆盖回空串（实测）。
     """
     lines = module_path.read_text(encoding="utf-8").splitlines(keepends=True)
-    hits = [i for i, line in enumerate(lines) if line.strip().startswith(BAKE_MARKER)]
-    if len(hits) != 1:
-        raise OSError(f"期望恰好一处 `{BAKE_MARKER}` 占位，实际 {len(hits)} 处 —— 拒绝改")
-    lines[hits[0]] = f"{BAKE_MARKER}{json.dumps(str(repo_root))}\n"
+    filled: list[str] = []
+    for name, value in (("DEFAULT_REPO_ROOT", str(repo_root)), ("DEFAULT_PYTHON", python)):
+        if not value:
+            continue
+        marker = f"const {name} = "
+        hits = [i for i, line in enumerate(lines) if line.strip().startswith(marker)]
+        if len(hits) != 1:
+            raise OSError(f"期望恰好一处 `{marker}` 占位，实际 {len(hits)} 处 —— 拒绝改")
+        lines[hits[0]] = f"{marker}{json.dumps(str(value))}\n"
+        filled.append(f"{name}={value}")
+    if not filled:
+        return "没有可填的默认值"
     module_path.write_text("".join(lines), encoding="utf-8")
-    return lines[hits[0]].strip()
+    return "；".join(filled)
 
 
 def ensure_workspace_repo(link_root: Path) -> tuple[bool, str]:
@@ -497,6 +538,11 @@ def main(argv: list[str] | None = None) -> int:
         "--link-root",
         help="junction 装法里「工作区内那份副本」的位置；默认 <当前目录>/.repo-autopilot",
     )
+    parser.add_argument(
+        "--bake-python",
+        default="",
+        help="烘进模块的解释器；默认用当前解释器（先验证能 import yaml/requests，不通过就不烘）",
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
         "--boot-check",
@@ -567,7 +613,12 @@ def main(argv: list[str] | None = None) -> int:
     if not used:
         print("\n[B 免包管理器] 直接写出终态")
         try:
-            ok, detail = install_by_bundle(profile_dir, dry_run=args.dry_run, bake_root=link_root)
+            ok, detail = install_by_bundle(
+                profile_dir,
+                dry_run=args.dry_run,
+                bake_root=link_root,
+                bake_python=verified_python(args.bake_python or ""),
+            )
         except NeedsOutsideSandbox as blocked:
             # **不要**在这里申请提权：这份部署的沙箱是故意钉死的。
             # 正确的做法是把命令交出去 —— 用户双击或在普通终端里跑，零提示、一次装完。
