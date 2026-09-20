@@ -97,5 +97,93 @@ if (tool) {
   )
 }
 
+// 4. 退出码语义 + 结论摘要 —— 用**假 shell 真调一次工具**。
+//
+// 为什么不能只扫源码：2026-09-20 实测报告① 的毛病就在"输出被 tail 切掉"，
+// 而 tail 是**运行时**才拼出来的。源码里看着对，跑起来仍可能把不合格项切走。
+// 所以这里造一个假 shell 返回指定的 stdout/exitCode，直接调 execute() 看结论。
+const DOCTOR_JSON = JSON.stringify([
+  { name: 'state 目录完整性', ok: true, detail: '12 个子目录齐全' },
+  { name: 'mode.json 合法性', ok: true, detail: 'mode=online' },
+  { name: '队列孤儿任务', ok: true, detail: '0 个任务在跑，无孤儿' },
+  { name: '闸门悬挂审批', ok: true, detail: '0 张待批单' },
+  { name: '写 token 文件', ok: false, detail: '不存在 state\\.write_token' },
+  { name: '本地小模型探活', ok: true, detail: 'embedding 维度 1024' },
+  { name: 'GitHub 连通性', ok: false, detail: '读 token 不可用：LookupError' },
+])
+
+function contextWithShell(exitCode, stdout, stderr) {
+  const reg = []
+  const fakeShell = {
+    resolve: (spec) => spec,
+    run: async (spec) => {
+      // 解释器探测那条命令里有 `import`；统一放行，免得它干扰本场景。
+      if (String(spec.command).includes('import ')) {
+        return { exitCode: 0, stdout: { text: '' }, stderr: { text: '' } }
+      }
+      return {
+        exitCode,
+        stdout: { text: stdout },
+        stderr: { text: stderr || '' },
+      }
+    },
+  }
+  return {
+    reg,
+    ctx: {
+      get: (name) => (name === 'shell' ? fakeShell : undefined),
+      effect: (callback) => callback(),
+      tools: { register: (definition) => { reg.push(definition); return () => {} } },
+    },
+  }
+}
+
+const abnormal = contextWithShell(1, DOCTOR_JSON)
+module_.apply(abnormal.ctx, {})
+const doctorResult = await abnormal.reg[0].execute(
+  { mode: 'doctor', repo_root: '.' },
+  { signal: undefined },
+)
+check(
+  !String(doctorResult.verdict).includes('不在预期集合内'),
+  'doctor 退出码 1 不再被当成"未知码"',
+  doctorResult.verdict,
+)
+check(
+  String(doctorResult.verdict).includes('不合格 2 项'),
+  '结论里带上了不合格项的条数',
+  doctorResult.verdict,
+)
+check(
+  String(doctorResult.verdict).includes('写 token 文件') &&
+    String(doctorResult.verdict).includes('GitHub 连通性'),
+  '结论里点名了是哪两项',
+  doctorResult.verdict,
+)
+
+// 反例：真·未知退出码仍要提示，别把这一档一起吞掉。
+const unknown = contextWithShell(2, '{}')
+module_.apply(unknown.ctx, {})
+const unknownResult = await unknown.reg[0].execute({ mode: 'doctor', repo_root: '.' }, {})
+check(
+  String(unknownResult.verdict).includes('不在预期集合内'),
+  '退出码 2 仍然提示"不在预期集合内"',
+  unknownResult.verdict,
+)
+
+// 反例：是**我们这边**拼错命令时，不许再谈"哪几项不合格"（误诊表优先）。
+const misdiagnosed = contextWithShell(
+  1,
+  DOCTOR_JSON,
+  "&: 术语 'definitely-not-python' 不会被识别为 cmdlet、函数、脚本文件或可执行程序的名称。",
+)
+module_.apply(misdiagnosed.ctx, {})
+const misdiagnosedResult = await misdiagnosed.reg[0].execute({ mode: 'doctor', repo_root: '.' }, {})
+check(
+  !String(misdiagnosedResult.verdict).includes('不合格 2 项'),
+  '命令拼错时不谈仓库的不合格项（误诊优先）',
+  misdiagnosedResult.verdict,
+)
+
 console.log(failures === 0 ? 'PACKAGE LOAD: PASS' : `PACKAGE LOAD: FAIL (${failures})`)
 process.exit(failures === 0 ? 0 : 1)
