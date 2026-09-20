@@ -33,9 +33,13 @@ from src.spec import (
     Proposal,
     SpecDraft,
     SpecError,
+    StopJudger,
     build_messages,
+    checkability_report,
     find_compound_marker,
+    is_machine_checkable,
     is_yes_no_question,
+    machine_checkable_basis,
     new_draft,
 )
 
@@ -321,3 +325,80 @@ def test_three_real_ideas_end_to_end(state_dir: Path) -> None:
     assert len(audit) >= len(REAL_IDEAS), f"3 个 idea 各至少要有 1 个问题，实际 {len(audit)}"
     for event in guard_events:
         assert "不发出" in event["reason"], "兜底拦下时必须说明'不发出什么'"
+
+
+# ============================================ 运行报告 2026-09-18 的三项修复
+#
+# 三条都不是猜的 —— 是 agent 驱动（每条命令一个新进程）跑真卡跑出来的。
+# 报告：`/细化idea` 卡片 86a0662d5e99。
+
+
+def test_open_gaps_survive_a_process_boundary(state_dir: Path) -> None:
+    """
+    §1.1：缺口原来只活在 `IdeaRefiner.open_gaps`（进程内字段），而 `SpecDraft`
+    没有承载字段 —— 于是"每条命令一个新进程"的驱动形态下**缺口下一轮就没了**。
+    当时的办法是往 `state/specs/<id>.gaps.json` 写旁路日志：**绕过，不是修复**。
+
+    判据：把缺口记进草稿，**丢掉整个 refiner**（等价于进程结束），
+    再从源卡重建一个 —— 缺口必须还在，并且真的进了下一问的提示词。
+    """
+    draft = SpecDraft(id="boundary", idea="任务结束/卡住时通知手机")
+    draft.acceptance = ["跑 `bash -c 'sleep 3; exit 1'` 后通知里含非零退出码"]
+
+    first = IdeaRefiner(store_dir=state_dir / "specs", generate=ScriptedGenerator([]))
+    first.note_gaps(["「卡住」的判定阈值没有定量"], draft)
+    saved = first.persist(draft)
+    assert "open_gaps" in json.loads(saved.read_text(encoding="utf-8")), "缺口必须落进源卡"
+
+    # ---- 进程边界：refiner 全新，只有源卡是共享的 ----
+    reloaded = SpecDraft.model_validate_json(saved.read_text(encoding="utf-8"))
+    assert reloaded.open_gaps == ["「卡住」的判定阈值没有定量"]
+
+    seen: list[str] = []
+
+    def spy(messages: list[dict[str, str]], _schema: object) -> object:
+        seen.append(json.dumps(messages, ensure_ascii=False))
+        raise AssertionError("到这里就够：只看提示词里有没有那个缺口")
+
+    second = IdeaRefiner(store_dir=state_dir / "specs", generate=spy)
+    with pytest.raises(AssertionError):
+        second.propose(reloaded)
+    assert seen and any("卡住" in item for item in seen), "恢复出来的缺口必须进了下一问的提示词"
+
+
+def test_render_view_does_not_clobber_the_final_handover(state_dir: Path) -> None:
+    """
+    §1.2：`finalize()` 与 `write_markdown()` 原来写**同一个** `state/specs/<id>.md`，
+    后跑的覆盖先跑的 —— 实测把定稿覆盖成了渲染稿。
+
+    判据：两个产物路径不同，且定稿在渲染稿写完之后**内容不变**。
+    """
+    draft = SpecDraft(id="collide", idea="两条路都写 md 会互相覆盖")
+    draft.acceptance = ["`pytest -q` 返回 0", "系统应该好用"]
+    refiner = IdeaRefiner(store_dir=state_dir / "specs", generate=ScriptedGenerator([]))
+
+    official = StopJudger(spec_dir=state_dir / "specs").finalize(draft)
+    before = official.read_text(encoding="utf-8")
+
+    rendered = refiner.write_markdown(draft)
+    assert rendered != official, "渲染稿与定稿必须是两个不同的文件"
+    assert official.read_text(encoding="utf-8") == before, "定稿不许被渲染稿覆盖"
+
+
+def test_checkability_reports_its_basis() -> None:
+    """
+    §1.3：这条启发式**很宽松**，只给 bool 时 `not_machine_checkable_count: 0`
+    读不出"5 条都验得了"（它其实是"5 条都含反引号"的副产品）。
+    判据：依据要能单独取出来、且与 `is_machine_checkable` 同源。
+    """
+    assert machine_checkable_basis("`pytest -q` 返回 0") == "含数字"
+    assert machine_checkable_basis("命令返回 0") is not None
+    assert machine_checkable_basis("系统应该好用") is None
+    assert machine_checkable_basis("   ") is None
+
+    draft = SpecDraft(id="basis", idea="判据要可审")
+    draft.acceptance = ["`pytest -q` 返回 0", "系统应该好用"]
+    report = checkability_report(draft)
+    assert [item[1] is not None for item in report] == [True, False]
+    for condition, basis in report:          # 同源：两处判据必须一致
+        assert is_machine_checkable(condition) is (basis is not None)

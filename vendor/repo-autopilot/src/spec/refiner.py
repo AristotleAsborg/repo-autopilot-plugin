@@ -201,6 +201,15 @@ class SpecDraft(BaseModel):
     #: 被后续轮次推翻/摘出范围的条目（D4）。**保留记录，但不再算作承诺** ——
     #: 直接从列表里删掉等于抹掉"人类曾经要过这个"的事实，那比留着更危险。
     withdrawn: list[str] = Field(default_factory=list)
+    #: **判停诊断里还悬着的缺口**（`/细化idea` 运行报告 2026-09-18 §1.1 修复）。
+    #:
+    #: 原来它只活在 `IdeaRefiner.open_gaps`（进程内字段），而 `SpecDraft.model_dump()`
+    #: 里**没有**它 —— 于是 agent 驱动那种"每条命令一个新进程"的形态下，
+    #: `note_gaps(decision.blocked_by_gaps)` 记下的缺口**下一轮就没了**，
+    #: 即使 `blocked_by_gaps` 非空也会被丢掉。当时靠旁路文件
+    #: `state/specs/<id>.gaps.json` 绕过去 —— **那是绕过，不是修复**。
+    #: 现在缺口随源卡一起落盘，跨进程不丢。
+    open_gaps: list[str] = Field(default_factory=list)
     status: str = "asking"
     created_at: str = ""
     updated_at: str = ""
@@ -989,9 +998,34 @@ def spec_text(draft: SpecDraft) -> str:
     return "\n".join(parts)
 
 
+def machine_checkable_basis(condition: str) -> str | None:
+    """
+    判"看起来能机器执行"的**依据**：命中了哪个标记，或 None。
+
+    为什么把依据单独暴露出来（2026-09-18 运行报告 §1.3）：
+    这条启发式**很宽松** —— 「含数字」或「含 ` 及返回/等于/通过/失败/退出码/命令」就算可验。
+    实测一张卡 5 条验收**每条都含反引号命令**，于是 `not_machine_checkable_count: 0`，
+    而**那个 0 不能读作"5 条都验得了"**，它是"5 条都含反引号"的副产品。
+
+    只报一个 bool 时，人无法分辨"真的可验"与"撞上了关键词"；把依据报出来，
+    至少能让这个数字**可审**。（是否收紧阈值是**口径决定**，不在这里偷偷改 ——
+    收紧会让更多卡片被硬拦，那就动了 2.1 已有的验收结论。）
+    """
+    text = condition.strip()
+    if not text:
+        return None
+    if any(char.isdigit() for char in text):
+        return "含数字"
+    markers = ("`", "返回", "等于", ">=", "<=", "≥", "≤", "通过", "失败", "退出码", "命令")
+    for marker in markers:
+        if marker in text:
+            return f"含「{marker}」"
+    return None
+
+
 def is_machine_checkable(condition: str) -> bool:
     """
-    验收条件是否**看起来**能机器执行。
+    验收条件是否**看起来**能机器执行（判据见 `machine_checkable_basis`）。
 
     判据刻意宽松（有数字、有命令样式的反引号、有断言词），目标是抓出
     "系统应该好用"这种一眼就是愿望的条目，而不是做精确的语义判断 ——
@@ -1003,13 +1037,18 @@ def is_machine_checkable(condition: str) -> bool:
     复制一遍（而且只复制了"空不空"这一半），于是同一份草稿在两个入口下的状态**不一致**。
     规则只有一份，才谈得上一致；`stopper` 从这里重导出。
     """
-    text = condition.strip()
-    if not text:
-        return False
-    if any(char.isdigit() for char in text):
-        return True
-    markers = ("`", "返回", "等于", ">=", "<=", "≥", "≤", "通过", "失败", "退出码", "命令")
-    return any(marker in text for marker in markers)
+    return machine_checkable_basis(condition) is not None
+
+
+def checkability_report(draft: SpecDraft) -> list[tuple[str, str | None]]:
+    """
+    逐条给出「验收条件 → 判据依据」，给需要展示的地方用（报告 / 定稿 / 驱动脚本）。
+
+    存在的理由就是让 §1.3 那个假阳性**看得见**：调用方能把
+    "判为可验的 N 条里，有几条只是撞上了关键词"直接写进输出，
+    而不是让人对着一个光秃秃的 `0` 猜。
+    """
+    return [(item, machine_checkable_basis(item)) for item in draft.acceptance]
 
 
 def acceptance_gap(draft: SpecDraft) -> str | None:
@@ -1146,9 +1185,17 @@ class IdeaRefiner:
     #: 本轮运行中累积的告警（例如"某轮什么都没沉淀"）。调用方负责展示，脚本不自己打印。
     warnings: list[str] = field(default_factory=list)
 
-    def note_gaps(self, gaps: Sequence[str]) -> None:
-        """记下"还没问到过的缺口"，下一次 `ask()` 会带着它们生成问题。"""
+    def note_gaps(self, gaps: Sequence[str], draft: SpecDraft | None = None) -> None:
+        """
+        记下"还没问到过的缺口"，下一次 `ask()` 会带着它们生成问题。
+
+        传了 `draft` 就**同时写进源卡**（`SpecDraft.open_gaps`）——
+        不传也能用（纯内存语义保留），但跨进程驱动会丢缺口，
+        所以调用方**应当**把草稿传进来。见 `SpecDraft.open_gaps` 的说明。
+        """
         self.open_gaps = [str(item).strip() for item in gaps if str(item).strip()]
+        if draft is not None:
+            draft.open_gaps = list(self.open_gaps)
 
     # ------------------------------------------------------------ 落盘
 
@@ -1156,7 +1203,17 @@ class IdeaRefiner:
         return Path(self.store_dir) / f"{draft.id}.draft.json"
 
     def markdown_path_for(self, draft: SpecDraft) -> Path:
-        return Path(self.store_dir) / f"{draft.id}.md"
+        """
+        渲染稿的落点：`state/specs/<id>.render.md`。
+
+        ⚠️ **不是 `<id>.md`**（2026-09-18 运行报告 §1.2）：那个路径是
+        `StopJudger.finalize()` 的**定稿**。两个函数写同一个文件时，
+        谁后跑谁覆盖 —— 实测把 `finalize()` 的定稿覆盖掉了，丢的正是它比渲染稿
+        多出来的三件事：`converged`/`converged_with_gaps` 分离、不可机器验证的
+        验收条件标 ⚠️、以及定稿章节结构。**渲染稿只是源卡的一个视图**，
+        定稿才是权威 —— 「两份并存时以源卡为准」，同理 `.md` 以定稿为准。
+        """
+        return Path(self.store_dir) / f"{draft.id}.render.md"
 
     def persist(self, draft: SpecDraft) -> Path:
         draft.updated_at = _now()
@@ -1172,7 +1229,14 @@ class IdeaRefiner:
         return target
 
     def write_markdown(self, draft: SpecDraft) -> Path:
-        """把渲染稿写到 `state/specs/<id>.md`（D6：文档与实现对齐）。"""
+        """
+        把**渲染稿**写到 `state/specs/<id>.render.md`（D6：文档与实现对齐）。
+
+        与 `StopJudger.finalize()` **不是二选一的关系，而是两个不同产物**：
+        `finalize()` 写权威定稿 `<id>.md`（含收敛状态与 ⚠️ 标注），
+        这里写源卡的可读视图 `<id>.render.md`。两者路径不同，谁都不会覆盖谁 ——
+        2026-09-18 之前它们写同一个 `<id>.md`，后跑的会把定稿覆盖掉。
+        """
         target = self.markdown_path_for(draft)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(render_markdown(draft), encoding="utf-8")
@@ -1199,6 +1263,11 @@ class IdeaRefiner:
             raise SpecError(f"已经问满 {MAX_ROUNDS} 轮，硬上限不允许再问")
 
         history = [item.question for item in draft.rounds]
+        # **跨进程恢复**（运行报告 2026-09-18 §1.1）：缺口现在随源卡落盘，
+        # 而 agent 驱动是"每条命令一个新进程"—— 上一次 `note_gaps` 记的缺口
+        # 只存在于 `.draft.json` 里。这里在**用之前**把它捞回来，否则这一问会漏掉它。
+        if not self.open_gaps and draft.open_gaps:
+            self.open_gaps = list(draft.open_gaps)
         # 两类缺口都带进这一问：`carry_over` 是"人类已经说了、只是没说清"（G5，必须先问），
         # `open_gaps` 是判停诊断列出的空白（G2）。
         messages = build_messages(draft, open_gaps=[*self.carry_over, *self.open_gaps])

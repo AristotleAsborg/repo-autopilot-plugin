@@ -1,14 +1,14 @@
 {
-  "name": "repo-autopilot-20260918",
-  "built_at": "2026-09-18T05:53:46Z",
+  "name": "repo-autopilot-20260919",
+  "built_at": "2026-09-19T04:41:55Z",
   "source": {
     "path": "D:\\deepseek harness\\repo-autopilot",
-    "commit": "63be9db",
+    "commit": "6135665",
     "dirty": false
   },
   "counts": {
-    "files": 189,
-    "bytes": 4938573
+    "files": 190,
+    "bytes": 4958738
   },
   "state_skeleton_dirs": [
     "tasks/pending",
@@ -275,12 +275,12 @@
       "bytes": 25734
     },
     "src/spec/__init__.py": {
-      "sha256": "6aab99fd890cbe297018f573175f51d60a4bd4cf1324b29f127b0f093c5be00a",
-      "bytes": 2561
+      "sha256": "c44ba205d46979ba3691f128df21064fd879bb10a7ef59c28de8c4b26ac3b6c0",
+      "bytes": 2673
     },
     "src/spec/refiner.py": {
-      "sha256": "829d4b4e69b8abac17f9159f74e77ac13d368eae4e083ea14062a72ed4c5e4b2",
-      "bytes": 78441
+      "sha256": "aa2acd9a9ef4796b33d0417104a85abd8fa1df6f10b631af0d561be05b19d915",
+      "bytes": 82592
     },
     "src/spec/stopper.py": {
       "sha256": "6a25c6be1bd190090cb1676073c4743492bdcdadb44fd175cd91013433173a7f",
@@ -563,8 +563,8 @@
       "bytes": 12462
     },
     "tests/integration/test_spec_refiner.py": {
-      "sha256": "381befcbd6288e5ebc790732639c11f049c546ee071e9c1aabdd91d24b96a66b",
-      "bytes": 14661
+      "sha256": "f957d22c0065d7d2c902e3698ae5255f4c5f24702416049c5a1cce76cd7f20e1",
+      "bytes": 18729
     },
     "tests/integration/test_stage8.py": {
       "sha256": "1f51b349fcc22ee8fa4d4a1a4bc0a11416fae0da48e4d8c4b805e49a30a2530c",
@@ -757,6 +757,10 @@
     "tools/redteam_month.py": {
       "sha256": "ae0d69f35720ced3014e1edc0be5812ddd7ef40724871c31fb7f34ab857a7efc",
       "bytes": 33180
+    },
+    "tools/refine_driver.py": {
+      "sha256": "ced49c750082e67fa58888b70fc70c3d78d1b01e79749bcefd6e08b9e134a7a3",
+      "bytes": 11834
     },
     "tools/review_adjudication.py": {
       "sha256": "b99b926310a01c2e718c7ec4f1a338867401f223f82251124dadde38fbbe72c9",
